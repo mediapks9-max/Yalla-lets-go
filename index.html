@@ -36,6 +36,26 @@
   <meta name="description" content="יאלה - הקהילה הישראלית של מטיילים. מצאו שותפים לטיול, סופ״ש, או אפילו זריחה במכתש.">
   <title>יאלה — מי בעניין?</title>
 
+  <!-- ============================================================
+       🔗 SOCIAL SHARING (Open Graph + Twitter)
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yalla-lets-go.vercel.app/">
+  <meta property="og:title" content="יאלה — מי בעניין?">
+  <meta property="og:description" content="הקהילה של מטיילים ישראלים שמחפשים שותפים לטיול, סופ״ש, או זריחה במכתש.">
+  <meta property="og:locale" content="he_IL">
+  <meta property="og:site_name" content="יאלה">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="יאלה — מי בעניין?">
+  <meta name="twitter:description" content="הקהילה של מטיילים ישראלים שמחפשים שותפים לטיול, סופ״ש, או זריחה במכתש.">
+
+  <!-- Theme color for browser chrome -->
+  <meta name="theme-color" content="#c2410c">
+
+  <!-- Apple touch icon (uses inline SVG fallback if no icon file) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c2410c'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='%23fdf6ec' font-family='serif' font-weight='bold'%3Eי%3C/text%3E%3C/svg%3E">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Suez+One&family=Rubik:wght@300;400;500;600;700;800&family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
@@ -1646,6 +1666,52 @@
     }
 
     /* ============================================================
+       REDUCED MOTION — respect user preference
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ============================================================
+       LOADING SKELETONS
+       ============================================================ */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-card {
+      background: var(--color-cream);
+      border: 1.5px solid var(--color-sand);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+    }
+    .skeleton-image {
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(90deg, var(--color-cream-warm) 0%, var(--color-sand) 50%, var(--color-cream-warm) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s ease-in-out infinite;
+    }
+    .skeleton-body { padding: 18px 20px 20px; flex: 1; }
+    .skeleton-line {
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--color-cream-warm) 0%, var(--color-sand) 50%, var(--color-cream-warm) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.tall { height: 20px; }
+
+    /* ============================================================
        ANIMATIONS
        ============================================================ */
     .stagger-in { animation: cardIn 0.6s ease-out backwards; }
@@ -3187,11 +3253,11 @@
   </footer>
 
   <!-- ============================ CREATE PLAN MODAL ============================ -->
-  <div class="modal-overlay" id="modal-create">
+  <div class="modal-overlay" id="modal-create" role="dialog" aria-modal="true" aria-labelledby="modal-create-title">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">פרסם תוכנית חדשה</h2>
-        <button class="modal-close" data-close-modal="modal-create">×</button>
+        <h2 class="modal-title" id="modal-create-title">פרסם תוכנית חדשה</h2>
+        <button class="modal-close" data-close-modal="modal-create" aria-label="סגור">×</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -3356,11 +3422,11 @@
   </div>
 
   <!-- ============================ JOIN REQUEST MODAL ============================ -->
-  <div class="modal-overlay" id="modal-join">
+  <div class="modal-overlay" id="modal-join" role="dialog" aria-modal="true" aria-labelledby="modal-join-title">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">שלח בקשת הצטרפות</h2>
-        <button class="modal-close" data-close-modal="modal-join">×</button>
+        <h2 class="modal-title" id="modal-join-title">שלח בקשת הצטרפות</h2>
+        <button class="modal-close" data-close-modal="modal-join" aria-label="סגור">×</button>
       </div>
       <div class="modal-body">
         <p style="font-size: 14px; color: var(--color-earth); margin-bottom: 16px; line-height: 1.6;">
@@ -3383,11 +3449,11 @@
   </div>
 
   <!-- ============================ LOGIN MODAL ============================ -->
-  <div class="modal-overlay" id="modal-login">
+  <div class="modal-overlay" id="modal-login" role="dialog" aria-modal="true" aria-labelledby="modal-login-title">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">ברוך הבא ליאלה</h2>
-        <button class="modal-close" data-close-modal="modal-login">×</button>
+        <h2 class="modal-title" id="modal-login-title">ברוך הבא ליאלה</h2>
+        <button class="modal-close" data-close-modal="modal-login" aria-label="סגור">×</button>
       </div>
       <div class="modal-body">
         <div class="login-tabs">
@@ -3432,11 +3498,11 @@
   </div>
 
   <!-- ============================ EDIT PROFILE MODAL ============================ -->
-  <div class="modal-overlay" id="modal-edit-profile">
+  <div class="modal-overlay" id="modal-edit-profile" role="dialog" aria-modal="true" aria-labelledby="modal-edit-profile-title">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">ערוך פרופיל</h2>
-        <button class="modal-close" data-close-modal="modal-edit-profile">×</button>
+        <h2 class="modal-title" id="modal-edit-profile-title">ערוך פרופיל</h2>
+        <button class="modal-close" data-close-modal="modal-edit-profile" aria-label="סגור">×</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
@@ -3465,8 +3531,24 @@
     </div>
   </div>
 
+  <!-- ============================ CONFIRM MODAL (replaces native confirm()) ============================ -->
+  <div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal" style="max-width: 420px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="confirm-title">אישור</h2>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message" style="font-size: 15px; color: var(--color-earth); line-height: 1.6; white-space: pre-line; margin: 0;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="confirm-cancel" style="flex: 1; margin: 0;">ביטול</button>
+        <button class="btn-join-large" id="confirm-ok" style="flex: 1;">אישור</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============================ TOAST ============================ -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- ============================================================
        JAVASCRIPT
@@ -3689,7 +3771,7 @@
             } else if (action === 'guides') {
               navigate('guide-register');
             } else if (action === 'logout') {
-              if (!confirm('להתנתק מהאתר?')) return;
+              if (!await customConfirm('להתנתק מהאתר?')) return;
               try {
                 await api.signOut();
                 showToast('👋 התנתקת בהצלחה');
@@ -5033,9 +5115,27 @@
       `;
     }
 
+    function renderSkeletonCards(count = 6) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `
+          <div class="skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line tall"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          </div>
+        `;
+      }
+      return html;
+    }
+
     async function renderHomePlans() {
       const grid = document.getElementById('plans-grid');
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">טוען תוכניות...</div>';
+      grid.innerHTML = renderSkeletonCards(6);
       const plans = await api.fetchPlans();
       grid.innerHTML = plans.map(p => renderPlanCard(p)).join('');
       attachPlanCardListeners();
@@ -5089,7 +5189,7 @@
         const logoutBtn = document.getElementById('btn-profile-logout');
         if (logoutBtn) {
           logoutBtn.onclick = async () => {
-            if (!confirm('להתנתק מהאתר?')) return;
+            if (!await customConfirm('להתנתק מהאתר?')) return;
             try {
               await api.signOut();
               showToast('👋 התנתקת בהצלחה');
@@ -5342,7 +5442,7 @@
         document.querySelectorAll('.btn-mark-paid').forEach(btn => {
           btn.onclick = async (e) => {
             const id = e.target.dataset.bookingId;
-            if (!confirm('סמן כהושלם ושולם? פעולה זו תעדכן את הסטטיסטיקות.')) return;
+            if (!await customConfirm('סמן כהושלם ושולם? פעולה זו תעדכן את הסטטיסטיקות.')) return;
             e.target.textContent = 'מסמן...';
             e.target.disabled = true;
             try {
@@ -5473,7 +5573,7 @@
 
       document.querySelectorAll('.btn-cancel-request').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-          if (!confirm('לבטל את הבקשה?')) return;
+          if (!await customConfirm('לבטל את הבקשה?')) return;
           const requestId = e.target.dataset.requestId;
           e.target.textContent = 'מבטל...';
           e.target.disabled = true;
@@ -5492,7 +5592,7 @@
 
       document.querySelectorAll('.btn-decline-request').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-          if (!confirm('בטוח שברצונך לדחות את הבקשה?')) return;
+          if (!await customConfirm('בטוח שברצונך לדחות את הבקשה?', { danger: true })) return;
           const requestId = e.target.dataset.requestId;
           e.target.textContent = 'דוחה...';
           e.target.disabled = true;
@@ -5934,7 +6034,7 @@
       document.querySelectorAll('.admin-approve-guide').forEach(btn => {
         btn.onclick = async (e) => {
           const id = e.target.dataset.guideId;
-          if (!confirm('לאשר את המדריך? הוא יקבל גישה לפיצ\'רים מקצועיים.')) return;
+          if (!await customConfirm('לאשר את המדריך? הוא יקבל גישה לפיצ\'רים מקצועיים.')) return;
           e.target.textContent = 'מאשר...';
           e.target.disabled = true;
           try {
@@ -5953,7 +6053,7 @@
       document.querySelectorAll('.admin-reject-guide').forEach(btn => {
         btn.onclick = async (e) => {
           const id = e.target.dataset.guideId;
-          if (!confirm('לדחות את המדריך? הוא לא יוכל להעלות תוכניות בתשלום.')) return;
+          if (!await customConfirm('לדחות את המדריך? הוא לא יוכל להעלות תוכניות בתשלום.', { danger: true })) return;
           e.target.textContent = 'דוחה...';
           e.target.disabled = true;
           try {
@@ -6243,15 +6343,14 @@
         const platformFee = (plan.price * 0.10).toFixed(2);
         const guideEarning = (plan.price * 0.90).toFixed(2);
 
-        const confirmed = confirm(
-          `💳 אישור הזמנה\n\n` +
+        const confirmed = await customConfirm(
           `${plan.title}\n` +
           `מחיר: ${currencySymbol}${plan.price} לאדם\n\n` +
           `כיצד התשלום עובד:\n` +
           `1. תיצור איתי קשר ב-WhatsApp/Email\n` +
           `2. נסכם פרטים ואת אופן התשלום\n` +
-          `3. תקבל אישור הזמנה\n\n` +
-          `המשך להזמנה?`
+          `3. תקבל אישור הזמנה`,
+          { title: '💳 אישור הזמנה', okText: 'המשך להזמנה' }
         );
 
         if (!confirmed) return;
@@ -6361,7 +6460,7 @@
 
       // Delete button (only for plan owner)
       document.getElementById('detail-delete-btn')?.addEventListener('click', async () => {
-        if (!confirm(`למחוק את "${plan.title}" לצמיתות?\nכל הבקשות וההצטרפויות לתוכנית הזו יימחקו.`)) return;
+        if (!await customConfirm(`למחוק את "${plan.title}" לצמיתות?\nכל הבקשות וההצטרפויות לתוכנית הזו יימחקו.`, { danger: true, okText: 'מחק' })) return;
 
         const btn = document.getElementById('detail-delete-btn');
         btn.textContent = 'מוחק...';
@@ -6474,7 +6573,7 @@
 
         const grid = document.getElementById('plans-grid');
         if (grid) {
-          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">מסנן תוכניות...</div>';
+          grid.innerHTML = renderSkeletonCards(4);
 
           let plans = await api.fetchPlansFiltered({ country, city, topic });
 
@@ -7163,6 +7262,64 @@
           e.preventDefault();
           navigate(el.dataset.route);
         });
+      });
+    }
+
+    // ============================================================
+    // CUSTOM CONFIRM — Promise-based replacement for native confirm()
+    // ============================================================
+    function customConfirm(message, opts = {}) {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('modal-confirm');
+        const titleEl = document.getElementById('confirm-title');
+        const msgEl = document.getElementById('confirm-message');
+        const okBtn = document.getElementById('confirm-ok');
+        const cancelBtn = document.getElementById('confirm-cancel');
+        if (!overlay || !msgEl || !okBtn || !cancelBtn) {
+          // Fallback to native confirm if modal not found
+          resolve(window.confirm(message));
+          return;
+        }
+
+        titleEl.textContent = opts.title || 'אישור';
+        msgEl.textContent = message;
+        okBtn.textContent = opts.okText || 'אישור';
+        cancelBtn.textContent = opts.cancelText || 'ביטול';
+
+        // Style ok button for destructive actions
+        if (opts.danger) {
+          okBtn.style.background = '#c62828';
+        } else {
+          okBtn.style.background = '';
+        }
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        const cleanup = (result) => {
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          overlay.removeEventListener('click', onBackdrop);
+          document.removeEventListener('keydown', onKey);
+          resolve(result);
+        };
+        const onOk = () => cleanup(true);
+        const onCancel = () => cleanup(false);
+        const onBackdrop = (e) => { if (e.target === overlay) cleanup(false); };
+        const onKey = (e) => {
+          if (e.key === 'Escape') cleanup(false);
+          else if (e.key === 'Enter') cleanup(true);
+        };
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+        overlay.addEventListener('click', onBackdrop);
+        document.addEventListener('keydown', onKey);
+
+        // Focus the cancel button by default (safer)
+        setTimeout(() => cancelBtn.focus(), 50);
       });
     }
 
