@@ -3648,24 +3648,32 @@
             <div class="detail-meta-grid">
               <div class="detail-meta-item">
                 <div class="label">📅 תאריך</div>
-                <div class="value">${plan.dateFull}</div>
+                <div class="value">${plan.dateFull || 'TBD'}</div>
               </div>
+              ${plan.location ? `
               <div class="detail-meta-item">
                 <div class="label">📍 מיקום</div>
                 <div class="value">${plan.location}</div>
               </div>
+              ` : ''}
+              ${plan.budget ? `
               <div class="detail-meta-item">
                 <div class="label">💰 תקציב</div>
                 <div class="value">${plan.budget}</div>
               </div>
+              ` : ''}
+              ${plan.difficulty ? `
               <div class="detail-meta-item">
                 <div class="label">⚡ רמה</div>
                 <div class="value">${plan.difficulty}</div>
               </div>
+              ` : ''}
+              ${plan.meetingPoint ? `
               <div class="detail-meta-item" style="grid-column: 1 / -1;">
                 <div class="label">🚗 נקודת מפגש</div>
                 <div class="value">${plan.meetingPoint}</div>
               </div>
+              ` : ''}
             </div>
 
             <h2>מי כבר מצטרף?</h2>
@@ -3887,28 +3895,77 @@
       });
 
       document.getElementById('btn-send-join').addEventListener('click', async () => {
+        const btn = document.getElementById('btn-send-join');
+        const originalText = btn.textContent;
+
         try {
-          if (SUPABASE_ENABLED && currentUser) {
-            const message = document.querySelector('#modal-join textarea')?.value || '';
-            const reason = document.querySelector('#modal-join input')?.value || '';
-            // Note: planId would be tracked from currently-viewed plan; simplified for now
-            const currentPlanId = window.location.hash.split('/')[1];
-            if (currentPlanId && currentPlanId.length > 10) {
-              // It's a UUID
-              await api.sendJoinRequest(currentPlanId, message, reason);
-            }
-            closeModal('modal-join');
-            showToast('✓ הבקשה נשלחה ליוצר התוכנית!');
-          } else if (SUPABASE_ENABLED && !currentUser) {
+          const message = document.querySelector('#modal-join textarea')?.value?.trim() || '';
+          const reason = document.querySelector('#modal-join input')?.value?.trim() || '';
+          const currentPlanId = window.location.hash.split('/')[1];
+
+          console.log('🔔 Join request attempt:', {
+            planId: currentPlanId,
+            message: message,
+            reason: reason,
+            user: currentUser?.email,
+            SUPABASE_ENABLED: SUPABASE_ENABLED
+          });
+
+          // Validation - need authentication first
+          if (SUPABASE_ENABLED && !currentUser) {
+            console.log('⚠️ Not logged in');
             closeModal('modal-join');
             openModal('modal-login');
             showToast('🔒 התחבר כדי לשלוח בקשה');
-          } else {
-            closeModal('modal-join');
-            showToast('✓ הבקשה נשלחה! ניידע אותך ברגע שיהיה אישור.');
+            return;
           }
+
+          if (!SUPABASE_ENABLED) {
+            closeModal('modal-join');
+            showToast('✓ הבקשה נשלחה! (מצב הדגמה)');
+            return;
+          }
+
+          // Need plan ID
+          if (!currentPlanId || currentPlanId.length < 10) {
+            console.error('❌ No valid plan ID found in URL hash');
+            showToast('⚠️ לא נמצאה תוכנית. נסה לרענן.');
+            return;
+          }
+
+          // Disable button
+          btn.textContent = 'שולח...';
+          btn.disabled = true;
+          btn.style.opacity = '0.6';
+
+          console.log('🚀 Calling api.sendJoinRequest...');
+          const result = await Promise.race([
+            api.sendJoinRequest(currentPlanId, message, reason),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout - took too long')), 10000))
+          ]);
+          console.log('✅ Join request sent:', result);
+
+          closeModal('modal-join');
+          showToast('✓ הבקשה נשלחה ליוצר התוכנית!');
         } catch (err) {
-          showToast('❌ ' + (err.message || 'שגיאה - נסה שוב'));
+          console.error('❌ Join request error:', err);
+          console.error('Error details:', {
+            message: err.message,
+            code: err.code,
+            details: err.details,
+            hint: err.hint
+          });
+
+          // Special case: if user already requested
+          if (err.code === '23505' || err.message?.includes('duplicate')) {
+            showToast('⚠️ כבר שלחת בקשה לתוכנית זו');
+          } else {
+            showToast('❌ ' + (err.message || 'שגיאה - בדוק Console'));
+          }
+        } finally {
+          btn.textContent = originalText;
+          btn.disabled = false;
+          btn.style.opacity = '';
         }
       });
 
