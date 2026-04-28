@@ -5,6 +5,22 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ============================================================
+       🛡️ CONTENT SECURITY POLICY (defense-in-depth XSS protection)
+       ============================================================ -->
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.clarity.ms https://*.clarity.ms;
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com data:;
+    img-src 'self' data: blob: https:;
+    connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.clarity.ms https://www.google-analytics.com;
+    frame-src 'self';
+    object-src 'none';
+    base-uri 'self';
+    form-action 'self';
+  ">
+
+  <!-- ============================================================
        📊 ANALYTICS - Microsoft Clarity
        ============================================================ -->
 
@@ -19,6 +35,26 @@
 
   <meta name="description" content="יאלה - הקהילה הישראלית של מטיילים. מצאו שותפים לטיול, סופ״ש, או אפילו זריחה במכתש.">
   <title>יאלה — מי בעניין?</title>
+
+  <!-- ============================================================
+       🔗 SOCIAL SHARING (Open Graph + Twitter)
+       ============================================================ -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yalla-lets-go.vercel.app/">
+  <meta property="og:title" content="יאלה — מי בעניין?">
+  <meta property="og:description" content="הקהילה של מטיילים ישראלים שמחפשים שותפים לטיול, סופ״ש, או זריחה במכתש.">
+  <meta property="og:locale" content="he_IL">
+  <meta property="og:site_name" content="יאלה">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="יאלה — מי בעניין?">
+  <meta name="twitter:description" content="הקהילה של מטיילים ישראלים שמחפשים שותפים לטיול, סופ״ש, או זריחה במכתש.">
+
+  <!-- Theme color for browser chrome -->
+  <meta name="theme-color" content="#c2410c">
+
+  <!-- Apple touch icon (uses inline SVG fallback if no icon file) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23c2410c'/%3E%3Ctext x='50' y='68' font-size='60' text-anchor='middle' fill='%23fdf6ec' font-family='serif' font-weight='bold'%3Eי%3C/text%3E%3C/svg%3E">
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1630,6 +1666,52 @@
     }
 
     /* ============================================================
+       REDUCED MOTION — respect user preference
+       ============================================================ */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* ============================================================
+       LOADING SKELETONS
+       ============================================================ */
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .skeleton-card {
+      background: var(--color-cream);
+      border: 1.5px solid var(--color-sand);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      box-shadow: var(--shadow-card);
+      display: flex;
+      flex-direction: column;
+    }
+    .skeleton-image {
+      aspect-ratio: 16 / 10;
+      background: linear-gradient(90deg, var(--color-cream-warm) 0%, var(--color-sand) 50%, var(--color-cream-warm) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s ease-in-out infinite;
+    }
+    .skeleton-body { padding: 18px 20px 20px; flex: 1; }
+    .skeleton-line {
+      height: 12px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--color-cream-warm) 0%, var(--color-sand) 50%, var(--color-cream-warm) 100%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+    .skeleton-line.short { width: 60%; }
+    .skeleton-line.tall { height: 20px; }
+
+    /* ============================================================
        ANIMATIONS
        ============================================================ */
     .stagger-in { animation: cardIn 0.6s ease-out backwards; }
@@ -2394,7 +2476,7 @@
     }
   </style>
 
-  <!-- Supabase JS SDK -->
+  <!-- Supabase JS SDK (must load before inline script that uses `supabase` global) -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
@@ -2405,7 +2487,7 @@
       <div class="logo" data-route="home">יאלה<span class="logo-dot"></span></div>
       <nav class="nav-main">
         <span class="nav-link active" data-route="home">גלה</span>
-        <span class="nav-link" data-route="profile">הפרופיל שלי</span>
+        <span class="nav-link" data-route="profile">הפרופיל שלי <span id="nav-incoming-badge" style="display:none; background:var(--color-cream); color:var(--color-terracotta); border-radius:10px; padding:1px 7px; font-size:11px; margin-right:4px; font-weight:700;"></span></span>
         <span class="nav-link" data-route="guides">💎 מדריכים</span>
         <span class="nav-link" data-route="about">איך זה עובד</span>
         <span class="nav-link" id="nav-admin" data-route="admin" style="display: none; color: #d4583a; font-weight: 600;">🛡️ אדמין</span>
@@ -2426,26 +2508,26 @@
       <section class="hero">
         <div class="hero-badge">
           <span class="hero-badge-dot"></span>
-          247 ישראלים מתכננים השבוע
+          קהילה גדלה — בוא להיות חלק
         </div>
         <h1>הולך לאנשהו?<br><em>קח מישהו איתך.</em></h1>
         <p class="hero-sub">
           הקהילה של מטיילים ישראלים שמחפשים שותפים<br>
           לטיול, לסופ"ש, לזריחה במכתש או לבירה בנמל.
         </p>
-        <div class="hero-stats">
+        <div class="hero-stats" id="hero-stats" style="display:none;">
           <div class="hero-stat">
-            <div class="hero-stat-num">1,847</div>
+            <div class="hero-stat-num" id="hero-users">—</div>
             <div class="hero-stat-label">חברי קהילה</div>
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
-            <div class="hero-stat-num">93</div>
+            <div class="hero-stat-num" id="hero-plans">—</div>
             <div class="hero-stat-label">תוכניות פעילות</div>
           </div>
           <div class="hero-stat-divider"></div>
           <div class="hero-stat">
-            <div class="hero-stat-num">412</div>
+            <div class="hero-stat-num" id="hero-connections">—</div>
             <div class="hero-stat-label">חיבורים נוצרו</div>
           </div>
         </div>
@@ -2453,6 +2535,17 @@
 
       <div class="filter-bar">
         <div class="filter-bar-inner" style="flex-wrap: wrap; gap: 12px; padding: 16px 24px;">
+          <!-- Free-text search -->
+          <div style="display: flex; gap: 8px; align-items: center; flex: 1; min-width: 200px;">
+            <input type="search" id="filter-search" placeholder="🔍 חיפוש (כותרת, תיאור, מיקום...)" style="width: 100%; padding: 8px 14px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; font-size: 14px;">
+          </div>
+          <!-- Date range chips -->
+          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+            <span class="filter-label" style="font-weight: 600;">📅 מתי:</span>
+            <button class="filter-chip date-chip active" data-date="all">כל הזמן</button>
+            <button class="filter-chip date-chip" data-date="week">השבוע</button>
+            <button class="filter-chip date-chip" data-date="month">החודש</button>
+          </div>
           <!-- Hierarchy filter dropdowns -->
           <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <span class="filter-label" style="font-weight: 600;">📍 מיקום:</span>
@@ -2505,23 +2598,23 @@
         </div>
       </section>
 
-      <!-- ============================ KPIS ============================ -->
-      <section class="kpis-section">
+      <!-- ============================ KPIS (hidden until enough real data) ============================ -->
+      <section class="kpis-section" id="kpis-section" style="display:none;">
         <div class="kpis-grid">
           <div class="kpi-cell">
-            <div class="kpi-num">1,847<small>+</small></div>
+            <div class="kpi-num" id="kpi-users">—</div>
             <div class="kpi-label">חברי קהילה</div>
-            <div class="kpi-sub">גדל ב-23% החודש</div>
+            <div class="kpi-sub">גדלים יחד</div>
           </div>
           <div class="kpi-cell">
-            <div class="kpi-num">412</div>
+            <div class="kpi-num" id="kpi-connections">—</div>
             <div class="kpi-label">חיבורים שנוצרו</div>
-            <div class="kpi-sub">חברויות, רומנים, קולגות לדרך</div>
+            <div class="kpi-sub">בקשות שאושרו</div>
           </div>
           <div class="kpi-cell">
-            <div class="kpi-num">4.9<small>★</small></div>
-            <div class="kpi-label">ממוצע דירוג</div>
-            <div class="kpi-sub">מתוך 1,200+ ביקורות</div>
+            <div class="kpi-num" id="kpi-plans">—</div>
+            <div class="kpi-label">תוכניות פעילות</div>
+            <div class="kpi-sub">השבוע הקרוב</div>
           </div>
         </div>
       </section>
@@ -2759,7 +2852,7 @@
           </div>
           <div class="contact-form">
             <h3>בואו נתחבר לטיול הבא</h3>
-            <p class="contact-form-sub">השאר פרטים, נשלח לך מייל ברוך-הבא עם 5 תוכניות שכנראה תאהב.</p>
+            <p class="contact-form-sub">הצטרף לקהילה — דקה אחת ואתה בפנים.</p>
 
             <div class="form-group">
               <label class="form-label">שם מלא</label>
@@ -2785,7 +2878,7 @@
                 <option>תייר בישראל</option>
               </select>
             </div>
-            <button class="btn-join-large" id="btn-contact-submit" style="width: 100%;">שלחו לי תוכניות</button>
+            <button class="btn-join-large" id="btn-contact-submit" style="width: 100%;">הצטרף לקהילה</button>
           </div>
         </div>
       </section>
@@ -2832,6 +2925,7 @@
 
           <!-- Profile actions -->
           <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee; flex-wrap: wrap;">
+            <button id="btn-edit-profile" style="background: var(--color-terracotta); color: white; padding: 10px 20px; border: none; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">✏️ ערוך פרופיל</button>
             <button id="btn-profile-logout" style="background: #f5f5f5; color: #d4583a; padding: 10px 20px; border: 1px solid #d4583a33; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">🚪 התנתק</button>
           </div>
         </div>
@@ -3166,16 +3260,16 @@
   </footer>
 
   <!-- ============================ CREATE PLAN MODAL ============================ -->
-  <div class="modal-overlay" id="modal-create">
+  <div class="modal-overlay" id="modal-create" role="dialog" aria-modal="true" aria-labelledby="modal-create-title">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">פרסם תוכנית חדשה</h2>
-        <button class="modal-close" data-close-modal="modal-create">×</button>
+        <h2 class="modal-title" id="modal-create-title">פרסם תוכנית חדשה</h2>
+        <button class="modal-close" data-close-modal="modal-create" aria-label="סגור">×</button>
       </div>
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">לאן הולכים?</label>
-          <input type="text" class="form-input" placeholder="למשל: מכתש רמון, יפו, חרמון...">
+          <input type="text" class="form-input" id="create-title" placeholder="למשל: מכתש רמון, יפו, חרמון...">
         </div>
 
         <!-- Country/City/Topic selectors -->
@@ -3251,21 +3345,32 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">מתי</label>
-            <input type="date" class="form-input">
+            <input type="date" class="form-input" id="create-date">
           </div>
           <div class="form-group">
             <label class="form-label">כמה אנשים</label>
-            <select class="form-select">
+            <select class="form-select" id="create-spots">
               <option>2 אנשים</option>
               <option>3 אנשים</option>
-              <option>4 אנשים</option>
+              <option selected>4 אנשים</option>
               <option>5+ אנשים</option>
             </select>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">מה התוכנית? מה עושים שם?</label>
-          <textarea class="form-textarea" placeholder="ספר קצת על התוכנית - מה תיקח? מה הרמה? איזה אווירה אתה מחפש?"></textarea>
+          <textarea class="form-textarea" id="create-desc" placeholder="ספר קצת על התוכנית - מה תיקח? מה הרמה? איזה אווירה אתה מחפש?"></textarea>
+        </div>
+
+        <!-- Plan image upload -->
+        <div class="form-group">
+          <label class="form-label">📸 תמונה לתוכנית (אופציונלי)</label>
+          <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+            <input type="file" id="create-image-file" accept="image/*" style="flex: 1; padding: 8px; border: 1.5px solid var(--color-sand); border-radius: var(--radius-md); background: var(--color-cream); font-family: inherit; cursor: pointer;">
+            <img id="create-image-preview" style="display:none; width: 80px; height: 60px; object-fit: cover; border-radius: 8px;" alt="">
+            <button type="button" id="create-image-clear" style="display:none; background: transparent; color: #c62828; border: 1px solid #c62828; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 12px;">הסר</button>
+          </div>
+          <p style="font-size: 11px; color: #999; margin-top: 4px;">בחר תמונה מהמכשיר. אם לא תבחר — נציג איור אוטומטי לפי הנושא.</p>
         </div>
 
         <!-- Paid plan section - only shown for approved guides -->
@@ -3324,11 +3429,11 @@
   </div>
 
   <!-- ============================ JOIN REQUEST MODAL ============================ -->
-  <div class="modal-overlay" id="modal-join">
+  <div class="modal-overlay" id="modal-join" role="dialog" aria-modal="true" aria-labelledby="modal-join-title">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">שלח בקשת הצטרפות</h2>
-        <button class="modal-close" data-close-modal="modal-join">×</button>
+        <h2 class="modal-title" id="modal-join-title">שלח בקשת הצטרפות</h2>
+        <button class="modal-close" data-close-modal="modal-join" aria-label="סגור">×</button>
       </div>
       <div class="modal-body">
         <p style="font-size: 14px; color: var(--color-earth); margin-bottom: 16px; line-height: 1.6;">
@@ -3351,11 +3456,11 @@
   </div>
 
   <!-- ============================ LOGIN MODAL ============================ -->
-  <div class="modal-overlay" id="modal-login">
+  <div class="modal-overlay" id="modal-login" role="dialog" aria-modal="true" aria-labelledby="modal-login-title">
     <div class="modal">
       <div class="modal-header">
-        <h2 class="modal-title">ברוך הבא ליאלה</h2>
-        <button class="modal-close" data-close-modal="modal-login">×</button>
+        <h2 class="modal-title" id="modal-login-title">ברוך הבא ליאלה</h2>
+        <button class="modal-close" data-close-modal="modal-login" aria-label="סגור">×</button>
       </div>
       <div class="modal-body">
         <div class="login-tabs">
@@ -3389,6 +3494,9 @@
           <label class="form-label">סיסמה</label>
           <input type="password" class="form-input" placeholder="••••••••">
         </div>
+        <div style="text-align: left; margin-top: -8px; margin-bottom: 8px;">
+          <a id="link-forgot-password" style="font-size: 13px; color: var(--color-terracotta); cursor: pointer;">שכחת סיסמה?</a>
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn-join-large" id="btn-login-submit" style="width: 100%;">התחבר</button>
@@ -3396,8 +3504,99 @@
     </div>
   </div>
 
+  <!-- ============================ EDIT PROFILE MODAL ============================ -->
+  <div class="modal-overlay" id="modal-edit-profile" role="dialog" aria-modal="true" aria-labelledby="modal-edit-profile-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-edit-profile-title">ערוך פרופיל</h2>
+        <button class="modal-close" data-close-modal="modal-edit-profile" aria-label="סגור">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">שם מלא</label>
+          <input type="text" class="form-input" id="edit-profile-name" placeholder="ישראל ישראלי">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">עיר</label>
+            <input type="text" class="form-input" id="edit-profile-city" placeholder="תל אביב">
+          </div>
+          <div class="form-group">
+            <label class="form-label">גיל</label>
+            <input type="number" class="form-input" id="edit-profile-age" min="13" max="120" placeholder="29">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">קצת עליי (Bio)</label>
+          <textarea class="form-textarea" id="edit-profile-bio" rows="4" placeholder="איזה טיולים אני אוהב, איפה הייתי, עם מי כיף לטייל..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close-modal="modal-edit-profile" style="flex: 1; margin: 0;">ביטול</button>
+        <button class="btn-join-large" id="btn-save-profile">שמור</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ WELCOME / ONBOARDING MODAL ============================ -->
+  <div class="modal-overlay" id="modal-welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div class="modal" style="max-width: 520px;">
+      <div class="modal-header" style="text-align: center; flex-direction: column; gap: 8px;">
+        <div style="font-size: 56px; line-height: 1;">👋</div>
+        <h2 class="modal-title" id="welcome-title" style="text-align: center;">ברוכים הבאים ליאלה</h2>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p style="font-size: 16px; color: var(--color-earth); line-height: 1.6; margin-bottom: 20px;">
+          הקהילה של מטיילים ישראלים שמחפשים שותפים — לטיול, לסופ"ש, או לבירה בנמל.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 14px; text-align: right; background: var(--color-cream-warm); padding: 20px; border-radius: var(--radius-md); margin-bottom: 16px;">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <span style="font-size: 22px;">🔍</span>
+            <div>
+              <strong style="display: block; margin-bottom: 2px;">גלה</strong>
+              <span style="font-size: 14px; color: var(--color-earth);">חפש לפי עיר, נושא, או חיפוש חופשי</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <span style="font-size: 22px;">✨</span>
+            <div>
+              <strong style="display: block; margin-bottom: 2px;">פרסם</strong>
+              <span style="font-size: 14px; color: var(--color-earth);">יש לך תוכנית? פרסם אותה בדקה אחת</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <span style="font-size: 22px;">🤝</span>
+            <div>
+              <strong style="display: block; margin-bottom: 2px;">הצטרף</strong>
+              <span style="font-size: 14px; color: var(--color-earth);">שלח בקשה למארגן, וכשמאשרים — תקבל את פרטי הקשר</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-join-large" id="btn-welcome-close" style="flex: 1;">בוא נתחיל</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================ CONFIRM MODAL (replaces native confirm()) ============================ -->
+  <div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+    <div class="modal" style="max-width: 420px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="confirm-title">אישור</h2>
+      </div>
+      <div class="modal-body">
+        <p id="confirm-message" style="font-size: 15px; color: var(--color-earth); line-height: 1.6; white-space: pre-line; margin: 0;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" id="confirm-cancel" style="flex: 1; margin: 0;">ביטול</button>
+        <button class="btn-join-large" id="confirm-ok" style="flex: 1;">אישור</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============================ TOAST ============================ -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- ============================================================
        JAVASCRIPT
@@ -3424,6 +3623,102 @@
 
       'ein-gedi': `<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="eg-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFD89B"/><stop offset="100%" stop-color="#FAEEDA"/></linearGradient><linearGradient id="eg-cliff" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#BA7517"/><stop offset="100%" stop-color="#854F0B"/></linearGradient></defs><rect width="800" height="500" fill="url(#eg-sky)"/><circle cx="650" cy="100" r="60" fill="#FFE5B4" opacity="0.5"/><path d="M0,250 L80,200 L160,220 L240,180 L320,210 L400,185 L480,215 L560,195 L640,225 L720,200 L800,220 L800,350 L0,350 Z" fill="#854F0B" opacity="0.5"/><path d="M0,300 L100,260 L200,280 L300,240 L400,265 L500,245 L600,275 L700,255 L800,280 L800,400 L0,400 Z" fill="url(#eg-cliff)"/><path d="M0,400 L0,250 Q40,230 80,260 Q120,240 160,270 L160,400 Z" fill="#633806"/><path d="M100,250 L100,380 L130,380 L130,250 Z" fill="#FFF" opacity="0.85"/><line x1="105" y1="260" x2="105" y2="375" stroke="#85B7EB" stroke-width="1" opacity="0.7"/><line x1="115" y1="255" x2="115" y2="378" stroke="#FFF" stroke-width="1.5"/><line x1="125" y1="260" x2="125" y2="375" stroke="#85B7EB" stroke-width="1" opacity="0.7"/><ellipse cx="170" cy="395" rx="80" ry="15" fill="#085041"/><ellipse cx="170" cy="390" rx="65" ry="11" fill="#1D9E75"/><ellipse cx="170" cy="388" rx="40" ry="6" fill="#5DCAA5" opacity="0.7"/><g transform="translate(220, 380)"><rect x="-3" y="0" width="6" height="50" fill="#5C4424"/><path d="M0,0 Q-25,-15 -35,-8" stroke="#3B6D11" stroke-width="3" fill="none"/><path d="M0,0 Q-15,-25 -10,-40" stroke="#3B6D11" stroke-width="3" fill="none"/><path d="M0,0 Q15,-25 10,-40" stroke="#3B6D11" stroke-width="3" fill="none"/><path d="M0,0 Q25,-15 35,-8" stroke="#3B6D11" stroke-width="3" fill="none"/><path d="M0,0 Q-5,-25 0,-42" stroke="#3B6D11" stroke-width="3" fill="none"/></g><g transform="translate(280, 390)"><rect x="-3" y="0" width="6" height="40" fill="#5C4424"/><path d="M0,0 Q-22,-13 -30,-5" stroke="#3B6D11" stroke-width="3" fill="none"/><path d="M0,0 Q-12,-22 -8,-35" stroke="#3B6D11" stroke-width="3" fill="none"/><path d="M0,0 Q12,-22 8,-35" stroke="#3B6D11" stroke-width="3" fill="none"/><path d="M0,0 Q22,-13 30,-5" stroke="#3B6D11" stroke-width="3" fill="none"/></g><ellipse cx="100" cy="395" rx="25" ry="10" fill="#27500A"/><ellipse cx="180" cy="405" rx="35" ry="12" fill="#3B6D11"/><ellipse cx="260" cy="410" rx="30" ry="11" fill="#27500A"/><ellipse cx="340" cy="405" rx="40" ry="13" fill="#3B6D11"/><g transform="translate(540, 280)"><ellipse cx="0" cy="0" rx="14" ry="6" fill="#412402"/><ellipse cx="-14" cy="-3" rx="6" ry="4" fill="#412402"/><path d="M-16,-7 Q-22,-12 -20,-18" stroke="#412402" stroke-width="2" fill="none"/><path d="M-13,-7 Q-19,-12 -17,-18" stroke="#412402" stroke-width="2" fill="none"/><line x1="-8" y1="5" x2="-8" y2="14" stroke="#412402" stroke-width="2"/><line x1="-3" y1="6" x2="-3" y2="14" stroke="#412402" stroke-width="2"/><line x1="3" y1="6" x2="3" y2="14" stroke="#412402" stroke-width="2"/><line x1="8" y1="5" x2="8" y2="14" stroke="#412402" stroke-width="2"/></g><ellipse cx="50" cy="450" rx="30" ry="10" fill="#5F5E5A"/><ellipse cx="500" cy="455" rx="40" ry="12" fill="#5F5E5A"/></svg>`,
     };
+
+    // ============================================================
+    // 🖼️ ILLUSTRATION SELECTION — pick a fitting SVG by topic/keywords
+    // ============================================================
+    function pickIllustrationForPlan({ topic, title, country, city }) {
+      const all = ['ramon-crater', 'eilat-coral', 'jerusalem-old-city', 'banias-waterfall', 'masada-sunrise', 'telaviv-beach', 'rosh-hanikra', 'ein-gedi'];
+      const topicMap = {
+        // Sports / outdoor
+        running: 'telaviv-beach', cycling: 'rosh-hanikra', hiking: 'ein-gedi', climbing: 'ramon-crater',
+        diving: 'eilat-coral', swimming: 'eilat-coral', beach: 'telaviv-beach', yoga: 'masada-sunrise',
+        football: 'telaviv-beach', basketball: 'telaviv-beach',
+        // Social
+        beer: 'telaviv-beach', coffee: 'jerusalem-old-city', sunset: 'masada-sunrise',
+        language: 'jerusalem-old-city', networking: 'telaviv-beach', family: 'banias-waterfall',
+        // Culture
+        food: 'jerusalem-old-city', photo: 'masada-sunrise', music: 'telaviv-beach',
+        // Travel
+        travel: 'ramon-crater', roadtrip: 'rosh-hanikra', camping: 'ein-gedi',
+        other: 'ramon-crater',
+      };
+      // Topic match wins
+      if (topic && topicMap[topic]) return topicMap[topic];
+
+      // City match (Hebrew/English keywords)
+      const text = `${title || ''} ${city || ''}`.toLowerCase();
+      const cityMap = [
+        ['eilat', 'eilat-coral'], ['אילת', 'eilat-coral'],
+        ['jerusalem', 'jerusalem-old-city'], ['ירושלים', 'jerusalem-old-city'],
+        ['masada', 'masada-sunrise'], ['מצדה', 'masada-sunrise'],
+        ['banias', 'banias-waterfall'], ['בניאס', 'banias-waterfall'],
+        ['ramon', 'ramon-crater'], ['רמון', 'ramon-crater'], ['מכתש', 'ramon-crater'],
+        ['ein-gedi', 'ein-gedi'], ['גדי', 'ein-gedi'],
+        ['rosh-hanikra', 'rosh-hanikra'], ['ראש הנקרה', 'rosh-hanikra'], ['nikra', 'rosh-hanikra'],
+        ['tel-aviv', 'telaviv-beach'], ['תל אביב', 'telaviv-beach'], ['tel aviv', 'telaviv-beach'], ['telaviv', 'telaviv-beach'],
+      ];
+      for (const [kw, ill] of cityMap) {
+        if (text.includes(kw)) return ill;
+      }
+
+      // Fallback: deterministic pick by string hash so the same plan always gets the same image
+      const seed = (text || 'plan').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+      return all[seed % all.length];
+    }
+
+    // ============================================================
+    // 🌐 ERROR MESSAGE TRANSLATION (English → Hebrew)
+    // ============================================================
+    function translateError(err) {
+      if (!err) return 'שגיאה לא ידועה';
+      const msg = (err.message || err.error_description || String(err)).toLowerCase();
+
+      // Auth errors
+      if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) return 'אימייל או סיסמה שגויים';
+      if (msg.includes('email not confirmed')) return 'האימייל עוד לא אומת — בדוק את תיבת הדואר שלך';
+      if (msg.includes('user already registered')) return 'אימייל זה כבר רשום במערכת';
+      if (msg.includes('password should be at least')) return 'הסיסמה קצרה מדי (לפחות 6 תווים)';
+      if (msg.includes('rate limit')) return 'יותר מדי נסיונות — נסה שוב בעוד דקה';
+      if (msg.includes('network') || msg.includes('failed to fetch')) return 'בעיית תקשורת — בדוק את החיבור לאינטרנט';
+
+      // DB errors
+      if (err.code === '23505') return 'הרשומה כבר קיימת';
+      if (err.code === '23503') return 'נתון לא תקין (foreign key)';
+      if (err.code === '42501') return 'אין הרשאה לפעולה זו';
+      if (msg.includes('row-level security') || msg.includes('rls')) return 'אין הרשאה לפעולה זו';
+      if (msg.includes('violates check constraint')) return 'הנתון לא תקין';
+
+      // Storage errors
+      if (msg.includes('payload too large')) return 'הקובץ גדול מדי';
+      if (msg.includes('bucket not found')) return 'שטח האחסון עוד לא הוגדר — צור קשר עם מנהל';
+
+      // Timeout
+      if (msg.includes('timeout')) return 'הפעולה לקחה יותר מדי זמן — נסה שוב';
+
+      // Fallback to original message
+      return err.message || err.error_description || 'שגיאה';
+    }
+
+    // ============================================================
+    // 🛡️ XSS PROTECTION HELPERS
+    // ============================================================
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function safeUrl(url) {
+      if (!url) return '';
+      const s = String(url).trim();
+      if (/^(https?:\/\/|\/|data:image\/)/i.test(s)) return escapeHtml(s);
+      return '';
+    }
 
     // ============================================================
     // ⚡ SUPABASE CONFIGURATION
@@ -3480,6 +3775,8 @@
       }
       currentProfile = data;
       updateAuthUI();
+      // Refresh global incoming-requests badge once profile loaded
+      if (typeof refreshIncomingBadge === 'function') refreshIncomingBadge();
       return data;
     }
 
@@ -3508,9 +3805,9 @@
         chip.style.cssText = 'position:relative; display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--color-cream); font-size:13px;';
         chip.innerHTML = `
           <div style="width:32px;height:32px;border-radius:50%;background:var(--color-cream);color:var(--color-terracotta);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;overflow:hidden;">
-            ${avatarUrl ? `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+            ${avatarUrl ? `<img src="${safeUrl(avatarUrl)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(initial)}
           </div>
-          <span class="user-chip-name">${fullName}</span>
+          <span class="user-chip-name">${escapeHtml(fullName)}</span>
           <span style="font-size: 10px; opacity: 0.7;">▼</span>
 
           <!-- Dropdown menu (hidden by default) -->
@@ -3555,11 +3852,17 @@
             } else if (action === 'guides') {
               navigate('guide-register');
             } else if (action === 'logout') {
-              if (!confirm('להתנתק מהאתר?')) return;
+              if (!await customConfirm('להתנתק מהאתר?')) return;
               try {
                 await api.signOut();
                 showToast('👋 התנתקת בהצלחה');
-                setTimeout(() => window.location.reload(), 800);
+                // Clear local state and re-render without reloading the page
+                currentUser = null;
+                currentProfile = null;
+                updateAuthUI();
+                refreshIncomingBadge();
+                navigate('home');
+                renderHomePlans();
               } catch (err) {
                 showToast('❌ שגיאה בהתנתקות');
               }
@@ -3699,6 +4002,7 @@
           price_includes: planData.priceIncludes || null,
           price_excludes: planData.priceExcludes || null,
           guide_id: planData.guideId || null,
+          image_url: planData.imageUrl || null,
         }).select().single();
 
         if (error) throw error;
@@ -3709,15 +4013,29 @@
         if (!SUPABASE_ENABLED) return { success: true };
         if (!currentUser) throw new Error('Must be logged in');
 
-        const { error } = await sb.from('plans').update({
+        const updateFields = {
           title: planData.title,
           description: planData.description,
           long_description: planData.longDescription,
           location: planData.location,
           start_date: planData.startDate,
           spots_total: planData.spotsTotal,
-        }).eq('id', planId);
+          country: planData.country,
+          city: planData.city,
+          topic: planData.topic,
+          is_paid: planData.isPaid || false,
+          price: planData.price ?? null,
+          currency: planData.currency ?? null,
+          price_includes: planData.priceIncludes ?? null,
+          price_excludes: planData.priceExcludes ?? null,
+        };
 
+        // Only update image_url if a new one was provided (don't clobber)
+        if (planData.imageUrl !== undefined) {
+          updateFields.image_url = planData.imageUrl;
+        }
+
+        const { error } = await sb.from('plans').update(updateFields).eq('id', planId);
         if (error) throw error;
         return { success: true };
       },
@@ -3857,6 +4175,21 @@
         }
       },
 
+      // Cancel my own outgoing request (set status to 'cancelled')
+      async cancelMyRequest(requestId) {
+        if (!SUPABASE_ENABLED) return { success: true };
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const { error } = await sb
+          .from('join_requests')
+          .update({ status: 'cancelled' })
+          .eq('id', requestId)
+          .eq('user_id', currentUser.id); // double-check ownership
+
+        if (error) throw error;
+        return { success: true };
+      },
+
       // Approve or decline a request
       async respondToRequest(requestId, newStatus) {
         if (!SUPABASE_ENABLED) {
@@ -3929,6 +4262,94 @@
         });
 
         if (error) throw error;
+        return { success: true };
+      },
+
+      // העלאת תמונה ל-Supabase Storage (bucket "plan-images")
+      async uploadPlanImage(file) {
+        if (!SUPABASE_ENABLED) return null;
+        if (!currentUser) throw new Error('Must be logged in');
+        if (!file) return null;
+
+        // Validate
+        if (file.size > 5 * 1024 * 1024) throw new Error('הקובץ גדול מדי (מקסימום 5MB)');
+        if (!file.type.startsWith('image/')) throw new Error('הקובץ אינו תמונה');
+
+        // Path: {user_id}/{timestamp}-{random}.ext
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase().replace(/[^a-z0-9]/g, '');
+        const path = `${currentUser.id}/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+
+        const { error: uploadError } = await sb.storage
+          .from('plan-images')
+          .upload(path, file, { cacheControl: '3600', upsert: false });
+
+        if (uploadError) throw uploadError;
+
+        const { data } = sb.storage.from('plan-images').getPublicUrl(path);
+        return data?.publicUrl || null;
+      },
+
+      // ספירת מספרים פומביים לדף הבית (משתמשים, פלאנים, חיבורים)
+      async fetchPublicStats() {
+        if (!SUPABASE_ENABLED) return null;
+        try {
+          const [usersRes, plansRes, connectionsRes] = await Promise.all([
+            sb.from('profiles').select('*', { count: 'exact', head: true }),
+            sb.from('plans').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+            sb.from('join_requests').select('*', { count: 'exact', head: true }).eq('status', 'approved'),
+          ]);
+          return {
+            users: usersRes.count || 0,
+            plans: plansRes.count || 0,
+            connections: connectionsRes.count || 0,
+          };
+        } catch (err) {
+          console.warn('fetchPublicStats failed:', err);
+          return null;
+        }
+      },
+
+      // ספירת בקשות הצטרפות ממתינות (לפלאנים שאני יצרתי)
+      async fetchPendingIncomingCount() {
+        if (!SUPABASE_ENABLED || !currentUser) return 0;
+        try {
+          // Get my plan IDs first
+          const { data: myPlans } = await sb
+            .from('plans')
+            .select('id')
+            .eq('creator_id', currentUser.id);
+          if (!myPlans || myPlans.length === 0) return 0;
+          const planIds = myPlans.map(p => p.id);
+
+          const { count } = await sb
+            .from('join_requests')
+            .select('*', { count: 'exact', head: true })
+            .in('plan_id', planIds)
+            .eq('status', 'pending');
+          return count || 0;
+        } catch (err) {
+          return 0;
+        }
+      },
+
+      // עדכון פרופיל אישי (bio/city/age/full_name)
+      async updateMyProfile(profileData) {
+        if (!SUPABASE_ENABLED) return { success: true };
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const { error } = await sb
+          .from('profiles')
+          .update({
+            full_name: profileData.full_name ?? undefined,
+            bio: profileData.bio ?? undefined,
+            city: profileData.city ?? undefined,
+            age: profileData.age ?? undefined,
+          })
+          .eq('id', currentUser.id);
+
+        if (error) throw error;
+        // Refresh local copy
+        await loadCurrentProfile();
         return { success: true };
       },
 
@@ -4388,7 +4809,15 @@
         await sb.auth.signOut();
         currentUser = null;
         currentProfile = null;
-        location.reload();
+      },
+
+      async resetPassword(email) {
+        if (!SUPABASE_ENABLED) throw new Error('Demo mode');
+        const { error } = await sb.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname,
+        });
+        if (error) throw error;
+        return { success: true };
       },
     };
 
@@ -4400,6 +4829,7 @@
       return {
         id: dbPlan.id,
         illustration: dbPlan.illustration,
+        imageUrl: dbPlan.image_url || null,
         tag: dbPlan.tag || '✦',
         date: dateLabel,
         dateFull: dbPlan.start_date,
@@ -4648,12 +5078,48 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Whitelist of valid routes (anything else → home)
+    const VALID_ROUTES = ['home', 'profile', 'plan-detail', 'about', 'guides', 'guide-register', 'admin'];
+
     function handleHashChange() {
       const hash = window.location.hash.slice(1);
       if (!hash) return navigate('home');
-      const [route, ...rest] = hash.split('/');
+
+      // Split route from query string: "home?country=CY&city=tel-aviv"
+      const [routeAndPath, queryStr] = hash.split('?');
+      const [route, ...rest] = routeAndPath.split('/');
       const params = rest.join('/');
+
+      // Validate route — fall back to home if unknown
+      if (!VALID_ROUTES.includes(route)) {
+        history.replaceState(null, '', '#home');
+        return navigate('home');
+      }
+
       navigate(route, params);
+
+      // Apply query filters on home
+      if (route === 'home' && queryStr) {
+        const sp = new URLSearchParams(queryStr);
+        const country = sp.get('country');
+        const city = sp.get('city');
+        const topic = sp.get('topic');
+        // Set the filter dropdowns once they exist (setupFilters is async)
+        const trySet = (id, val) => {
+          const el = document.getElementById(id);
+          if (el && val != null) el.value = val;
+        };
+        const q = sp.get('q');
+        // Defer to allow setupFilters to populate options first
+        setTimeout(() => {
+          trySet('filter-country', country);
+          trySet('filter-city', city);
+          trySet('filter-topic', topic);
+          trySet('filter-search', q);
+          // Trigger change to apply filters
+          document.getElementById('filter-country')?.dispatchEvent(new Event('change'));
+        }, 100);
+      }
     }
 
     // ============================================================
@@ -4661,11 +5127,13 @@
     // ============================================================
     function renderPlanCard(plan, includeStagger = true) {
       const staggerClass = includeStagger ? 'stagger-in' : '';
+      const joinedNum = parseInt(plan.joined) || 0;
+      const spotsNum = parseInt(plan.spots) || 0;
       const spotsLabel = plan.categories.includes('family')
-        ? `משפחה <strong>${plan.joined}</strong>/${plan.spots}`
-        : plan.joined === 0
+        ? `משפחה <strong>${joinedNum}</strong>/${spotsNum}`
+        : joinedNum === 0
           ? 'פתוח · להכיר אנשים'
-          : `<strong>${plan.joined}</strong>/${plan.spots} הצטרפו`;
+          : `<strong>${joinedNum}</strong>/${spotsNum} הצטרפו`;
 
       // Currency symbols
       const currencySymbol = {
@@ -4679,51 +5147,81 @@
         <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #d4583a, #c44329); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 2;">💎 מקצועי</span>
       ` : '';
 
+      const priceNum = parseFloat(plan.price) || 0;
       const priceDisplay = plan.isPaid && plan.price ? `
         <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 10px 14px; border-radius: 12px; margin: 8px 0; border: 1px solid #d4583a33; display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 12px; color: #777;">מחיר לאדם</span>
-          <span style="font-size: 22px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${plan.price}</span>
+          <span style="font-size: 22px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${priceNum}</span>
         </div>
       ` : '';
 
       const ctaButton = plan.isPaid
-        ? `<button class="btn-join" data-join-id="${plan.id}" style="background: linear-gradient(135deg, #d4583a, #c44329);">הזמן עכשיו</button>`
-        : `<button class="btn-join" data-join-id="${plan.id}">אני בעניין</button>`;
+        ? `<button class="btn-join" data-join-id="${escapeHtml(plan.id)}" style="background: linear-gradient(135deg, #d4583a, #c44329);">הזמן עכשיו</button>`
+        : `<button class="btn-join" data-join-id="${escapeHtml(plan.id)}">אני בעניין</button>`;
+
+      const shareButton = `<button class="btn-share-card" data-share-id="${escapeHtml(plan.id)}" data-share-title="${escapeHtml(plan.title)}" aria-label="שתף תוכנית" title="שתף" style="background: transparent; border: 1px solid var(--color-sand); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; margin-left: 8px;">📤</button>`;
+
+      const categoriesAttr = Array.isArray(plan.categories) ? plan.categories.join(',') : '';
+
+      const imageContent = plan.imageUrl
+        ? `<img src="${safeUrl(plan.imageUrl)}" alt="${escapeHtml(plan.title)}" loading="lazy" style="width:100%;height:100%;object-fit:cover;">`
+        : (ILLUSTRATIONS[plan.illustration] || '');
 
       return `
-        <article class="plan-card ${staggerClass}" data-plan-id="${plan.id}" data-categories="${plan.categories}" style="position: relative;">
+        <article class="plan-card ${staggerClass}" data-plan-id="${escapeHtml(plan.id)}" data-categories="${escapeHtml(categoriesAttr)}" style="position: relative;">
           ${paidBadge}
           <div class="plan-image">
-            ${ILLUSTRATIONS[plan.illustration] || ''}
-            <span class="plan-tag">${plan.tag}</span>
-            <span class="plan-date">${plan.date}</span>
+            ${imageContent}
+            <span class="plan-tag">${escapeHtml(plan.tag)}</span>
+            <span class="plan-date">${escapeHtml(plan.date)}</span>
           </div>
           <div class="plan-body">
             <div class="plan-creator">
-              <div class="creator-avatar ${plan.creator.avatarClass}">${plan.creator.initial}</div>
+              <div class="creator-avatar ${escapeHtml(plan.creator.avatarClass)}">${escapeHtml(plan.creator.initial)}</div>
               <div class="creator-info">
-                <div class="creator-name">${plan.creator.name}</div>
+                <div class="creator-name">${escapeHtml(plan.creator.name)}</div>
                 <div class="creator-meta">
-                  <span>${plan.creator.meta}</span>
+                  <span>${escapeHtml(plan.creator.meta)}</span>
                   ${plan.creator.verified ? '<span>·</span><span class="verified-badge">✓ מאומת</span>' : ''}
                 </div>
               </div>
             </div>
-            <h3 class="plan-title">${plan.title}</h3>
-            <p class="plan-desc">${plan.desc}</p>
+            <h3 class="plan-title">${escapeHtml(plan.title)}</h3>
+            <p class="plan-desc">${escapeHtml(plan.desc)}</p>
             ${priceDisplay}
             <div class="plan-footer">
               <span class="plan-spots">${spotsLabel}</span>
-              ${ctaButton}
+              <div style="display: flex; align-items: center;">
+                ${shareButton}
+                ${ctaButton}
+              </div>
             </div>
           </div>
         </article>
       `;
     }
 
+    function renderSkeletonCards(count = 6) {
+      let html = '';
+      for (let i = 0; i < count; i++) {
+        html += `
+          <div class="skeleton-card">
+            <div class="skeleton-image"></div>
+            <div class="skeleton-body">
+              <div class="skeleton-line short"></div>
+              <div class="skeleton-line tall"></div>
+              <div class="skeleton-line"></div>
+              <div class="skeleton-line short"></div>
+            </div>
+          </div>
+        `;
+      }
+      return html;
+    }
+
     async function renderHomePlans() {
       const grid = document.getElementById('plans-grid');
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">טוען תוכניות...</div>';
+      grid.innerHTML = renderSkeletonCards(6);
       const plans = await api.fetchPlans();
       grid.innerHTML = plans.map(p => renderPlanCard(p)).join('');
       attachPlanCardListeners();
@@ -4737,13 +5235,24 @@
         const avatarUrl = meta.avatar_url || meta.picture;
         const initial = fullName.charAt(0).toUpperCase();
 
+        // Prefer values from currentProfile (DB) over user_metadata (Google)
+        const profileName = currentProfile?.full_name || fullName;
+        const profileCity = currentProfile?.city || meta.city || 'יאלה קהילה';
+        const profileBio = currentProfile?.bio || '';
+
         // Update name
         const nameEl = document.getElementById('profile-name');
-        if (nameEl) nameEl.textContent = fullName;
+        if (nameEl) nameEl.textContent = profileName;
 
         // Update location
         const locEl = document.getElementById('profile-location');
-        if (locEl) locEl.textContent = meta.city || 'יאלה קהילה';
+        if (locEl) locEl.textContent = profileCity;
+
+        // Update bio (use textContent to avoid XSS — it's already user input)
+        const bioEl = document.getElementById('profile-bio');
+        if (bioEl) {
+          bioEl.textContent = profileBio || 'ספר לקהילה קצת על עצמך — לחץ "ערוך פרופיל"';
+        }
 
         // Update "since" with real signup date
         const sinceEl = document.getElementById('profile-since');
@@ -4756,7 +5265,7 @@
         const avatarEl = document.getElementById('profile-avatar');
         if (avatarEl) {
           if (avatarUrl) {
-            avatarEl.innerHTML = `<img src="${avatarUrl}" alt="${fullName}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+            avatarEl.innerHTML = `<img src="${safeUrl(avatarUrl)}" alt="${escapeHtml(fullName)}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
           } else {
             avatarEl.textContent = initial;
           }
@@ -4766,11 +5275,16 @@
         const logoutBtn = document.getElementById('btn-profile-logout');
         if (logoutBtn) {
           logoutBtn.onclick = async () => {
-            if (!confirm('להתנתק מהאתר?')) return;
+            if (!await customConfirm('להתנתק מהאתר?')) return;
             try {
               await api.signOut();
               showToast('👋 התנתקת בהצלחה');
-              setTimeout(() => window.location.reload(), 800);
+              currentUser = null;
+              currentProfile = null;
+              updateAuthUI();
+              refreshIncomingBadge();
+              navigate('home');
+              renderHomePlans();
             } catch (err) {
               showToast('❌ שגיאה בהתנתקות');
             }
@@ -4921,10 +5435,10 @@
         container.innerHTML = `
           <!-- Guide profile card -->
           <div style="background: linear-gradient(135deg, #d4583a 0%, #c44329 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
-            <h2 style="margin: 0 0 8px 0;">💎 ${guide.full_name}</h2>
-            <p style="margin: 0; opacity: 0.9; font-size: 14px;">${guide.bio || 'מדריך מקצועי בקהילה'}</p>
+            <h2 style="margin: 0 0 8px 0;">💎 ${escapeHtml(guide.full_name)}</h2>
+            <p style="margin: 0; opacity: 0.9; font-size: 14px;">${escapeHtml(guide.bio || 'מדריך מקצועי בקהילה')}</p>
             <div style="display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;">
-              ${(guide.specialties || []).slice(0, 5).map(s => `<span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 13px;">${s}</span>`).join('')}
+              ${(guide.specialties || []).slice(0, 5).map(s => `<span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 13px;">${escapeHtml(s)}</span>`).join('')}
             </div>
           </div>
 
@@ -4982,14 +5496,14 @@
                 <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #eee;">
                   <div style="display: flex; gap: 16px; align-items: flex-start;">
                     <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; overflow: hidden;">
-                      ${b.user?.avatar_url ? `<img src="${b.user.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : userInitial}
+                      ${b.user?.avatar_url ? `<img src="${safeUrl(b.user.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(userInitial)}
                     </div>
                     <div style="flex: 1;">
                       <div style="display: flex; justify-content: space-between; align-items: start;">
                         <div>
-                          <h4 style="margin: 0 0 4px 0;">${userName}</h4>
-                          <div style="font-size: 14px; color: #777;">${planTitle}</div>
-                          <div style="font-size: 12px; color: #999; margin-top: 4px;">${date}</div>
+                          <h4 style="margin: 0 0 4px 0;">${escapeHtml(userName)}</h4>
+                          <div style="font-size: 14px; color: #777;">${escapeHtml(planTitle)}</div>
+                          <div style="font-size: 12px; color: #999; margin-top: 4px;">${escapeHtml(date)}</div>
                         </div>
                         <div style="text-align: left;">
                           <div style="font-size: 22px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${amount}</div>
@@ -4999,7 +5513,7 @@
                       <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
                         <span style="background: ${sc.bg}; color: ${sc.text}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sc.label}</span>
                         ${status !== 'completed' && !b.guide_reported_paid ? `
-                          <button class="btn-mark-paid" data-booking-id="${b.id}" style="background: #2e7d32; color: white; border: none; padding: 6px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">✓ סמן כשולם</button>
+                          <button class="btn-mark-paid" data-booking-id="${escapeHtml(b.id)}" style="background: #2e7d32; color: white; border: none; padding: 6px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">✓ סמן כשולם</button>
                         ` : ''}
                       </div>
                     </div>
@@ -5014,7 +5528,7 @@
         document.querySelectorAll('.btn-mark-paid').forEach(btn => {
           btn.onclick = async (e) => {
             const id = e.target.dataset.bookingId;
-            if (!confirm('סמן כהושלם ושולם? פעולה זו תעדכן את הסטטיסטיקות.')) return;
+            if (!await customConfirm('סמן כהושלם ושולם? פעולה זו תעדכן את הסטטיסטיקות.')) return;
             e.target.textContent = 'מסמן...';
             e.target.disabled = true;
             try {
@@ -5056,8 +5570,8 @@
 
         const actionsHtml = request.status === 'pending' ? `
           <div style="display: flex; gap: 8px; margin-top: 16px;">
-            <button class="btn-approve-request" data-request-id="${request.id}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר</button>
-            <button class="btn-decline-request" data-request-id="${request.id}" style="flex: 1; background: #f5f5f5; color: #666; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
+            <button class="btn-approve-request" data-request-id="${escapeHtml(request.id)}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר</button>
+            <button class="btn-decline-request" data-request-id="${escapeHtml(request.id)}" style="flex: 1; background: #f5f5f5; color: #666; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
           </div>
         ` : `
           <div style="margin-top: 12px; padding: 8px 12px; background: ${status.bg}; color: ${status.text}; border-radius: 8px; display: inline-block; font-size: 14px; font-weight: 600;">${status.label}</div>
@@ -5067,18 +5581,18 @@
           <div class="request-item" style="background: white; padding: 20px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
             <div style="display: flex; gap: 16px; align-items: flex-start;">
               <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; flex-shrink: 0; overflow: hidden;">
-                ${requesterAvatar ? `<img src="${requesterAvatar}" style="width:100%;height:100%;object-fit:cover;">` : requesterInitial}
+                ${requesterAvatar ? `<img src="${safeUrl(requesterAvatar)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(requesterInitial)}
               </div>
               <div style="flex: 1;">
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
-                  <h3 style="margin: 0; font-size: 18px;">${requesterName}</h3>
-                  <span style="font-size: 12px; color: #999;">${date}</span>
+                  <h3 style="margin: 0; font-size: 18px;">${escapeHtml(requesterName)}</h3>
+                  <span style="font-size: 12px; color: #999;">${escapeHtml(date)}</span>
                 </div>
-                <div style="font-size: 14px; color: #555; margin-bottom: 12px;">רוצה להצטרף ל-<strong>"${planTitle}"</strong></div>
+                <div style="font-size: 14px; color: #555; margin-bottom: 12px;">רוצה להצטרף ל-<strong>"${escapeHtml(planTitle)}"</strong></div>
                 <div style="background: #f9f5ed; padding: 12px; border-radius: 12px; font-size: 14px; line-height: 1.5;">
                   <div style="font-weight: 600; margin-bottom: 4px; color: #555;">💬 הודעה אישית:</div>
-                  <div>${message}</div>
-                  ${reason ? `<div style="margin-top: 8px; font-weight: 600; color: #555;">למה דווקא לתוכנית הזו:</div><div>${reason}</div>` : ''}
+                  <div>${escapeHtml(message)}</div>
+                  ${reason ? `<div style="margin-top: 8px; font-weight: 600; color: #555;">למה דווקא לתוכנית הזו:</div><div>${escapeHtml(reason)}</div>` : ''}
                 </div>
                 ${actionsHtml}
               </div>
@@ -5096,21 +5610,27 @@
         const contactHtml = request.status === 'approved' && request.plan?.creator?.email ? `
           <div style="margin-top: 12px; padding: 12px; background: #e8f5e9; border-radius: 8px; font-size: 14px;">
             <div style="font-weight: 600; margin-bottom: 4px; color: #2e7d32;">🎉 אושרת! פרטי קשר:</div>
-            <div style="color: #555;">📧 ${request.plan.creator.email}</div>
+            <div style="color: #555;">📧 ${escapeHtml(request.plan.creator.email)}</div>
           </div>
+        ` : '';
+
+        // Cancel button (only for pending requests)
+        const cancelBtnHtml = request.status === 'pending' ? `
+          <button class="btn-cancel-request" data-request-id="${escapeHtml(request.id)}" style="margin-top: 8px; background: transparent; color: #c62828; padding: 6px 14px; border: 1px solid #c62828; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">✗ בטל בקשה</button>
         ` : '';
 
         return `
           <div class="request-item" style="background: white; padding: 20px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #eee;">
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
               <div>
-                <h3 style="margin: 0 0 4px 0; font-size: 18px;">${planTitle}</h3>
-                <div style="font-size: 14px; color: #777;">📍 ${planLocation} · מארגן: ${creatorName}</div>
+                <h3 style="margin: 0 0 4px 0; font-size: 18px;">${escapeHtml(planTitle)}</h3>
+                <div style="font-size: 14px; color: #777;">📍 ${escapeHtml(planLocation)} · מארגן: ${escapeHtml(creatorName)}</div>
               </div>
-              <span style="font-size: 12px; color: #999;">${date}</span>
+              <span style="font-size: 12px; color: #999;">${escapeHtml(date)}</span>
             </div>
             <div style="margin-top: 12px; padding: 8px 12px; background: ${status.bg}; color: ${status.text}; border-radius: 8px; display: inline-block; font-size: 14px; font-weight: 600;">${status.label}</div>
             ${contactHtml}
+            ${cancelBtnHtml}
           </div>
         `;
       }
@@ -5127,6 +5647,7 @@
             await api.respondToRequest(requestId, 'approved');
             showToast('✓ הבקשה אושרה!');
             await renderProfilePlans();
+            refreshIncomingBadge();
           } catch (err) {
             console.error(err);
             showToast('❌ שגיאה: ' + err.message);
@@ -5136,9 +5657,28 @@
         });
       });
 
+      document.querySelectorAll('.btn-cancel-request').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          if (!await customConfirm('לבטל את הבקשה?')) return;
+          const requestId = e.target.dataset.requestId;
+          e.target.textContent = 'מבטל...';
+          e.target.disabled = true;
+          try {
+            await api.cancelMyRequest(requestId);
+            showToast('הבקשה בוטלה');
+            await renderProfilePlans();
+          } catch (err) {
+            console.error(err);
+            showToast('❌ ' + (err.message || 'שגיאה בביטול'));
+            e.target.textContent = '✗ בטל בקשה';
+            e.target.disabled = false;
+          }
+        });
+      });
+
       document.querySelectorAll('.btn-decline-request').forEach(btn => {
         btn.addEventListener('click', async (e) => {
-          if (!confirm('בטוח שברצונך לדחות את הבקשה?')) return;
+          if (!await customConfirm('בטוח שברצונך לדחות את הבקשה?', { danger: true })) return;
           const requestId = e.target.dataset.requestId;
           e.target.textContent = 'דוחה...';
           e.target.disabled = true;
@@ -5146,6 +5686,7 @@
             await api.respondToRequest(requestId, 'declined');
             showToast('הבקשה נדחתה');
             await renderProfilePlans();
+            refreshIncomingBadge();
           } catch (err) {
             console.error(err);
             showToast('❌ שגיאה: ' + err.message);
@@ -5159,7 +5700,7 @@
     function attachPlanCardListeners() {
       document.querySelectorAll('.plan-card').forEach(card => {
         card.addEventListener('click', (e) => {
-          if (e.target.closest('.btn-join')) return;
+          if (e.target.closest('.btn-join') || e.target.closest('.btn-share-card')) return;
           const id = card.dataset.planId;
           navigate('plan-detail', id);
         });
@@ -5169,6 +5710,24 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           openModal('modal-join');
+        });
+      });
+
+      // Share buttons on cards
+      document.querySelectorAll('.btn-share-card').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = e.currentTarget.dataset.shareId;
+          const title = e.currentTarget.dataset.shareTitle;
+          const url = `${window.location.origin}${window.location.pathname}#plan-detail/${id}`;
+          try {
+            if (navigator.share) {
+              await navigator.share({ title: `יאלה — ${title}`, text: 'בוא איתי לטיול', url });
+            } else {
+              await navigator.clipboard.writeText(url);
+              showToast('✓ הלינק הועתק! שתף בוואטסאפ');
+            }
+          } catch (err) { /* user cancelled */ }
         });
       });
     }
@@ -5202,29 +5761,31 @@
           const specialties = (g.specialties || []).slice(0, 3).join(' · ');
           const cities = (g.cities || []).join(', ');
           const langs = (g.languages || []).join(' · ');
+          const bioText = g.bio ? (g.bio.length > 150 ? g.bio.substring(0, 150) + '...' : g.bio) : '';
+          const yearsNum = parseInt(g.years_experience) || 0;
 
           return `
             <div class="guide-card">
               <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
                 <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #d4583a, #c44329); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
-                  ${g.avatar_url ? `<img src="${g.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+                  ${g.avatar_url ? `<img src="${safeUrl(g.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(initial)}
                 </div>
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                    <h3 style="margin: 0; font-size: 18px;">${g.full_name}</h3>
+                    <h3 style="margin: 0; font-size: 18px;">${escapeHtml(g.full_name)}</h3>
                     <span class="badge-pro">💎 מקצועי</span>
                   </div>
-                  <div style="font-size: 13px; color: #777;">${cities || 'מדריך טיולים'}</div>
+                  <div style="font-size: 13px; color: #777;">${escapeHtml(cities || 'מדריך טיולים')}</div>
                 </div>
               </div>
 
-              ${g.bio ? `<p style="font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px;">${g.bio.length > 150 ? g.bio.substring(0, 150) + '...' : g.bio}</p>` : ''}
+              ${bioText ? `<p style="font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px;">${escapeHtml(bioText)}</p>` : ''}
 
-              ${specialties ? `<div style="font-size: 13px; color: #777; margin-bottom: 8px;">🎯 <strong>תחומים:</strong> ${specialties}</div>` : ''}
+              ${specialties ? `<div style="font-size: 13px; color: #777; margin-bottom: 8px;">🎯 <strong>תחומים:</strong> ${escapeHtml(specialties)}</div>` : ''}
 
-              ${langs ? `<div style="font-size: 13px; color: #777; margin-bottom: 12px;">🌐 <strong>שפות:</strong> ${langs}</div>` : ''}
+              ${langs ? `<div style="font-size: 13px; color: #777; margin-bottom: 12px;">🌐 <strong>שפות:</strong> ${escapeHtml(langs)}</div>` : ''}
 
-              ${g.years_experience ? `<div style="font-size: 13px; color: var(--color-terracotta); font-weight: 600;">⭐ ${g.years_experience} שנות ניסיון</div>` : ''}
+              ${yearsNum ? `<div style="font-size: 13px; color: var(--color-terracotta); font-weight: 600;">⭐ ${yearsNum} שנות ניסיון</div>` : ''}
             </div>
           `;
         }).join('');
@@ -5509,31 +6070,32 @@
       const sc = statusColors[g.status] || statusColors.pending;
       const date = new Date(g.created_at).toLocaleDateString('he-IL');
 
+      const yearsNum = parseInt(g.years_experience) || 0;
       return `
         <div style="background: white; padding: 24px; border-radius: 16px; margin-bottom: 16px; border: 1px solid #eee;">
           <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
             <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
-              ${g.avatar_url ? `<img src="${g.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+              ${g.avatar_url ? `<img src="${safeUrl(g.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(initial)}
             </div>
             <div style="flex: 1; min-width: 250px;">
               <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
-                <h3 style="margin: 0;">${g.full_name}</h3>
+                <h3 style="margin: 0;">${escapeHtml(g.full_name)}</h3>
                 <span style="background: ${sc.bg}; color: ${sc.text}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sc.label}</span>
               </div>
-              <div style="font-size: 13px; color: #777; margin-bottom: 12px;">📧 ${g.email} ${g.whatsapp ? `· 📱 ${g.whatsapp}` : ''}</div>
+              <div style="font-size: 13px; color: #777; margin-bottom: 12px;">📧 ${escapeHtml(g.email)} ${g.whatsapp ? `· 📱 ${escapeHtml(g.whatsapp)}` : ''}</div>
 
-              ${g.bio ? `<p style="font-size: 14px; line-height: 1.6; color: #555; background: #f9f5ed; padding: 12px; border-radius: 8px; margin-bottom: 12px;">${g.bio}</p>` : ''}
+              ${g.bio ? `<p style="font-size: 14px; line-height: 1.6; color: #555; background: #f9f5ed; padding: 12px; border-radius: 8px; margin-bottom: 12px;">${escapeHtml(g.bio)}</p>` : ''}
 
               <div style="display: flex; gap: 16px; font-size: 13px; color: #555; flex-wrap: wrap; margin-bottom: 12px;">
-                ${g.years_experience ? `<div>⭐ ${g.years_experience} שנות ניסיון</div>` : ''}
-                ${g.license_number ? `<div>📜 תעודה: ${g.license_number}</div>` : '<div style="color: #c62828;">⚠️ ללא תעודה</div>'}
+                ${yearsNum ? `<div>⭐ ${yearsNum} שנות ניסיון</div>` : ''}
+                ${g.license_number ? `<div>📜 תעודה: ${escapeHtml(g.license_number)}</div>` : '<div style="color: #c62828;">⚠️ ללא תעודה</div>'}
               </div>
 
               ${g.specialties && g.specialties.length > 0 ? `
                 <div style="margin-bottom: 8px;">
                   <strong style="font-size: 12px; color: #777;">תחומים:</strong>
                   <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
-                    ${g.specialties.map(s => `<span style="background: #f5f5f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                    ${g.specialties.map(s => `<span style="background: #f5f5f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${escapeHtml(s)}</span>`).join('')}
                   </div>
                 </div>
               ` : ''}
@@ -5542,7 +6104,7 @@
                 <div style="margin-bottom: 8px;">
                   <strong style="font-size: 12px; color: #777;">שפות:</strong>
                   <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
-                    ${g.languages.map(s => `<span style="background: #e3f2fd; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                    ${g.languages.map(s => `<span style="background: #e3f2fd; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${escapeHtml(s)}</span>`).join('')}
                   </div>
                 </div>
               ` : ''}
@@ -5551,20 +6113,20 @@
                 <div style="margin-bottom: 12px;">
                   <strong style="font-size: 12px; color: #777;">ערים:</strong>
                   <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
-                    ${g.cities.map(s => `<span style="background: #fff8f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                    ${g.cities.map(s => `<span style="background: #fff8f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${escapeHtml(s)}</span>`).join('')}
                   </div>
                 </div>
               ` : ''}
 
-              <div style="font-size: 11px; color: #999;">נרשם: ${date}</div>
+              <div style="font-size: 11px; color: #999;">נרשם: ${escapeHtml(date)}</div>
 
               ${showActions ? `
                 <div style="display: flex; gap: 8px; margin-top: 16px;">
-                  <button class="admin-approve-guide" data-guide-id="${g.id}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר מדריך</button>
-                  <button class="admin-reject-guide" data-guide-id="${g.id}" style="flex: 1; background: #f5f5f5; color: #c62828; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
+                  <button class="admin-approve-guide" data-guide-id="${escapeHtml(g.id)}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר מדריך</button>
+                  <button class="admin-reject-guide" data-guide-id="${escapeHtml(g.id)}" style="flex: 1; background: #f5f5f5; color: #c62828; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
                 </div>
               ` : g.status === 'approved' ? `
-                <button class="admin-reject-guide" data-guide-id="${g.id}" style="margin-top: 12px; background: #f5f5f5; color: #c62828; padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">⚠️ בטל אישור</button>
+                <button class="admin-reject-guide" data-guide-id="${escapeHtml(g.id)}" style="margin-top: 12px; background: #f5f5f5; color: #c62828; padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">⚠️ בטל אישור</button>
               ` : ''}
             </div>
           </div>
@@ -5576,7 +6138,7 @@
       document.querySelectorAll('.admin-approve-guide').forEach(btn => {
         btn.onclick = async (e) => {
           const id = e.target.dataset.guideId;
-          if (!confirm('לאשר את המדריך? הוא יקבל גישה לפיצ\'רים מקצועיים.')) return;
+          if (!await customConfirm('לאשר את המדריך? הוא יקבל גישה לפיצ\'רים מקצועיים.')) return;
           e.target.textContent = 'מאשר...';
           e.target.disabled = true;
           try {
@@ -5595,7 +6157,7 @@
       document.querySelectorAll('.admin-reject-guide').forEach(btn => {
         btn.onclick = async (e) => {
           const id = e.target.dataset.guideId;
-          if (!confirm('לדחות את המדריך? הוא לא יוכל להעלות תוכניות בתשלום.')) return;
+          if (!await customConfirm('לדחות את המדריך? הוא לא יוכל להעלות תוכניות בתשלום.', { danger: true })) return;
           e.target.textContent = 'דוחה...';
           e.target.disabled = true;
           try {
@@ -5633,13 +6195,13 @@
             ${users.map(u => `
               <div style="padding: 16px 20px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 16px; align-items: center;">
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; overflow: hidden; flex-shrink: 0;">
-                  ${u.avatar_url ? `<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : (u.full_name || '?').charAt(0).toUpperCase()}
+                  ${u.avatar_url ? `<img src="${safeUrl(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml((u.full_name || '?').charAt(0).toUpperCase())}
                 </div>
                 <div style="flex: 1;">
-                  <div style="font-weight: 600;">${u.full_name || 'משתמש'} ${u.is_admin ? '<span class="badge-pro">🛡️ אדמין</span>' : ''}</div>
-                  <div style="font-size: 13px; color: #777;">${u.email || ''}</div>
+                  <div style="font-weight: 600;">${escapeHtml(u.full_name || 'משתמש')} ${u.is_admin ? '<span class="badge-pro">🛡️ אדמין</span>' : ''}</div>
+                  <div style="font-size: 13px; color: #777;">${escapeHtml(u.email || '')}</div>
                 </div>
-                <div style="font-size: 11px; color: #999;">${new Date(u.created_at).toLocaleDateString('he-IL')}</div>
+                <div style="font-size: 11px; color: #999;">${escapeHtml(new Date(u.created_at).toLocaleDateString('he-IL'))}</div>
               </div>
             `).join('')}
           </div>
@@ -5688,21 +6250,23 @@
               };
               const sc = statusColors[status] || statusColors.pending;
 
+              const amountNum = parseFloat(b.amount_paid) || 0;
+              const feeNum = parseFloat(b.platform_fee) || 0;
               return `
                 <div style="padding: 16px 20px; border-bottom: 1px solid #f5f5f5;">
                   <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap;">
                     <div>
-                      <div style="font-weight: 600;">${b.user?.full_name || 'לקוח'} → ${b.guide?.full_name || 'מדריך'}</div>
-                      <div style="font-size: 13px; color: #777; margin-top: 2px;">${b.plan?.title || 'תוכנית'}</div>
+                      <div style="font-weight: 600;">${escapeHtml(b.user?.full_name || 'לקוח')} → ${escapeHtml(b.guide?.full_name || 'מדריך')}</div>
+                      <div style="font-size: 13px; color: #777; margin-top: 2px;">${escapeHtml(b.plan?.title || 'תוכנית')}</div>
                     </div>
                     <div style="text-align: left;">
-                      <div style="font-size: 18px; font-weight: 700; color: var(--color-terracotta);">€${b.amount_paid || 0}</div>
-                      <div style="font-size: 11px; color: #999;">עמלה: €${(b.platform_fee || 0).toFixed(2)}</div>
+                      <div style="font-size: 18px; font-weight: 700; color: var(--color-terracotta);">€${amountNum}</div>
+                      <div style="font-size: 11px; color: #999;">עמלה: €${feeNum.toFixed(2)}</div>
                     </div>
                   </div>
                   <div style="display: flex; justify-content: space-between; margin-top: 8px;">
                     <span style="background: ${sc.bg}; color: ${sc.text}; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600;">${sc.label}</span>
-                    <span style="font-size: 11px; color: #999;">${new Date(b.created_at).toLocaleDateString('he-IL')}</span>
+                    <span style="font-size: 11px; color: #999;">${escapeHtml(new Date(b.created_at).toLocaleDateString('he-IL'))}</span>
                   </div>
                 </div>
               `;
@@ -5717,10 +6281,16 @@
     // ============================================================
     // RENDER: Plan Detail
     // ============================================================
+    // Generation counter — invalidates stale renders when user navigates fast
+    let _planDetailGen = 0;
+
     async function renderPlanDetail(id) {
+      const myGen = ++_planDetailGen;
+
       // Try numeric (demo data) first, then string (UUID from DB)
       let plan = PLANS.find(p => p.id === parseInt(id));
       if (!plan) plan = await api.fetchPlanById(id);
+      if (myGen !== _planDetailGen) return; // user navigated away — abort
       if (!plan) return navigate('home');
 
       // Check if this is MY plan (so I can edit/delete it)
@@ -5731,6 +6301,7 @@
       if (typeof id === 'string' && id.length > 10) {
         // Real plan from DB - fetch members
         approvedMembers = await api.fetchApprovedMembers(id);
+        if (myGen !== _planDetailGen) return; // aborted
       }
 
       // Build joined list HTML - prefer real members, fallback to plan.joinedList for demo
@@ -5747,59 +6318,65 @@
         ? '<p style="font-size: 13px; color: var(--color-stone); padding: 16px; text-align: center; background: var(--color-cream-warm); border-radius: var(--radius-md);">עדיין אין מצטרפים מאושרים. תהיה הראשון!</p>'
         : realJoined.map(j => `
             <div class="joined-item">
-              <div class="creator-avatar ${j.avatarClass}" style="overflow: hidden;">
-                ${j.avatar_url ? `<img src="${j.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : j.initial}
+              <div class="creator-avatar ${escapeHtml(j.avatarClass)}" style="overflow: hidden;">
+                ${j.avatar_url ? `<img src="${safeUrl(j.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : escapeHtml(j.initial)}
               </div>
               <div class="joined-info">
-                <div class="joined-name">${j.name}</div>
-                <div class="joined-bio">${j.bio}</div>
+                <div class="joined-name">${escapeHtml(j.name)}</div>
+                <div class="joined-bio">${escapeHtml(j.bio)}</div>
               </div>
             </div>
           `).join('');
 
+      const detailPriceNum = parseFloat(plan.price) || 0;
+      const spotsTotalNum = parseInt(plan.spots) || 0;
+      const progressPct = parseFloat(progress) || 0;
+      const detailHeroContent = plan.imageUrl
+        ? `<img src="${safeUrl(plan.imageUrl)}" alt="${escapeHtml(plan.title)}" style="width:100%;height:100%;object-fit:cover;">`
+        : (ILLUSTRATIONS[plan.illustration] || '');
       document.getElementById('plan-detail-content').innerHTML = `
         <span class="back-link" data-route="home">← חזרה לפיד</span>
 
         <div class="detail-hero">
-          ${ILLUSTRATIONS[plan.illustration] || ''}
+          ${detailHeroContent}
           <div class="detail-hero-overlay">
-            <span class="detail-hero-tag">${plan.tag}</span>
-            <h1 class="detail-hero-title">${plan.title}</h1>
+            <span class="detail-hero-tag">${escapeHtml(plan.tag)}</span>
+            <h1 class="detail-hero-title">${escapeHtml(plan.title)}</h1>
           </div>
         </div>
 
         <div class="detail-grid">
           <div class="detail-main">
             <h2>על התוכנית</h2>
-            <p>${plan.longDesc}</p>
+            <p>${escapeHtml(plan.longDesc)}</p>
 
             <div class="detail-meta-grid">
               <div class="detail-meta-item">
                 <div class="label">📅 תאריך</div>
-                <div class="value">${plan.dateFull || 'TBD'}</div>
+                <div class="value">${escapeHtml(plan.dateFull || 'TBD')}</div>
               </div>
               ${plan.location ? `
               <div class="detail-meta-item">
                 <div class="label">📍 מיקום</div>
-                <div class="value">${plan.location}</div>
+                <div class="value">${escapeHtml(plan.location)}</div>
               </div>
               ` : ''}
               ${plan.budget ? `
               <div class="detail-meta-item">
                 <div class="label">💰 תקציב</div>
-                <div class="value">${plan.budget}</div>
+                <div class="value">${escapeHtml(plan.budget)}</div>
               </div>
               ` : ''}
               ${plan.difficulty ? `
               <div class="detail-meta-item">
                 <div class="label">⚡ רמה</div>
-                <div class="value">${plan.difficulty}</div>
+                <div class="value">${escapeHtml(plan.difficulty)}</div>
               </div>
               ` : ''}
               ${plan.meetingPoint ? `
               <div class="detail-meta-item" style="grid-column: 1 / -1;">
                 <div class="label">🚗 נקודת מפגש</div>
-                <div class="value">${plan.meetingPoint}</div>
+                <div class="value">${escapeHtml(plan.meetingPoint)}</div>
               </div>
               ` : ''}
             </div>
@@ -5811,22 +6388,22 @@
           <aside class="detail-sidebar">
             <div class="detail-card">
               <div class="detail-creator-block" data-route="profile">
-                <div class="creator-avatar ${plan.creator.avatarClass}">${plan.creator.initial}</div>
+                <div class="creator-avatar ${escapeHtml(plan.creator.avatarClass)}">${escapeHtml(plan.creator.initial)}</div>
                 <div>
-                  <div class="detail-creator-name">${plan.creator.name}</div>
+                  <div class="detail-creator-name">${escapeHtml(plan.creator.name)}</div>
                   <div class="detail-creator-meta">
-                    ${plan.creator.meta}${plan.creator.verified ? ' · ✓ מאומת' : ''}
+                    ${escapeHtml(plan.creator.meta)}${plan.creator.verified ? ' · ✓ מאומת' : ''}
                   </div>
                 </div>
               </div>
 
               <div class="detail-spots">
                 <span class="detail-spots-label">מקומות פנויים</span>
-                <span class="detail-spots-value">${plan.spots - realJoined.length}/${plan.spots}</span>
+                <span class="detail-spots-value">${spotsTotalNum - realJoined.length}/${spotsTotalNum}</span>
               </div>
 
               <div class="progress-bar">
-                <div class="progress-fill" style="width: ${progress}%"></div>
+                <div class="progress-fill" style="width: ${progressPct}%"></div>
               </div>
 
               ${isMyPlan ? `
@@ -5836,10 +6413,10 @@
                 <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 2px solid #d4583a33;">
                   <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
                     <span style="font-size: 13px; color: #777;">מחיר לאדם</span>
-                    <span style="font-size: 28px; font-weight: 700; color: var(--color-terracotta);">${({EUR:'€',ILS:'₪',USD:'$'})[plan.currency] || '€'}${plan.price}</span>
+                    <span style="font-size: 28px; font-weight: 700; color: var(--color-terracotta);">${({EUR:'€',ILS:'₪',USD:'$'})[plan.currency] || '€'}${detailPriceNum}</span>
                   </div>
-                  ${plan.priceIncludes ? `<div style="font-size: 13px; color: #555; margin-top: 8px;"><strong>כלול:</strong> ${plan.priceIncludes}</div>` : ''}
-                  ${plan.priceExcludes ? `<div style="font-size: 13px; color: #999; margin-top: 4px;"><strong>לא כלול:</strong> ${plan.priceExcludes}</div>` : ''}
+                  ${plan.priceIncludes ? `<div style="font-size: 13px; color: #555; margin-top: 8px;"><strong>כלול:</strong> ${escapeHtml(plan.priceIncludes)}</div>` : ''}
+                  ${plan.priceExcludes ? `<div style="font-size: 13px; color: #999; margin-top: 4px;"><strong>לא כלול:</strong> ${escapeHtml(plan.priceExcludes)}</div>` : ''}
                 </div>
                 <button class="btn-join-large" id="detail-book-btn" style="background: linear-gradient(135deg, #d4583a, #c44329);">💳 הזמן עכשיו</button>
                 <button class="btn-secondary" id="detail-share-btn">📤 שתף תוכנית</button>
@@ -5870,15 +6447,14 @@
         const platformFee = (plan.price * 0.10).toFixed(2);
         const guideEarning = (plan.price * 0.90).toFixed(2);
 
-        const confirmed = confirm(
-          `💳 אישור הזמנה\n\n` +
+        const confirmed = await customConfirm(
           `${plan.title}\n` +
           `מחיר: ${currencySymbol}${plan.price} לאדם\n\n` +
           `כיצד התשלום עובד:\n` +
           `1. תיצור איתי קשר ב-WhatsApp/Email\n` +
           `2. נסכם פרטים ואת אופן התשלום\n` +
-          `3. תקבל אישור הזמנה\n\n` +
-          `המשך להזמנה?`
+          `3. תקבל אישור הזמנה`,
+          { title: '💳 אישור הזמנה', okText: 'המשך להזמנה' }
         );
 
         if (!confirmed) return;
@@ -5901,10 +6477,10 @@
 
           if (guide?.whatsapp) {
             const waNumber = guide.whatsapp.replace(/\D/g, '');
-            window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank');
+            window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
             showToast('✓ נפתח WhatsApp - תכתב למדריך');
           } else if (guide?.email) {
-            window.open(`mailto:${guide.email}?subject=${encodeURIComponent('הזמנה: ' + plan.title)}&body=${message}`, '_blank');
+            window.open(`mailto:${encodeURIComponent(guide.email)}?subject=${encodeURIComponent('הזמנה: ' + plan.title)}&body=${message}`, '_blank', 'noopener,noreferrer');
             showToast('✓ נפתח אימייל למדריך');
           } else {
             showToast('⚠️ אין פרטי קשר למדריך');
@@ -5933,12 +6509,44 @@
 
       // Edit button (only for plan owner)
       document.getElementById('detail-edit-btn')?.addEventListener('click', () => {
-        // Pre-fill the create modal with current values
-        const inputs = document.querySelectorAll('#modal-create input, #modal-create textarea');
-        const select = document.querySelector('#modal-create select');
-        if (inputs[0]) inputs[0].value = plan.title || '';
-        if (inputs[1]) inputs[1].value = plan.startDate || '';
-        if (inputs[2]) inputs[2].value = plan.longDesc || plan.desc || '';
+        // Pre-fill the create modal with current values (by ID)
+        const setVal = (id, v) => {
+          const el = document.getElementById(id);
+          if (el) el.value = v == null ? '' : v;
+        };
+        setVal('create-title', plan.title);
+        setVal('create-date', plan.startDate);
+        setVal('create-desc', plan.longDesc || plan.desc);
+        setVal('create-country', plan.country);
+        setVal('create-topic', plan.topic);
+
+        // Spots: select option that contains the spots number
+        const spotsSel = document.getElementById('create-spots');
+        if (spotsSel && plan.spots) {
+          const target = plan.spots >= 5 ? '5+ אנשים' : `${plan.spots} אנשים`;
+          for (const opt of spotsSel.options) {
+            if (opt.text === target) { opt.selected = true; break; }
+          }
+        }
+
+        // City: repopulate based on country, then select
+        if (typeof populateCitiesDropdown === 'function' && plan.country) {
+          populateCitiesDropdown(plan.country, 'create-city', plan.city);
+        }
+
+        // Paid plan fields
+        const paidCheckbox = document.getElementById('is-paid-plan');
+        const priceFields = document.getElementById('price-fields');
+        if (paidCheckbox) {
+          paidCheckbox.checked = !!plan.isPaid;
+          if (priceFields) priceFields.style.display = plan.isPaid ? 'block' : 'none';
+        }
+        if (plan.isPaid) {
+          setVal('plan-price', plan.price);
+          setVal('plan-currency', plan.currency || 'EUR');
+          setVal('plan-price-includes', plan.priceIncludes);
+          setVal('plan-price-excludes', plan.priceExcludes);
+        }
 
         // Mark we're editing
         window._editingPlanId = id;
@@ -5956,7 +6564,7 @@
 
       // Delete button (only for plan owner)
       document.getElementById('detail-delete-btn')?.addEventListener('click', async () => {
-        if (!confirm(`למחוק את "${plan.title}" לצמיתות?\nכל הבקשות וההצטרפויות לתוכנית הזו יימחקו.`)) return;
+        if (!await customConfirm(`למחוק את "${plan.title}" לצמיתות?\nכל הבקשות וההצטרפויות לתוכנית הזו יימחקו.`, { danger: true, okText: 'מחק' })) return;
 
         const btn = document.getElementById('detail-delete-btn');
         btn.textContent = 'מוחק...';
@@ -6007,9 +6615,9 @@
             other: '✨ אחר',
           };
           Object.keys(grouped).forEach(cat => {
-            html += `<optgroup label="${categoryNames[cat] || cat}">`;
+            html += `<optgroup label="${escapeHtml(categoryNames[cat] || cat)}">`;
             grouped[cat].forEach(t => {
-              html += `<option value="${t.id}">${t.emoji} ${t.name_he}</option>`;
+              html += `<option value="${escapeHtml(t.id)}">${escapeHtml(t.emoji)} ${escapeHtml(t.name_he)}</option>`;
             });
             html += '</optgroup>';
           });
@@ -6035,7 +6643,8 @@
           let html = '<option value="">כל הערים</option>';
           filtered.forEach(c => {
             const name = cityNames[c.city] || `📍 ${c.city}`;
-            html += `<option value="${c.city}">${name} (${c.count})</option>`;
+            const countNum = parseInt(c.count) || 0;
+            html += `<option value="${escapeHtml(c.city)}">${escapeHtml(name)} (${countNum})</option>`;
           });
           filterCity.innerHTML = html;
         } catch (e) { console.error('Cities load failed:', e); }
@@ -6047,18 +6656,55 @@
         const country = filterCountry.value || null;
         const city = filterCity.value || null;
         const topic = filterTopic.value || null;
+        const search = (document.getElementById('filter-search')?.value || '').trim().toLowerCase();
+        const activeDateChip = document.querySelector('.date-chip.active');
+        const dateRange = activeDateChip?.dataset?.date || 'all';
 
-        // Update URL hash for sharing
-        const params = [];
-        if (country) params.push(`country=${country}`);
-        if (city) params.push(`city=${city}`);
-        if (topic) params.push(`topic=${topic}`);
+        // Update URL hash for sharing (only when on home — don't override plan-detail etc.)
+        const currentRoute = (window.location.hash.slice(1).split('/')[0]) || 'home';
+        if (currentRoute === 'home') {
+          const params = [];
+          if (country) params.push(`country=${encodeURIComponent(country)}`);
+          if (city) params.push(`city=${encodeURIComponent(city)}`);
+          if (topic) params.push(`topic=${encodeURIComponent(topic)}`);
+          if (search) params.push(`q=${encodeURIComponent(search)}`);
+          const newHash = params.length ? `home?${params.join('&')}` : 'home';
+          if (window.location.hash !== `#${newHash}` && newHash !== 'home') {
+            // Use replaceState so we don't pollute history with every filter change
+            history.replaceState(null, '', `#${newHash}`);
+          } else if (newHash === 'home' && window.location.hash && window.location.hash !== '#home') {
+            history.replaceState(null, '', '#home');
+          }
+        }
 
         const grid = document.getElementById('plans-grid');
         if (grid) {
-          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">מסנן תוכניות...</div>';
+          grid.innerHTML = renderSkeletonCards(4);
 
-          const plans = await api.fetchPlansFiltered({ country, city, topic });
+          let plans = await api.fetchPlansFiltered({ country, city, topic });
+
+          // Client-side text search (case insensitive, matches title/desc/location)
+          if (search) {
+            plans = plans.filter(p => {
+              const hay = `${p.title || ''} ${p.desc || ''} ${p.longDesc || ''} ${p.location || ''}`.toLowerCase();
+              return hay.includes(search);
+            });
+          }
+
+          // Date range filter (client-side, based on plan.dateFull/startDate)
+          if (dateRange === 'week' || dateRange === 'month') {
+            const now = new Date();
+            const cutoff = new Date(now);
+            if (dateRange === 'week') cutoff.setDate(now.getDate() + 7);
+            else cutoff.setMonth(now.getMonth() + 1);
+            plans = plans.filter(p => {
+              const dateStr = p.dateFull || p.startDate;
+              if (!dateStr) return true; // Keep undated
+              const planDate = new Date(dateStr);
+              if (isNaN(planDate.getTime())) return true;
+              return planDate >= now && planDate <= cutoff;
+            });
+          }
 
           if (plans.length === 0) {
             grid.innerHTML = `
@@ -6084,6 +6730,25 @@
       filterCity.addEventListener('change', applyFilters);
       filterTopic.addEventListener('change', applyFilters);
 
+      // Date range chips
+      document.querySelectorAll('.date-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          applyFilters();
+        });
+      });
+
+      // Text search with debounce
+      const searchInput = document.getElementById('filter-search');
+      if (searchInput) {
+        let searchTimer;
+        searchInput.addEventListener('input', () => {
+          clearTimeout(searchTimer);
+          searchTimer = setTimeout(applyFilters, 250);
+        });
+      }
+
       btnClear.addEventListener('click', async () => {
         filterCountry.value = '';
         filterCity.value = '';
@@ -6107,6 +6772,38 @@
       }
     }
     window.openModal = openModal; // Make available globally for inline onclick
+
+    // ============================================================
+    // PLAN IMAGE — preview + clear (the actual upload happens on publish)
+    // ============================================================
+    function setupPlanImageUpload() {
+      const fileInput = document.getElementById('create-image-file');
+      const preview = document.getElementById('create-image-preview');
+      const clearBtn = document.getElementById('create-image-clear');
+      if (!fileInput || !preview || !clearBtn) return;
+
+      const reset = () => {
+        fileInput.value = '';
+        preview.src = '';
+        preview.style.display = 'none';
+        clearBtn.style.display = 'none';
+      };
+
+      fileInput.addEventListener('change', () => {
+        const file = fileInput.files?.[0];
+        if (!file) return reset();
+        if (file.size > 5 * 1024 * 1024) {
+          showToast('⚠️ הקובץ גדול מדי (מקס 5MB)');
+          return reset();
+        }
+        const url = URL.createObjectURL(file);
+        preview.src = url;
+        preview.style.display = '';
+        clearBtn.style.display = '';
+      });
+
+      clearBtn.addEventListener('click', reset);
+    }
 
     // Check if current user is an approved guide and show paid plan section
     async function checkAndShowPaidSection() {
@@ -6234,9 +6931,23 @@
         if (modalTitle) modalTitle.textContent = 'פרסם תוכנית חדשה';
         const publishBtn = document.getElementById('btn-publish-plan');
         if (publishBtn) publishBtn.textContent = 'פרסם';
-        // Clear form
-        const inputs = document.querySelectorAll('#modal-create input, #modal-create textarea');
-        inputs.forEach(i => i.value = '');
+        // Clear form (inputs + textareas)
+        document.querySelectorAll('#modal-create input[type="text"], #modal-create input[type="number"], #modal-create input[type="date"], #modal-create textarea').forEach(i => i.value = '');
+        // Reset checkbox + paid section
+        const paid = document.getElementById('is-paid-plan');
+        if (paid) paid.checked = false;
+        const priceFields = document.getElementById('price-fields');
+        if (priceFields) priceFields.style.display = 'none';
+        // Hide custom city
+        const customCityGroup = document.getElementById('custom-city-group');
+        if (customCityGroup) customCityGroup.style.display = 'none';
+        // Reset image preview
+        const imgPreview = document.getElementById('create-image-preview');
+        const imgClear = document.getElementById('create-image-clear');
+        const imgFile = document.getElementById('create-image-file');
+        if (imgPreview) { imgPreview.src = ''; imgPreview.style.display = 'none'; }
+        if (imgClear) imgClear.style.display = 'none';
+        if (imgFile) imgFile.value = '';
       }
     }
 
@@ -6307,12 +7018,10 @@
         const originalText = btn.textContent;
 
         try {
-          // Get all form values
-          const inputs = document.querySelectorAll('#modal-create input, #modal-create textarea');
-          const select = document.querySelector('#modal-create select');
-          const titleInput = inputs[0]?.value?.trim();
-          const dateInput = inputs[1]?.value;
-          const descInput = inputs[2]?.value?.trim();
+          // Get all form values by ID (avoids index drift when modal HTML changes)
+          const titleInput = document.getElementById('create-title')?.value?.trim();
+          const dateInput = document.getElementById('create-date')?.value;
+          const descInput = document.getElementById('create-desc')?.value?.trim();
 
           console.log('📝 Form values:', { title: titleInput, date: dateInput, desc: descInput });
           console.log('🔐 Auth state:', { SUPABASE_ENABLED, currentUser: currentUser?.email });
@@ -6349,7 +7058,7 @@
           btn.disabled = true;
           btn.style.opacity = '0.6';
 
-          const spotsValue = select?.value || '4 אנשים';
+          const spotsValue = document.getElementById('create-spots')?.value || '4 אנשים';
           const spotsTotal = parseInt(spotsValue) || 4;
 
           // Check if this is a paid plan (only for approved guides)
@@ -6408,6 +7117,24 @@
 
           const topic = document.getElementById('create-topic')?.value || 'other';
 
+          // Upload image first (if user picked one)
+          let imageUrl;
+          const fileInput = document.getElementById('create-image-file');
+          const file = fileInput?.files?.[0];
+          if (file) {
+            try {
+              btn.textContent = 'מעלה תמונה...';
+              imageUrl = await api.uploadPlanImage(file);
+            } catch (uploadErr) {
+              console.error('Upload failed:', uploadErr);
+              showToast('❌ העלאת תמונה נכשלה: ' + (uploadErr.message || 'נסה שוב'));
+              btn.textContent = originalText;
+              btn.disabled = false;
+              btn.style.opacity = '';
+              return;
+            }
+          }
+
           const planData = {
             title: titleInput,
             description: descInput || titleInput,
@@ -6415,7 +7142,8 @@
             location: titleInput,
             startDate: dateInput,
             spotsTotal: spotsTotal,
-            illustration: 'ramon-crater',
+            illustration: pickIllustrationForPlan({ topic, title: titleInput, country, city }),
+            imageUrl: imageUrl,
             tag: isPaid ? '💎 מקצועי' : '✦ חדש',
             type: 'טיול',
             categories: isPaid ? ['paid', 'guide'] : [],
@@ -6462,7 +7190,7 @@
             details: err.details,
             hint: err.hint,
           });
-          showToast('❌ ' + (err.message || err.error_description || 'שגיאה - בדוק Console'));
+          showToast('❌ ' + translateError(err));
         } finally {
           btn.textContent = originalText;
           btn.disabled = false;
@@ -6555,7 +7283,7 @@
           if (err.code === '23505' || err.message?.includes('duplicate')) {
             showToast('⚠️ כבר שלחת בקשה לתוכנית זו');
           } else {
-            showToast('❌ ' + (err.message || 'שגיאה - בדוק Console'));
+            showToast('❌ ' + translateError(err));
           }
         } finally {
           btn.textContent = originalText;
@@ -6567,9 +7295,24 @@
       document.getElementById('btn-login-submit').addEventListener('click', async () => {
         try {
           const inputs = document.querySelectorAll('#modal-login input');
-          const email = inputs[0]?.value;
-          const password = inputs[1]?.value;
+          const email = (inputs[0]?.value || '').trim();
+          const password = inputs[1]?.value || '';
           const isLogin = document.querySelector('[data-login-tab="login"]').classList.contains('active');
+
+          // Email format validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (email && !emailRegex.test(email)) {
+            showToast('⚠️ אימייל לא תקין');
+            inputs[0]?.focus();
+            return;
+          }
+
+          // Password strength on signup
+          if (!isLogin && password && password.length < 6) {
+            showToast('⚠️ הסיסמה חייבת להיות לפחות 6 תווים');
+            inputs[1]?.focus();
+            return;
+          }
 
           if (!SUPABASE_ENABLED) {
             closeModal('modal-login');
@@ -6592,7 +7335,7 @@
           closeModal('modal-login');
           showToast(isLogin ? '👋 ברוך השב!' : '🎉 ברוך הבא לקהילה!');
         } catch (err) {
-          showToast('❌ ' + (err.message || 'שגיאה בהתחברות'));
+          showToast('❌ ' + translateError(err));
         }
       });
 
@@ -6606,10 +7349,34 @@
           try {
             if (idx === 0) await api.signInWithGoogle();
           } catch (err) {
-            showToast('❌ ' + err.message);
+            showToast('❌ ' + translateError(err));
           }
         });
       });
+
+      // Forgot password link
+      const forgotLink = document.getElementById('link-forgot-password');
+      if (forgotLink) {
+        forgotLink.addEventListener('click', async () => {
+          if (!SUPABASE_ENABLED) {
+            showToast('🟡 מצב הדגמה - שחזור סיסמה דורש Backend');
+            return;
+          }
+          const emailInput = document.querySelectorAll('#modal-login input')[0];
+          const email = emailInput?.value?.trim();
+          if (!email) {
+            showToast('⚠️ הזן אימייל בשדה למעלה ולחץ שוב');
+            emailInput?.focus();
+            return;
+          }
+          try {
+            await api.resetPassword(email);
+            showToast('📧 נשלח לך מייל איפוס סיסמה');
+          } catch (err) {
+            showToast('❌ ' + translateError(err));
+          }
+        });
+      }
     }
 
     // ============================================================
@@ -6644,6 +7411,64 @@
     }
 
     // ============================================================
+    // CUSTOM CONFIRM — Promise-based replacement for native confirm()
+    // ============================================================
+    function customConfirm(message, opts = {}) {
+      return new Promise(resolve => {
+        const overlay = document.getElementById('modal-confirm');
+        const titleEl = document.getElementById('confirm-title');
+        const msgEl = document.getElementById('confirm-message');
+        const okBtn = document.getElementById('confirm-ok');
+        const cancelBtn = document.getElementById('confirm-cancel');
+        if (!overlay || !msgEl || !okBtn || !cancelBtn) {
+          // Fallback to native confirm if modal not found
+          resolve(window.confirm(message));
+          return;
+        }
+
+        titleEl.textContent = opts.title || 'אישור';
+        msgEl.textContent = message;
+        okBtn.textContent = opts.okText || 'אישור';
+        cancelBtn.textContent = opts.cancelText || 'ביטול';
+
+        // Style ok button for destructive actions
+        if (opts.danger) {
+          okBtn.style.background = '#c62828';
+        } else {
+          okBtn.style.background = '';
+        }
+
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+
+        const cleanup = (result) => {
+          overlay.classList.remove('active');
+          document.body.style.overflow = '';
+          okBtn.removeEventListener('click', onOk);
+          cancelBtn.removeEventListener('click', onCancel);
+          overlay.removeEventListener('click', onBackdrop);
+          document.removeEventListener('keydown', onKey);
+          resolve(result);
+        };
+        const onOk = () => cleanup(true);
+        const onCancel = () => cleanup(false);
+        const onBackdrop = (e) => { if (e.target === overlay) cleanup(false); };
+        const onKey = (e) => {
+          if (e.key === 'Escape') cleanup(false);
+          else if (e.key === 'Enter') cleanup(true);
+        };
+
+        okBtn.addEventListener('click', onOk);
+        cancelBtn.addEventListener('click', onCancel);
+        overlay.addEventListener('click', onBackdrop);
+        document.addEventListener('keydown', onKey);
+
+        // Focus the cancel button by default (safer)
+        setTimeout(() => cancelBtn.focus(), 50);
+      });
+    }
+
+    // ============================================================
     // TOAST
     // ============================================================
     let toastTimeout;
@@ -6672,15 +7497,188 @@
     }
 
     // ============================================================
-    // CONTACT FORM submit
+    // PUBLIC STATS — show real numbers in hero & KPIs (hide if too low)
+    // ============================================================
+    async function refreshPublicStats() {
+      const stats = await api.fetchPublicStats();
+      if (!stats) return;
+
+      // Hero — show only if at least 5 plans exist (avoid "1 user" looking sad)
+      const heroEl = document.getElementById('hero-stats');
+      const showHero = stats.plans >= 5 || stats.users >= 10;
+      if (heroEl) {
+        if (showHero) {
+          heroEl.style.display = '';
+          const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n.toLocaleString('he-IL'); };
+          set('hero-users', stats.users);
+          set('hero-plans', stats.plans);
+          set('hero-connections', stats.connections);
+        } else {
+          heroEl.style.display = 'none';
+        }
+      }
+
+      // KPIs — show only if enough activity
+      const kpiEl = document.getElementById('kpis-section');
+      const showKpi = stats.plans >= 10 || stats.connections >= 10;
+      if (kpiEl) {
+        if (showKpi) {
+          kpiEl.style.display = '';
+          const set = (id, n) => { const el = document.getElementById(id); if (el) el.textContent = n.toLocaleString('he-IL'); };
+          set('kpi-users', stats.users);
+          set('kpi-connections', stats.connections);
+          set('kpi-plans', stats.plans);
+        } else {
+          kpiEl.style.display = 'none';
+        }
+      }
+    }
+
+    // ============================================================
+    // GLOBAL INCOMING-REQUESTS BADGE (in header nav)
+    // ============================================================
+    async function refreshIncomingBadge() {
+      const badge = document.getElementById('nav-incoming-badge');
+      if (!badge) return;
+      if (!currentUser) {
+        badge.style.display = 'none';
+        return;
+      }
+      const count = await api.fetchPendingIncomingCount();
+      if (count > 0) {
+        badge.textContent = count;
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+
+    // ============================================================
+    // EDIT PROFILE — open with prefill, save to DB
+    // ============================================================
+    function setupEditProfile() {
+      const editBtn = document.getElementById('btn-edit-profile');
+      const saveBtn = document.getElementById('btn-save-profile');
+      if (!editBtn || !saveBtn) return;
+
+      editBtn.addEventListener('click', () => {
+        if (!currentUser) {
+          showToast('🔒 התחבר כדי לערוך פרופיל');
+          openModal('modal-login');
+          return;
+        }
+        const meta = currentUser?.user_metadata || {};
+        const p = currentProfile || {};
+        const setVal = (id, v) => {
+          const el = document.getElementById(id);
+          if (el) el.value = v == null ? '' : v;
+        };
+        setVal('edit-profile-name', p.full_name || meta.full_name || '');
+        setVal('edit-profile-city', p.city || '');
+        setVal('edit-profile-age', p.age || '');
+        setVal('edit-profile-bio', p.bio || '');
+        openModal('modal-edit-profile');
+      });
+
+      saveBtn.addEventListener('click', async () => {
+        if (!currentUser) return;
+        const fullName = document.getElementById('edit-profile-name')?.value?.trim();
+        const city = document.getElementById('edit-profile-city')?.value?.trim();
+        const ageRaw = document.getElementById('edit-profile-age')?.value;
+        const bio = document.getElementById('edit-profile-bio')?.value?.trim();
+
+        if (!fullName) return showToast('⚠️ שם לא יכול להיות ריק');
+        const age = ageRaw ? parseInt(ageRaw) : null;
+        if (age !== null && (isNaN(age) || age < 13 || age > 120)) {
+          return showToast('⚠️ גיל לא תקין');
+        }
+
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = 'שומר...';
+        saveBtn.disabled = true;
+        try {
+          await api.updateMyProfile({ full_name: fullName, city, age, bio });
+          showToast('✓ הפרופיל עודכן');
+          closeModal('modal-edit-profile');
+          // Refresh profile UI
+          if (typeof renderProfilePlans === 'function') renderProfilePlans();
+        } catch (err) {
+          console.error('Profile update error:', err);
+          showToast('❌ ' + translateError(err));
+        } finally {
+          saveBtn.textContent = originalText;
+          saveBtn.disabled = false;
+        }
+      });
+    }
+
+    // ============================================================
+    // CONTACT FORM — opens signup with prefilled email (real action)
     // ============================================================
     function setupContactForm() {
       const btn = document.getElementById('btn-contact-submit');
-      if (btn) {
-        btn.addEventListener('click', () => {
-          showToast('✓ תודה! נשלח לך מייל ברוך הבא עם 5 תוכניות מותאמות.');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        // If already logged in, just take them to create-plan
+        if (currentUser) {
+          openModal('modal-create');
+          return;
+        }
+        // Otherwise: prefill the email in login modal and switch to signup tab
+        const formEmail = document.querySelector('.contact-form input[type="email"]')?.value?.trim();
+        openModal('modal-login');
+        // Switch to signup tab
+        const signupTab = document.querySelector('[data-login-tab="signup"]');
+        if (signupTab) signupTab.click();
+        // Prefill email
+        const loginEmailInput = document.querySelector('#modal-login input[type="email"]')
+          || document.querySelectorAll('#modal-login input')[0];
+        if (loginEmailInput && formEmail) loginEmailInput.value = formEmail;
+      });
+    }
+
+    // ============================================================
+    // FIRST-VISIT WELCOME MODAL
+    // ============================================================
+    function setupWelcomeOnboarding() {
+      const STORAGE_KEY = 'yalla_onboarded';
+      try {
+        if (localStorage.getItem(STORAGE_KEY)) return; // already seen
+      } catch { /* localStorage blocked */ return; }
+
+      // Show after a short delay (let page render first)
+      setTimeout(() => {
+        openModal('modal-welcome');
+      }, 800);
+
+      const closeBtn = document.getElementById('btn-welcome-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          try { localStorage.setItem(STORAGE_KEY, '1'); } catch {}
+          closeModal('modal-welcome');
         });
       }
+    }
+
+    // ============================================================
+    // ONLINE / OFFLINE INDICATOR
+    // ============================================================
+    function setupOnlineMonitor() {
+      let wasOffline = false;
+      const updateStatus = () => {
+        if (!navigator.onLine && !wasOffline) {
+          wasOffline = true;
+          showToast('📡 אין חיבור לאינטרנט');
+        } else if (navigator.onLine && wasOffline) {
+          wasOffline = false;
+          showToast('✓ חזרת לאוויר');
+          // Refresh data on reconnect
+          if (typeof renderHomePlans === 'function') renderHomePlans();
+          if (typeof refreshIncomingBadge === 'function') refreshIncomingBadge();
+        }
+      };
+      window.addEventListener('online', updateStatus);
+      window.addEventListener('offline', updateStatus);
     }
 
     // ============================================================
@@ -6690,15 +7688,19 @@
       // Check if user is already logged in (Supabase session)
       await checkAuthSession();
 
-      // Render initial views
+      // Render initial views (profile renders lazily on navigation)
       renderHomePlans();
-      renderProfilePlans();
+      refreshPublicStats();
       setupFilters();
       setupModals();
       setupProfileTabs();
       setupNavigation();
       setupFAQ();
       setupContactForm();
+      setupEditProfile();
+      setupPlanImageUpload();
+      setupOnlineMonitor();
+      setupWelcomeOnboarding();
 
       // Listen for auth state changes (login/logout in another tab, OAuth redirect, etc.)
       if (SUPABASE_ENABLED && sb) {
