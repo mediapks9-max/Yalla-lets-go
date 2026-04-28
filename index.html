@@ -2823,6 +2823,7 @@
           <button class="profile-tab active" data-tab="my-plans">התוכניות שלי</button>
           <button class="profile-tab" data-tab="incoming-requests">🔔 בקשות נכנסות <span id="incoming-badge" style="display:none; background: #d4583a; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-right: 4px;"></span></button>
           <button class="profile-tab" data-tab="my-requests">בקשות ששלחתי</button>
+          <button class="profile-tab" data-tab="guide-dashboard" id="tab-guide" style="display: none;">💎 דשבורד מדריך</button>
         </div>
 
         <div class="profile-tab-content active" data-content="my-plans">
@@ -2835,6 +2836,10 @@
 
         <div class="profile-tab-content" data-content="my-requests">
           <div id="my-requests-list"></div>
+        </div>
+
+        <div class="profile-tab-content" data-content="guide-dashboard">
+          <div id="guide-dashboard-content"></div>
         </div>
       </div>
     </div>
@@ -3123,6 +3128,43 @@
           <label class="form-label">מה התוכנית? מה עושים שם?</label>
           <textarea class="form-textarea" placeholder="ספר קצת על התוכנית - מה תיקח? מה הרמה? איזה אווירה אתה מחפש?"></textarea>
         </div>
+
+        <!-- Paid plan section - only shown for approved guides -->
+        <div id="paid-plan-section" style="display: none; background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 20px; border-radius: 12px; border: 2px dashed #d4583a; margin-bottom: 20px;">
+          <div class="form-group">
+            <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin: 0;">
+              <input type="checkbox" id="is-paid-plan" style="width: 20px; height: 20px; cursor: pointer;">
+              <span style="font-weight: 600; color: var(--color-terracotta); font-size: 16px;">💎 זאת תוכנית בתשלום (אני מדריך מקצועי)</span>
+            </label>
+          </div>
+
+          <div id="price-fields" style="display: none; margin-top: 16px;">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">מחיר לאדם *</label>
+                <input type="number" class="form-input" id="plan-price" min="0" step="5" placeholder="85" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">מטבע</label>
+                <select class="form-select" id="plan-currency">
+                  <option value="EUR">€ EUR</option>
+                  <option value="ILS">₪ ILS</option>
+                  <option value="USD">$ USD</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">מה כלול במחיר?</label>
+              <textarea class="form-input" id="plan-price-includes" rows="2" placeholder="לדוגמה: הדרכה מקצועית, ביטוח, ארוחת בוקר, ציוד טכני"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label">מה לא כלול?</label>
+              <textarea class="form-input" id="plan-price-excludes" rows="2" placeholder="לדוגמה: הסעה, ארוחת ערב, שתייה אלכוהולית"></textarea>
+            </div>
+            <p style="font-size: 12px; color: #666; margin-top: 8px;">ℹ️ עמלת הפלטפורמה: 10% מכל הזמנה</p>
+          </div>
+        </div>
+
         <div class="form-group">
           <label class="form-label">למה להיפגש? (סמן הכל שמתאים)</label>
           <div class="chip-group" data-chip-group="reasons" data-multi="true">
@@ -3428,6 +3470,13 @@
           difficulty: planData.difficulty,
           meeting_point: planData.meetingPoint,
           categories: planData.categories || [],
+          // Paid plan fields
+          is_paid: planData.isPaid || false,
+          price: planData.price || null,
+          currency: planData.currency || null,
+          price_includes: planData.priceIncludes || null,
+          price_excludes: planData.priceExcludes || null,
+          guide_id: planData.guideId || null,
         }).select().single();
 
         if (error) throw error;
@@ -3855,6 +3904,13 @@
         difficulty: dbPlan.difficulty,
         meetingPoint: dbPlan.meeting_point,
         categories: (dbPlan.categories || []).join(' '),
+        // Paid plan fields
+        isPaid: dbPlan.is_paid || false,
+        price: dbPlan.price,
+        currency: dbPlan.currency,
+        priceIncludes: dbPlan.price_includes,
+        priceExcludes: dbPlan.price_excludes,
+        guideId: dbPlan.guide_id,
         creator: dbPlan.creator ? {
           id: dbPlan.creator.id,
           initial: dbPlan.creator.full_name?.charAt(0) || '?',
@@ -4096,8 +4152,32 @@
           ? 'פתוח · להכיר אנשים'
           : `<strong>${plan.joined}</strong>/${plan.spots} הצטרפו`;
 
+      // Currency symbols
+      const currencySymbol = {
+        'EUR': '€',
+        'ILS': '₪',
+        'USD': '$',
+      }[plan.currency] || '€';
+
+      // Paid plan badge + price
+      const paidBadge = plan.isPaid ? `
+        <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #d4583a, #c44329); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 2;">💎 מקצועי</span>
+      ` : '';
+
+      const priceDisplay = plan.isPaid && plan.price ? `
+        <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 10px 14px; border-radius: 12px; margin: 8px 0; border: 1px solid #d4583a33; display: flex; justify-content: space-between; align-items: center;">
+          <span style="font-size: 12px; color: #777;">מחיר לאדם</span>
+          <span style="font-size: 22px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${plan.price}</span>
+        </div>
+      ` : '';
+
+      const ctaButton = plan.isPaid
+        ? `<button class="btn-join" data-join-id="${plan.id}" style="background: linear-gradient(135deg, #d4583a, #c44329);">הזמן עכשיו</button>`
+        : `<button class="btn-join" data-join-id="${plan.id}">אני בעניין</button>`;
+
       return `
-        <article class="plan-card ${staggerClass}" data-plan-id="${plan.id}" data-categories="${plan.categories}">
+        <article class="plan-card ${staggerClass}" data-plan-id="${plan.id}" data-categories="${plan.categories}" style="position: relative;">
+          ${paidBadge}
           <div class="plan-image">
             ${ILLUSTRATIONS[plan.illustration] || ''}
             <span class="plan-tag">${plan.tag}</span>
@@ -4116,9 +4196,10 @@
             </div>
             <h3 class="plan-title">${plan.title}</h3>
             <p class="plan-desc">${plan.desc}</p>
+            ${priceDisplay}
             <div class="plan-footer">
               <span class="plan-spots">${spotsLabel}</span>
-              <button class="btn-join" data-join-id="${plan.id}">אני בעניין</button>
+              ${ctaButton}
             </div>
           </div>
         </article>
@@ -4252,7 +4333,161 @@
         myRequestsContainer.innerHTML = '<p style="text-align:center; padding: 40px; color: #d4583a;">שגיאה</p>';
       }
 
+      // 5. Check if user is approved guide and load dashboard
+      try {
+        const myGuide = await api.fetchMyGuideProfile();
+        const tabGuide = document.getElementById('tab-guide');
+
+        if (myGuide && myGuide.status === 'approved' && tabGuide) {
+          tabGuide.style.display = 'inline-flex';
+          await renderGuideDashboard(myGuide);
+        } else if (tabGuide) {
+          tabGuide.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Guide check error:', err);
+      }
+
       attachPlanCardListeners();
+    }
+
+    // Render guide dashboard
+    async function renderGuideDashboard(guide) {
+      const container = document.getElementById('guide-dashboard-content');
+      if (!container) return;
+
+      container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">טוען...</p>';
+
+      try {
+        const bookings = await api.fetchGuideBookings(guide.id);
+
+        // Calculate stats
+        const totalBookings = bookings.length;
+        const completedBookings = bookings.filter(b => b.status === 'completed').length;
+        const pendingBookings = bookings.filter(b => b.status === 'pending').length;
+        const totalEarnings = bookings
+          .filter(b => b.guide_reported_paid)
+          .reduce((sum, b) => sum + (parseFloat(b.amount_paid) || 0), 0);
+        const totalPlatformFee = totalEarnings * 0.10;
+        const guideNet = totalEarnings * 0.90;
+
+        const currencySymbol = '€';
+
+        container.innerHTML = `
+          <!-- Guide profile card -->
+          <div style="background: linear-gradient(135deg, #d4583a 0%, #c44329 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+            <h2 style="margin: 0 0 8px 0;">💎 ${guide.full_name}</h2>
+            <p style="margin: 0; opacity: 0.9; font-size: 14px;">${guide.bio || 'מדריך מקצועי בקהילה'}</p>
+            <div style="display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;">
+              ${(guide.specialties || []).slice(0, 5).map(s => `<span style="background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 12px; font-size: 13px;">${s}</span>`).join('')}
+            </div>
+          </div>
+
+          <!-- Stats grid -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px;">
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #eee;">
+              <div style="font-size: 12px; color: #999; margin-bottom: 4px;">סה"כ הזמנות</div>
+              <div style="font-size: 32px; font-weight: 700; color: var(--color-terracotta);">${totalBookings}</div>
+            </div>
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #eee;">
+              <div style="font-size: 12px; color: #999; margin-bottom: 4px;">הושלמו</div>
+              <div style="font-size: 32px; font-weight: 700; color: #2e7d32;">${completedBookings}</div>
+            </div>
+            <div style="background: white; padding: 20px; border-radius: 12px; border: 1px solid #eee;">
+              <div style="font-size: 12px; color: #999; margin-bottom: 4px;">ממתינות</div>
+              <div style="font-size: 32px; font-weight: 700; color: #f57c00;">${pendingBookings}</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 20px; border-radius: 12px; border: 2px solid #d4583a33;">
+              <div style="font-size: 12px; color: #999; margin-bottom: 4px;">הכנסות שלך (90%)</div>
+              <div style="font-size: 24px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${guideNet.toFixed(0)}</div>
+            </div>
+            <div style="background: #f9f5ed; padding: 20px; border-radius: 12px; border: 1px solid #eee;">
+              <div style="font-size: 12px; color: #999; margin-bottom: 4px;">חוב לפלטפורמה (10%)</div>
+              <div style="font-size: 24px; font-weight: 700; color: #555;">${currencySymbol}${totalPlatformFee.toFixed(0)}</div>
+            </div>
+          </div>
+
+          <!-- Bookings list -->
+          <h3 style="margin: 0 0 16px 0;">📋 ההזמנות שלי</h3>
+          <div id="guide-bookings-list">
+            ${bookings.length === 0 ? `
+              <div style="text-align: center; padding: 60px 20px; background: #fff8f5; border-radius: 16px;">
+                <div style="font-size: 64px; margin-bottom: 16px;">📭</div>
+                <h3 style="color: var(--color-terracotta); margin-bottom: 8px;">עוד אין הזמנות</h3>
+                <p style="color: #777;">פרסם תוכנית בתשלום ויאלה תביא לך לקוחות</p>
+              </div>
+            ` : bookings.map(b => {
+              const userName = b.user?.full_name || 'לקוח';
+              const userInitial = userName.charAt(0).toUpperCase();
+              const planTitle = b.plan?.title || 'תוכנית';
+              const date = new Date(b.created_at).toLocaleDateString('he-IL');
+              const status = b.status;
+              const amount = parseFloat(b.amount_paid || 0);
+              const fee = parseFloat(b.platform_fee || amount * 0.10);
+
+              const statusColors = {
+                pending: { bg: '#fff8e1', text: '#f57c00', label: '⏳ ממתינה' },
+                confirmed: { bg: '#e3f2fd', text: '#1976d2', label: '✓ אושרה' },
+                completed: { bg: '#e8f5e9', text: '#2e7d32', label: '✅ הושלמה' },
+                cancelled: { bg: '#ffebee', text: '#c62828', label: '✗ בוטלה' },
+              };
+              const sc = statusColors[status] || statusColors.pending;
+
+              return `
+                <div style="background: white; padding: 20px; border-radius: 12px; margin-bottom: 12px; border: 1px solid #eee;">
+                  <div style="display: flex; gap: 16px; align-items: flex-start;">
+                    <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; overflow: hidden;">
+                      ${b.user?.avatar_url ? `<img src="${b.user.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : userInitial}
+                    </div>
+                    <div style="flex: 1;">
+                      <div style="display: flex; justify-content: space-between; align-items: start;">
+                        <div>
+                          <h4 style="margin: 0 0 4px 0;">${userName}</h4>
+                          <div style="font-size: 14px; color: #777;">${planTitle}</div>
+                          <div style="font-size: 12px; color: #999; margin-top: 4px;">${date}</div>
+                        </div>
+                        <div style="text-align: left;">
+                          <div style="font-size: 22px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${amount}</div>
+                          <div style="font-size: 11px; color: #999;">עמלה: ${currencySymbol}${fee.toFixed(2)}</div>
+                        </div>
+                      </div>
+                      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="background: ${sc.bg}; color: ${sc.text}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sc.label}</span>
+                        ${status !== 'completed' && !b.guide_reported_paid ? `
+                          <button class="btn-mark-paid" data-booking-id="${b.id}" style="background: #2e7d32; color: white; border: none; padding: 6px 16px; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">✓ סמן כשולם</button>
+                        ` : ''}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+
+        // Attach mark-paid listeners
+        document.querySelectorAll('.btn-mark-paid').forEach(btn => {
+          btn.onclick = async (e) => {
+            const id = e.target.dataset.bookingId;
+            if (!confirm('סמן כהושלם ושולם? פעולה זו תעדכן את הסטטיסטיקות.')) return;
+            e.target.textContent = 'מסמן...';
+            e.target.disabled = true;
+            try {
+              await api.markBookingPaid(id);
+              showToast('✓ הסטטוס עודכן');
+              await renderGuideDashboard(guide);
+            } catch (err) {
+              showToast('❌ שגיאה: ' + err.message);
+              e.target.textContent = '✓ סמן כשולם';
+              e.target.disabled = false;
+            }
+          };
+        });
+
+      } catch (err) {
+        console.error('Guide dashboard error:', err);
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #d4583a;">שגיאה בטעינת הדשבורד</p>';
+      }
     }
 
     // Render a single request item (incoming or outgoing)
@@ -4652,6 +4887,17 @@
               ${isMyPlan ? `
                 <button class="btn-join-large" id="detail-edit-btn" style="background: #555;">✏️ ערוך תוכנית</button>
                 <button class="btn-secondary" id="detail-delete-btn" style="border-color: #d4583a; color: #d4583a;">🗑️ מחק תוכנית</button>
+              ` : plan.isPaid ? `
+                <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 2px solid #d4583a33;">
+                  <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
+                    <span style="font-size: 13px; color: #777;">מחיר לאדם</span>
+                    <span style="font-size: 28px; font-weight: 700; color: var(--color-terracotta);">${({EUR:'€',ILS:'₪',USD:'$'})[plan.currency] || '€'}${plan.price}</span>
+                  </div>
+                  ${plan.priceIncludes ? `<div style="font-size: 13px; color: #555; margin-top: 8px;"><strong>כלול:</strong> ${plan.priceIncludes}</div>` : ''}
+                  ${plan.priceExcludes ? `<div style="font-size: 13px; color: #999; margin-top: 4px;"><strong>לא כלול:</strong> ${plan.priceExcludes}</div>` : ''}
+                </div>
+                <button class="btn-join-large" id="detail-book-btn" style="background: linear-gradient(135deg, #d4583a, #c44329);">💳 הזמן עכשיו</button>
+                <button class="btn-secondary" id="detail-share-btn">📤 שתף תוכנית</button>
               ` : `
                 <button class="btn-join-large" id="detail-join-btn">שלח בקשת הצטרפות</button>
                 <button class="btn-secondary" id="detail-share-btn">📤 שתף תוכנית</button>
@@ -4665,6 +4911,67 @@
       document.querySelector('[data-route="home"].back-link')?.addEventListener('click', () => navigate('home'));
       document.querySelector('.detail-creator-block')?.addEventListener('click', () => navigate('profile'));
       document.getElementById('detail-join-btn')?.addEventListener('click', () => openModal('modal-join'));
+
+      // Book Now button (paid plans)
+      document.getElementById('detail-book-btn')?.addEventListener('click', async () => {
+        if (!currentUser) {
+          showToast('🔒 התחבר קודם כדי להזמין');
+          openModal('modal-login');
+          return;
+        }
+
+        // Show booking confirmation modal
+        const currencySymbol = ({EUR:'€',ILS:'₪',USD:'$'})[plan.currency] || '€';
+        const platformFee = (plan.price * 0.10).toFixed(2);
+        const guideEarning = (plan.price * 0.90).toFixed(2);
+
+        const confirmed = confirm(
+          `💳 אישור הזמנה\n\n` +
+          `${plan.title}\n` +
+          `מחיר: ${currencySymbol}${plan.price} לאדם\n\n` +
+          `כיצד התשלום עובד:\n` +
+          `1. תיצור איתי קשר ב-WhatsApp/Email\n` +
+          `2. נסכם פרטים ואת אופן התשלום\n` +
+          `3. תקבל אישור הזמנה\n\n` +
+          `המשך להזמנה?`
+        );
+
+        if (!confirmed) return;
+
+        const btn = document.getElementById('detail-book-btn');
+        btn.textContent = 'יוצר הזמנה...';
+        btn.disabled = true;
+
+        try {
+          // Create booking record
+          await api.createBooking(id, plan.guideId, plan.price);
+
+          // Get guide contact info
+          const { data: guide } = await sb.from('guides').select('whatsapp, email, full_name').eq('id', plan.guideId).single();
+
+          // Build WhatsApp message
+          const message = encodeURIComponent(
+            `שלום ${guide?.full_name || 'מדריך'}, ראיתי את התוכנית "${plan.title}" באתר יאלה ואני רוצה להזמין. (מחיר: ${currencySymbol}${plan.price})`
+          );
+
+          if (guide?.whatsapp) {
+            const waNumber = guide.whatsapp.replace(/\D/g, '');
+            window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank');
+            showToast('✓ נפתח WhatsApp - תכתב למדריך');
+          } else if (guide?.email) {
+            window.open(`mailto:${guide.email}?subject=${encodeURIComponent('הזמנה: ' + plan.title)}&body=${message}`, '_blank');
+            showToast('✓ נפתח אימייל למדריך');
+          } else {
+            showToast('⚠️ אין פרטי קשר למדריך');
+          }
+        } catch (err) {
+          console.error('Booking error:', err);
+          showToast('❌ שגיאה: ' + (err.message || 'נסה שוב'));
+        } finally {
+          btn.textContent = '💳 הזמן עכשיו';
+          btn.disabled = false;
+        }
+      });
 
       // Share button
       document.getElementById('detail-share-btn')?.addEventListener('click', async () => {
@@ -4751,8 +5058,44 @@
     function openModal(id) {
       document.getElementById(id).classList.add('active');
       document.body.style.overflow = 'hidden';
+
+      // Special: if opening create plan modal, check if user is approved guide
+      if (id === 'modal-create') {
+        checkAndShowPaidSection();
+      }
     }
     window.openModal = openModal; // Make available globally for inline onclick
+
+    // Check if current user is an approved guide and show paid plan section
+    async function checkAndShowPaidSection() {
+      const section = document.getElementById('paid-plan-section');
+      if (!section) return;
+
+      if (!SUPABASE_ENABLED || !currentUser) {
+        section.style.display = 'none';
+        return;
+      }
+
+      try {
+        const guide = await api.fetchMyGuideProfile();
+        if (guide && guide.status === 'approved') {
+          section.style.display = 'block';
+
+          // Toggle price fields visibility on checkbox
+          const checkbox = document.getElementById('is-paid-plan');
+          const priceFields = document.getElementById('price-fields');
+          if (checkbox && priceFields) {
+            checkbox.onchange = () => {
+              priceFields.style.display = checkbox.checked ? 'block' : 'none';
+            };
+          }
+        } else {
+          section.style.display = 'none';
+        }
+      } catch (err) {
+        section.style.display = 'none';
+      }
+    }
 
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
@@ -4876,6 +5219,42 @@
           const spotsValue = select?.value || '4 אנשים';
           const spotsTotal = parseInt(spotsValue) || 4;
 
+          // Check if this is a paid plan (only for approved guides)
+          const isPaidCheckbox = document.getElementById('is-paid-plan');
+          const isPaid = isPaidCheckbox && isPaidCheckbox.checked;
+          let paidFields = {};
+
+          if (isPaid) {
+            const price = parseFloat(document.getElementById('plan-price')?.value || 0);
+            const currency = document.getElementById('plan-currency')?.value || 'EUR';
+            const priceIncludes = document.getElementById('plan-price-includes')?.value?.trim() || '';
+            const priceExcludes = document.getElementById('plan-price-excludes')?.value?.trim() || '';
+
+            if (!price || price <= 0) {
+              showToast('⚠️ אנא הזן מחיר תקין');
+              btn.textContent = originalText;
+              btn.disabled = false;
+              btn.style.opacity = '';
+              return;
+            }
+
+            paidFields = {
+              isPaid: true,
+              price: price,
+              currency: currency,
+              priceIncludes: priceIncludes,
+              priceExcludes: priceExcludes,
+            };
+
+            // Get my guide ID
+            try {
+              const myGuide = await api.fetchMyGuideProfile();
+              if (myGuide && myGuide.status === 'approved') {
+                paidFields.guideId = myGuide.id;
+              }
+            } catch (e) {}
+          }
+
           const planData = {
             title: titleInput,
             description: descInput || titleInput,
@@ -4884,9 +5263,10 @@
             startDate: dateInput,
             spotsTotal: spotsTotal,
             illustration: 'ramon-crater',
-            tag: '✦ חדש',
+            tag: isPaid ? '💎 מקצועי' : '✦ חדש',
             type: 'טיול',
-            categories: [],
+            categories: isPaid ? ['paid', 'guide'] : [],
+            ...paidFields,
           };
 
           console.log('🚀 Calling api...');
