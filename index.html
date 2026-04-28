@@ -351,6 +351,60 @@
       font-weight: 500;
     }
 
+    /* Specialty/Language chips for guide registration */
+    .specialty-chip, .lang-chip {
+      background: white;
+      color: #555;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      border: 1.5px solid #ddd;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: inherit;
+    }
+
+    .specialty-chip:hover, .lang-chip:hover {
+      border-color: var(--color-terracotta);
+      color: var(--color-terracotta);
+    }
+
+    .specialty-chip.active, .lang-chip.active {
+      background: var(--color-terracotta);
+      color: white;
+      border-color: var(--color-terracotta);
+    }
+
+    /* Guide cards on guides page */
+    .guide-card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid #eee;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .guide-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+    }
+
+    /* Premium badge */
+    .badge-pro {
+      background: linear-gradient(135deg, #d4583a 0%, #c44329 100%);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
     /* ============================================================
        PLANS GRID
        ============================================================ */
@@ -2350,6 +2404,7 @@
       <nav class="nav-main">
         <span class="nav-link active" data-route="home">גלה</span>
         <span class="nav-link" data-route="profile">הפרופיל שלי</span>
+        <span class="nav-link" data-route="guides">💎 מדריכים</span>
         <span class="nav-link" data-route="about">איך זה עובד</span>
       </nav>
       <div class="header-actions">
@@ -2855,6 +2910,135 @@
       </div>
     </div>
 
+    <!-- ============================ GUIDE REGISTRATION PAGE ============================ -->
+    <div class="page" data-page="guide-register">
+      <div class="guide-register-page" style="max-width: 700px; margin: 0 auto; padding: 60px 20px;">
+        <span class="back-link" data-route="home" style="cursor: pointer; color: var(--color-terracotta); margin-bottom: 24px; display: inline-block;">← חזרה</span>
+
+        <div style="background: linear-gradient(135deg, #d4583a 0%, #c44329 100%); color: white; padding: 40px; border-radius: 24px; margin-bottom: 32px;">
+          <h1 style="font-size: 42px; margin: 0 0 12px 0;">💎 הצטרף כמדריך טיולים</h1>
+          <p style="font-size: 18px; opacity: 0.95; line-height: 1.5; margin: 0;">
+            מדריכי טיולים מקצועיים, בעלי תעודה, מדריכי שטח, ומומחי טיולים -
+            יאלה היא הפלטפורמה החדשה שלכם. הצטרפו לקהילה של מטיילים שמחפשים
+            חוויות אותנטיות עם מומחים אמיתיים.
+          </p>
+        </div>
+
+        <div style="background: white; padding: 32px; border-radius: 16px; margin-bottom: 24px; border: 1px solid #eee;">
+          <h2 style="font-size: 24px; margin: 0 0 16px 0; color: var(--color-terracotta);">איך זה עובד?</h2>
+          <div style="display: grid; gap: 16px; font-size: 15px; line-height: 1.6;">
+            <div style="display: flex; gap: 12px;"><span style="font-size: 24px;">1️⃣</span><div><strong>הירשם:</strong> מלא את הטופס בדף הזה. אנחנו נעבור על הפרטים שלך.</div></div>
+            <div style="display: flex; gap: 12px;"><span style="font-size: 24px;">2️⃣</span><div><strong>אישור:</strong> תקבל אישור מאיתנו תוך 24 שעות. תזכה בתג "💎 מדריך מקצועי".</div></div>
+            <div style="display: flex; gap: 12px;"><span style="font-size: 24px;">3️⃣</span><div><strong>פרסם טיולים:</strong> תוכל לפרסם תוכניות בתשלום עם מחיר. מקבל גם ביקורות והכנסות.</div></div>
+            <div style="display: flex; gap: 12px;"><span style="font-size: 24px;">4️⃣</span><div><strong>10% עמלה:</strong> אנחנו לוקחים 10% מכל טיול. אתה מקבל 90%. הוגן ושקוף.</div></div>
+          </div>
+        </div>
+
+        <div style="background: white; padding: 32px; border-radius: 16px; border: 1px solid #eee;">
+          <h2 style="font-size: 24px; margin: 0 0 24px 0;">פרטי ההרשמה</h2>
+
+          <div id="guide-register-form">
+            <div class="form-group">
+              <label class="form-label">שם מלא *</label>
+              <input class="form-input" id="guide-fullname" placeholder="ישראל ישראלי" />
+            </div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">אימייל *</label>
+                <input class="form-input" id="guide-email" type="email" placeholder="email@example.com" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">WhatsApp (כולל קידומת)</label>
+                <input class="form-input" id="guide-whatsapp" placeholder="+972501234567" />
+              </div>
+            </div>
+
+            <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+              <div class="form-group">
+                <label class="form-label">מספר תעודת מדריך</label>
+                <input class="form-input" id="guide-license" placeholder="(אופציונלי)" />
+              </div>
+              <div class="form-group">
+                <label class="form-label">שנות ניסיון</label>
+                <input class="form-input" id="guide-years" type="number" min="0" placeholder="5" />
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ביוגרפיה מקצועית * <span style="font-size: 12px; color: #999;">(עד 500 תווים)</span></label>
+              <textarea class="form-input" id="guide-bio" rows="4" maxlength="500" placeholder="ספר על עצמך - איזה טיולים אתה מוביל, מה הניסיון שלך, מה הופך אותך למדריך מיוחד..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">תחומי התמחות * <span style="font-size: 12px; color: #999;">(לחץ לבחירה)</span></label>
+              <div id="guide-specialties" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                <button type="button" class="specialty-chip" data-specialty="טרקים">🥾 טרקים</button>
+                <button type="button" class="specialty-chip" data-specialty="אופניים">🚴 אופניים</button>
+                <button type="button" class="specialty-chip" data-specialty="צילום">📷 צילום</button>
+                <button type="button" class="specialty-chip" data-specialty="הרים">⛰️ הרים</button>
+                <button type="button" class="specialty-chip" data-specialty="ים">🌊 ים</button>
+                <button type="button" class="specialty-chip" data-specialty="טיפוס">🧗 טיפוס</button>
+                <button type="button" class="specialty-chip" data-specialty="מדבר">🏜️ מדבר</button>
+                <button type="button" class="specialty-chip" data-specialty="מים-לבנים">🛶 מים-לבנים</button>
+                <button type="button" class="specialty-chip" data-specialty="צלילה">🤿 צלילה</button>
+                <button type="button" class="specialty-chip" data-specialty="היסטוריה">🏛️ היסטוריה</button>
+                <button type="button" class="specialty-chip" data-specialty="ארכיאולוגיה">🏺 ארכיאולוגיה</button>
+                <button type="button" class="specialty-chip" data-specialty="קולינריה">🍽️ קולינריה</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">שפות *</label>
+              <div id="guide-languages" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px;">
+                <button type="button" class="lang-chip" data-lang="עברית">🇮🇱 עברית</button>
+                <button type="button" class="lang-chip" data-lang="אנגלית">🇬🇧 אנגלית</button>
+                <button type="button" class="lang-chip" data-lang="יוונית">🇬🇷 יוונית</button>
+                <button type="button" class="lang-chip" data-lang="רוסית">🇷🇺 רוסית</button>
+                <button type="button" class="lang-chip" data-lang="ערבית">🇸🇦 ערבית</button>
+                <button type="button" class="lang-chip" data-lang="צרפתית">🇫🇷 צרפתית</button>
+                <button type="button" class="lang-chip" data-lang="ספרדית">🇪🇸 ספרדית</button>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">ערים בהן פעיל *</label>
+              <input class="form-input" id="guide-cities" placeholder="לדוגמה: לימסול, לרנקה, ניקוסיה" />
+              <span style="font-size: 12px; color: #999; margin-top: 4px; display: block;">הפרד בפסיקים</span>
+            </div>
+
+            <button class="btn-join-large" id="btn-submit-guide" style="width: 100%; margin-top: 24px;">
+              📤 שלח הרשמה לאישור
+            </button>
+
+            <p style="font-size: 13px; color: #999; text-align: center; margin-top: 16px;">
+              לאחר השליחה תקבל אישור תוך 24-48 שעות.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================ GUIDES LIST PAGE ============================ -->
+    <div class="page" data-page="guides">
+      <div class="guides-page" style="max-width: 1200px; margin: 0 auto; padding: 60px 20px;">
+        <div style="text-align: center; margin-bottom: 48px;">
+          <h1 style="font-size: 48px; margin: 0 0 16px 0;">💎 הצוות שלנו</h1>
+          <p style="font-size: 18px; color: #666; max-width: 700px; margin: 0 auto;">
+            מדריכי טיולים מקצועיים, מאומתים ובעלי ניסיון.
+            כל אחד מהם הצטרף לקהילה כדי להוביל טיולים אותנטיים ובלתי נשכחים.
+          </p>
+          <button class="btn-join-large" data-route="guide-register" style="margin-top: 24px;">
+            👨‍🏫 הצטרף כמדריך
+          </button>
+        </div>
+
+        <div id="guides-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
+          <p style="grid-column: 1/-1; text-align: center; color: #999; padding: 60px;">טוען מדריכים...</p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- ============================ FOOTER ============================ -->
@@ -2868,6 +3052,8 @@
         <h4>הקהילה</h4>
         <ul>
           <li><a data-route="home">גלה תוכניות</a></li>
+          <li><a data-route="guides">💎 הצוות שלנו</a></li>
+          <li><a data-route="guide-register">👨‍🏫 הצטרף כמדריך</a></li>
           <li><a data-action="create-plan">צור תוכנית</a></li>
           <li><a>קהילות נושאיות</a></li>
           <li><a>סיפורי דרך</a></li>
@@ -3445,6 +3631,170 @@
         }
       },
 
+      // =================================================
+      // GUIDES API - מדריכי טיולים מקצועיים
+      // =================================================
+
+      // הגשת בקשת רישום כמדריך
+      async registerAsGuide(guideData) {
+        if (!SUPABASE_ENABLED) {
+          console.log('Demo mode: register guide:', guideData);
+          return { success: true };
+        }
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const { error } = await sb.from('guides').insert({
+          user_id: currentUser.id,
+          full_name: guideData.fullName,
+          email: guideData.email || currentUser.email,
+          whatsapp: guideData.whatsapp || null,
+          license_number: guideData.licenseNumber || null,
+          years_experience: guideData.yearsExperience || 0,
+          bio: guideData.bio || null,
+          specialties: guideData.specialties || [],
+          languages: guideData.languages || [],
+          cities: guideData.cities || [],
+          status: 'pending',
+        });
+
+        if (error) throw error;
+        return { success: true };
+      },
+
+      // האם המשתמש הנוכחי הוא מדריך?
+      async fetchMyGuideProfile() {
+        if (!SUPABASE_ENABLED || !currentUser) return null;
+        try {
+          const { data } = await sb
+            .from('guides')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .single();
+          return data;
+        } catch (err) {
+          return null; // not a guide
+        }
+      },
+
+      // טען את כל המדריכים המאושרים
+      async fetchApprovedGuides() {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          const { data: guides } = await sb
+            .from('guides')
+            .select('*')
+            .eq('status', 'approved')
+            .order('approved_at', { ascending: false });
+
+          if (!guides || guides.length === 0) return [];
+
+          // טען avatar_url של כל מדריך
+          const userIds = guides.map(g => g.user_id);
+          const { data: profiles } = await sb
+            .from('profiles')
+            .select('id, avatar_url')
+            .in('id', userIds);
+
+          const profileMap = {};
+          (profiles || []).forEach(p => { profileMap[p.id] = p; });
+
+          return guides.map(g => ({
+            ...g,
+            avatar_url: profileMap[g.user_id]?.avatar_url,
+          }));
+        } catch (err) {
+          console.error('fetchApprovedGuides error:', err);
+          return [];
+        }
+      },
+
+      // עדכון פרופיל מדריך
+      async updateGuideProfile(guideData) {
+        if (!SUPABASE_ENABLED || !currentUser) throw new Error('Must be logged in');
+        const { error } = await sb
+          .from('guides')
+          .update(guideData)
+          .eq('user_id', currentUser.id);
+        if (error) throw error;
+        return { success: true };
+      },
+
+      // יצירת הזמנה (booking) לתוכנית בתשלום
+      async createBooking(planId, guideId, amount) {
+        if (!SUPABASE_ENABLED) return { success: true };
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const { data, error } = await sb.from('bookings').insert({
+          plan_id: planId,
+          user_id: currentUser.id,
+          guide_id: guideId,
+          amount_paid: amount,
+          platform_fee: amount * 0.10,
+          status: 'pending',
+        }).select().single();
+
+        if (error) throw error;
+        return data;
+      },
+
+      // טען את ההזמנות של המדריך
+      async fetchGuideBookings(guideId) {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          const { data: bookings } = await sb
+            .from('bookings')
+            .select('*')
+            .eq('guide_id', guideId)
+            .order('created_at', { ascending: false });
+
+          if (!bookings || bookings.length === 0) return [];
+
+          // טען פרטי משתמש לכל הזמנה
+          const userIds = [...new Set(bookings.map(b => b.user_id))];
+          const planIds = [...new Set(bookings.map(b => b.plan_id))];
+
+          const { data: profiles } = await sb
+            .from('profiles')
+            .select('id, full_name, avatar_url, email')
+            .in('id', userIds);
+
+          const { data: plans } = await sb
+            .from('plans')
+            .select('id, title, start_date')
+            .in('id', planIds);
+
+          const profileMap = {};
+          (profiles || []).forEach(p => { profileMap[p.id] = p; });
+          const planMap = {};
+          (plans || []).forEach(p => { planMap[p.id] = p; });
+
+          return bookings.map(b => ({
+            ...b,
+            user: profileMap[b.user_id],
+            plan: planMap[b.plan_id],
+          }));
+        } catch (err) {
+          console.error('fetchGuideBookings error:', err);
+          return [];
+        }
+      },
+
+      // מדריך מדווח שטיול הסתיים והכסף שולם
+      async markBookingPaid(bookingId) {
+        if (!SUPABASE_ENABLED || !currentUser) throw new Error('Must be logged in');
+        const { error } = await sb
+          .from('bookings')
+          .update({
+            guide_reported_paid: true,
+            guide_reported_at: new Date().toISOString(),
+            status: 'completed',
+            completed_at: new Date().toISOString(),
+          })
+          .eq('id', bookingId);
+        if (error) throw error;
+        return { success: true };
+      },
+
       async signUp(email, password, fullName) {
         if (!SUPABASE_ENABLED) throw new Error('Backend not configured');
         const { data, error } = await sb.auth.signUp({
@@ -3709,6 +4059,18 @@
       if (route === 'plan-detail' && params) {
         // params can be numeric (demo) or UUID (Supabase) — pass as-is
         renderPlanDetail(params);
+      }
+
+      if (route === 'profile') {
+        renderProfilePlans();
+      }
+
+      if (route === 'guides') {
+        renderGuidesPage();
+      }
+
+      if (route === 'guide-register') {
+        setupGuideRegisterPage();
       }
 
       // Scroll to top
@@ -4029,6 +4391,147 @@
           openModal('modal-join');
         });
       });
+    }
+
+    // ============================================================
+    // GUIDES PAGE - הצוות שלנו
+    // ============================================================
+    async function renderGuidesPage() {
+      const grid = document.getElementById('guides-grid');
+      if (!grid) return;
+
+      grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #999; padding: 60px;">טוען מדריכים...</p>';
+
+      try {
+        const guides = await api.fetchApprovedGuides();
+
+        if (guides.length === 0) {
+          grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 80px 20px; background: #fff8f5; border-radius: 24px;">
+              <div style="font-size: 64px; margin-bottom: 16px;">💎</div>
+              <h2 style="color: var(--color-terracotta); margin-bottom: 12px;">עוד אין מדריכים מאושרים</h2>
+              <p style="color: #777; margin-bottom: 24px;">תהיה הראשון להצטרף לקהילת המדריכים המקצועיים</p>
+              <button class="btn-join-large" onclick="navigate('guide-register')">👨‍🏫 הצטרף כמדריך</button>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = guides.map(g => {
+          const initial = (g.full_name || 'M').charAt(0).toUpperCase();
+          const specialties = (g.specialties || []).slice(0, 3).join(' · ');
+          const cities = (g.cities || []).join(', ');
+          const langs = (g.languages || []).join(' · ');
+
+          return `
+            <div class="guide-card">
+              <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #d4583a, #c44329); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
+                  ${g.avatar_url ? `<img src="${g.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+                </div>
+                <div style="flex: 1;">
+                  <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                    <h3 style="margin: 0; font-size: 18px;">${g.full_name}</h3>
+                    <span class="badge-pro">💎 מקצועי</span>
+                  </div>
+                  <div style="font-size: 13px; color: #777;">${cities || 'מדריך טיולים'}</div>
+                </div>
+              </div>
+
+              ${g.bio ? `<p style="font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px;">${g.bio.length > 150 ? g.bio.substring(0, 150) + '...' : g.bio}</p>` : ''}
+
+              ${specialties ? `<div style="font-size: 13px; color: #777; margin-bottom: 8px;">🎯 <strong>תחומים:</strong> ${specialties}</div>` : ''}
+
+              ${langs ? `<div style="font-size: 13px; color: #777; margin-bottom: 12px;">🌐 <strong>שפות:</strong> ${langs}</div>` : ''}
+
+              ${g.years_experience ? `<div style="font-size: 13px; color: var(--color-terracotta); font-weight: 600;">⭐ ${g.years_experience} שנות ניסיון</div>` : ''}
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('renderGuidesPage error:', err);
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #d4583a; padding: 60px;">שגיאה בטעינת המדריכים</p>';
+      }
+    }
+
+    // ============================================================
+    // GUIDE REGISTRATION PAGE
+    // ============================================================
+    function setupGuideRegisterPage() {
+      // Pre-fill from logged-in user
+      if (currentUser) {
+        const meta = currentUser.user_metadata || {};
+        const fullnameInput = document.getElementById('guide-fullname');
+        const emailInput = document.getElementById('guide-email');
+        if (fullnameInput && !fullnameInput.value) fullnameInput.value = meta.full_name || '';
+        if (emailInput && !emailInput.value) emailInput.value = currentUser.email || '';
+      }
+
+      // Specialty chips toggle
+      document.querySelectorAll('.specialty-chip').forEach(chip => {
+        chip.onclick = () => chip.classList.toggle('active');
+      });
+
+      // Language chips toggle
+      document.querySelectorAll('.lang-chip').forEach(chip => {
+        chip.onclick = () => chip.classList.toggle('active');
+      });
+
+      // Submit button
+      const submitBtn = document.getElementById('btn-submit-guide');
+      if (submitBtn) {
+        submitBtn.onclick = async () => {
+          // Check authentication
+          if (!currentUser) {
+            showToast('🔒 התחבר קודם כדי להירשם כמדריך');
+            openModal('modal-login');
+            return;
+          }
+
+          // Collect form data
+          const fullName = document.getElementById('guide-fullname').value.trim();
+          const email = document.getElementById('guide-email').value.trim();
+          const whatsapp = document.getElementById('guide-whatsapp').value.trim();
+          const licenseNumber = document.getElementById('guide-license').value.trim();
+          const yearsExperience = parseInt(document.getElementById('guide-years').value) || 0;
+          const bio = document.getElementById('guide-bio').value.trim();
+          const cities = document.getElementById('guide-cities').value.split(',').map(c => c.trim()).filter(Boolean);
+
+          const specialties = Array.from(document.querySelectorAll('.specialty-chip.active')).map(c => c.dataset.specialty);
+          const languages = Array.from(document.querySelectorAll('.lang-chip.active')).map(c => c.dataset.lang);
+
+          // Validation
+          if (!fullName) return showToast('⚠️ אנא מלא שם מלא');
+          if (!email) return showToast('⚠️ אנא מלא אימייל');
+          if (!bio || bio.length < 30) return showToast('⚠️ ביוגרפיה חייבת להיות לפחות 30 תווים');
+          if (specialties.length === 0) return showToast('⚠️ אנא בחר לפחות תחום התמחות אחד');
+          if (languages.length === 0) return showToast('⚠️ אנא בחר לפחות שפה אחת');
+          if (cities.length === 0) return showToast('⚠️ אנא הזן לפחות עיר אחת');
+
+          // Send
+          submitBtn.textContent = 'שולח...';
+          submitBtn.disabled = true;
+
+          try {
+            await api.registerAsGuide({
+              fullName, email, whatsapp, licenseNumber, yearsExperience,
+              bio, specialties, languages, cities
+            });
+
+            showToast('🎉 הרשמתך נשלחה! נחזור אליך תוך 24-48 שעות');
+            setTimeout(() => navigate('home'), 2000);
+          } catch (err) {
+            console.error('Guide registration error:', err);
+            if (err.code === '23505') {
+              showToast('⚠️ אתה כבר רשום כמדריך');
+            } else {
+              showToast('❌ שגיאה: ' + (err.message || 'נסה שוב'));
+            }
+            submitBtn.textContent = '📤 שלח הרשמה לאישור';
+            submitBtn.disabled = false;
+          }
+        };
+      }
     }
 
     // ============================================================
