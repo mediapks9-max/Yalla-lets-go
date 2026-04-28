@@ -1625,6 +1625,8 @@
       .filter-chip { font-size: 12px; padding: 6px 12px; }
       .request-item { padding: 14px !important; }
       .joined-item { flex-direction: column; align-items: flex-start; gap: 8px; }
+      .user-chip-name { display: none; } /* hide name on small mobile, show only avatar */
+      #btn-header-login { padding: 6px 12px !important; font-size: 12px !important; }
     }
 
     /* ============================================================
@@ -2410,6 +2412,7 @@
       </nav>
       <div class="header-actions">
         <span class="lang-switch">EN</span>
+        <button class="btn-secondary" id="btn-header-login" style="display: none; padding: 8px 16px; border-radius: 100px; background: rgba(255,255,255,0.15); color: var(--color-cream); border: 1px solid rgba(255,255,255,0.3); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500;">🔑 התחבר</button>
         <button class="btn-primary" id="btn-create-plan">+ פרסם תוכנית</button>
       </div>
     </div>
@@ -2817,6 +2820,11 @@
               <div class="profile-stat-num" id="stat-incoming">0</div>
               <div class="profile-stat-label">בקשות חדשות</div>
             </div>
+          </div>
+
+          <!-- Profile actions -->
+          <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee; flex-wrap: wrap;">
+            <button id="btn-profile-logout" style="background: #f5f5f5; color: #d4583a; padding: 10px 20px; border: 1px solid #d4583a33; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">🚪 התנתק</button>
           </div>
         </div>
 
@@ -3407,6 +3415,7 @@
     async function updateAuthUI() {
       // Update header to show user name or login button
       const btn = document.getElementById('btn-create-plan');
+      const loginBtn = document.getElementById('btn-header-login');
       const headerActions = document.querySelector('.header-actions');
       if (!headerActions) return;
 
@@ -3415,16 +3424,83 @@
       if (existingChip) existingChip.remove();
 
       if (currentProfile) {
-        const initial = currentProfile.full_name?.charAt(0) || '?';
+        // User is logged in - show user chip with dropdown
+        if (loginBtn) loginBtn.style.display = 'none';
+
+        const meta = currentUser?.user_metadata || {};
+        const fullName = currentProfile.full_name || meta.full_name || 'משתמש';
+        const initial = fullName.charAt(0).toUpperCase();
+        const avatarUrl = currentProfile.avatar_url || meta.avatar_url || meta.picture;
+
         const chip = document.createElement('div');
         chip.className = 'user-chip';
-        chip.style.cssText = 'display:flex;align-items:center;gap:8px;cursor:pointer;color:var(--color-cream);font-size:13px;';
+        chip.style.cssText = 'position:relative; display:flex; align-items:center; gap:8px; cursor:pointer; color:var(--color-cream); font-size:13px;';
         chip.innerHTML = `
-          <div style="width:32px;height:32px;border-radius:50%;background:var(--color-cream);color:var(--color-terracotta);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;">${initial}</div>
-          <span>${currentProfile.full_name}</span>
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--color-cream);color:var(--color-terracotta);display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:14px;overflow:hidden;">
+            ${avatarUrl ? `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+          </div>
+          <span class="user-chip-name">${fullName}</span>
+          <span style="font-size: 10px; opacity: 0.7;">▼</span>
+
+          <!-- Dropdown menu (hidden by default) -->
+          <div class="user-dropdown" style="display:none; position:absolute; top:calc(100% + 8px); left:0; right:0; background:white; border-radius:12px; box-shadow:0 8px 24px rgba(0,0,0,0.15); padding:8px; min-width:200px; z-index:1000;">
+            <div class="user-dropdown-item" data-action="profile" style="padding:10px 12px; color:#333; cursor:pointer; border-radius:8px; font-size:14px; display:flex; align-items:center; gap:8px;">
+              <span>👤</span> הפרופיל שלי
+            </div>
+            <div class="user-dropdown-item" data-action="guides" style="padding:10px 12px; color:#333; cursor:pointer; border-radius:8px; font-size:14px; display:flex; align-items:center; gap:8px;">
+              <span>💎</span> רישום כמדריך
+            </div>
+            <div style="height:1px; background:#eee; margin:4px 0;"></div>
+            <div class="user-dropdown-item" data-action="logout" style="padding:10px 12px; color:#d4583a; cursor:pointer; border-radius:8px; font-size:14px; display:flex; align-items:center; gap:8px;">
+              <span>🚪</span> התנתק
+            </div>
+          </div>
         `;
-        chip.addEventListener('click', () => navigate('profile'));
         headerActions.insertBefore(chip, btn);
+
+        // Toggle dropdown on chip click
+        const dropdown = chip.querySelector('.user-dropdown');
+        chip.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Close dropdown on outside click
+        document.addEventListener('click', () => {
+          if (dropdown) dropdown.style.display = 'none';
+        });
+
+        // Handle dropdown actions
+        chip.querySelectorAll('.user-dropdown-item').forEach(item => {
+          item.addEventListener('mouseenter', () => item.style.background = '#f9f5ed');
+          item.addEventListener('mouseleave', () => item.style.background = '');
+          item.addEventListener('click', async (e) => {
+            e.stopPropagation();
+            const action = item.dataset.action;
+            dropdown.style.display = 'none';
+
+            if (action === 'profile') {
+              navigate('profile');
+            } else if (action === 'guides') {
+              navigate('guide-register');
+            } else if (action === 'logout') {
+              if (!confirm('להתנתק מהאתר?')) return;
+              try {
+                await api.signOut();
+                showToast('👋 התנתקת בהצלחה');
+                setTimeout(() => window.location.reload(), 800);
+              } catch (err) {
+                showToast('❌ שגיאה בהתנתקות');
+              }
+            }
+          });
+        });
+      } else {
+        // User not logged in - show login button
+        if (loginBtn) {
+          loginBtn.style.display = 'inline-flex';
+          loginBtn.onclick = () => openModal('modal-login');
+        }
       }
 
       // Check if user is admin and show admin link
@@ -4529,6 +4605,36 @@
           } else {
             avatarEl.textContent = initial;
           }
+        }
+
+        // Setup logout button
+        const logoutBtn = document.getElementById('btn-profile-logout');
+        if (logoutBtn) {
+          logoutBtn.onclick = async () => {
+            if (!confirm('להתנתק מהאתר?')) return;
+            try {
+              await api.signOut();
+              showToast('👋 התנתקת בהצלחה');
+              setTimeout(() => window.location.reload(), 800);
+            } catch (err) {
+              showToast('❌ שגיאה בהתנתקות');
+            }
+          };
+        }
+      } else {
+        // Not logged in - show login prompt
+        const nameEl = document.getElementById('profile-name');
+        if (nameEl) nameEl.textContent = 'לא מחובר';
+        const locEl = document.getElementById('profile-location');
+        if (locEl) locEl.textContent = 'התחבר כדי לראות את הפרופיל שלך';
+
+        const logoutBtn = document.getElementById('btn-profile-logout');
+        if (logoutBtn) {
+          logoutBtn.textContent = '🔑 התחבר';
+          logoutBtn.style.background = 'var(--color-terracotta)';
+          logoutBtn.style.color = 'white';
+          logoutBtn.style.borderColor = 'var(--color-terracotta)';
+          logoutBtn.onclick = () => openModal('modal-login');
         }
       }
 
@@ -5819,7 +5925,14 @@
       });
 
       // Open create plan modal
-      document.getElementById('btn-create-plan').addEventListener('click', () => openModal('modal-create'));
+      document.getElementById('btn-create-plan').addEventListener('click', () => {
+        if (SUPABASE_ENABLED && !currentUser) {
+          showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
+          openModal('modal-login');
+          return;
+        }
+        openModal('modal-create');
+      });
 
       // Footer "create plan" link
       document.querySelectorAll('[data-action="create-plan"]').forEach(el => {
