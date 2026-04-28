@@ -2452,16 +2452,24 @@
       </section>
 
       <div class="filter-bar">
-        <div class="filter-bar-inner">
-          <span class="filter-label">סנן:</span>
-          <button class="filter-chip active" data-filter="all">הכל</button>
-          <button class="filter-chip" data-filter="desert">🏜️ מדבר</button>
-          <button class="filter-chip" data-filter="sea">🌊 ים</button>
-          <button class="filter-chip" data-filter="north">🏔️ צפון</button>
-          <button class="filter-chip" data-filter="jerusalem">🏛️ ירושלים</button>
-          <button class="filter-chip" data-filter="family">👨‍👩‍👧 משפחות</button>
-          <button class="filter-chip" data-filter="backpacker">🎒 תרמיל</button>
-          <button class="filter-chip" data-filter="tourist">✈️ תיירים</button>
+        <div class="filter-bar-inner" style="flex-wrap: wrap; gap: 12px; padding: 16px 24px;">
+          <!-- Hierarchy filter dropdowns -->
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <span class="filter-label" style="font-weight: 600;">📍 מיקום:</span>
+            <select id="filter-country" class="form-select" style="padding: 6px 12px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; cursor: pointer;">
+              <option value="">כל המדינות</option>
+              <option value="CY">🇨🇾 קפריסין</option>
+              <option value="IL">🇮🇱 ישראל</option>
+              <option value="GR">🇬🇷 יוון</option>
+            </select>
+            <select id="filter-city" class="form-select" style="padding: 6px 12px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; cursor: pointer;">
+              <option value="">כל הערים</option>
+            </select>
+            <select id="filter-topic" class="form-select" style="padding: 6px 12px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; cursor: pointer;">
+              <option value="">כל הנושאים</option>
+            </select>
+            <button id="btn-clear-filters" style="background: transparent; color: #777; border: none; cursor: pointer; font-size: 13px; padding: 6px 12px;">🔄 נקה</button>
+          </div>
         </div>
       </div>
 
@@ -3169,6 +3177,72 @@
           <label class="form-label">לאן הולכים?</label>
           <input type="text" class="form-input" placeholder="למשל: מכתש רמון, יפו, חרמון...">
         </div>
+
+        <!-- Country/City/Topic selectors -->
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">🌍 מדינה</label>
+            <select class="form-select" id="create-country">
+              <option value="CY">🇨🇾 קפריסין</option>
+              <option value="IL">🇮🇱 ישראל</option>
+              <option value="GR">🇬🇷 יוון</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">📍 עיר</label>
+            <select class="form-select" id="create-city">
+              <option value="limassol">לימסול</option>
+              <option value="larnaca">לרנקה</option>
+              <option value="nicosia">ניקוסיה</option>
+              <option value="paphos">פאפוס</option>
+              <option value="tel-aviv">תל אביב</option>
+              <option value="jerusalem">ירושלים</option>
+              <option value="haifa">חיפה</option>
+              <option value="eilat">אילת</option>
+              <option value="athens">אתונה</option>
+              <option value="other">אחר</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">🏷️ נושא ראשי</label>
+          <select class="form-select" id="create-topic">
+            <option value="">בחר נושא...</option>
+            <optgroup label="🏃 ספורט">
+              <option value="running">🏃 ריצה</option>
+              <option value="cycling">🚴 רכיבה</option>
+              <option value="football">⚽ כדורגל</option>
+              <option value="basketball">🏀 כדורסל</option>
+              <option value="swimming">🏊 שחייה</option>
+              <option value="yoga">🧘 יוגה</option>
+              <option value="hiking">🥾 טיולים</option>
+              <option value="beach">🏖️ חוף</option>
+              <option value="climbing">🧗 טיפוס</option>
+              <option value="diving">🤿 צלילה</option>
+            </optgroup>
+            <optgroup label="🍻 חברתי">
+              <option value="beer">🍻 בירה</option>
+              <option value="coffee">☕ קפה</option>
+              <option value="sunset">🌅 שקיעה</option>
+              <option value="language">🗣️ שפות</option>
+              <option value="networking">🤝 נטוורקינג</option>
+              <option value="family">👨‍👩‍👧 משפחתי</option>
+            </optgroup>
+            <optgroup label="🎨 תרבות">
+              <option value="food">🍽️ אוכל ומסעדות</option>
+              <option value="photo">📷 צילום</option>
+              <option value="music">🎵 מוזיקה</option>
+            </optgroup>
+            <optgroup label="✈️ טיולים">
+              <option value="travel">✈️ טיולי שטח</option>
+              <option value="roadtrip">🚗 רוד-טריפ</option>
+              <option value="camping">🏕️ קמפינג</option>
+            </optgroup>
+            <option value="other">✨ אחר</option>
+          </select>
+        </div>
+
         <div class="form-group">
           <label class="form-label">איזה סוג תוכנית?</label>
           <div class="chip-group" data-chip-group="type">
@@ -3617,6 +3691,10 @@
           difficulty: planData.difficulty,
           meeting_point: planData.meetingPoint,
           categories: planData.categories || [],
+          // Hierarchical fields
+          country: planData.country || 'CY',
+          city: planData.city || null,
+          topic: planData.topic || null,
           // Paid plan fields
           is_paid: planData.isPaid || false,
           price: planData.price || null,
@@ -4148,6 +4226,86 @@
         } catch (err) {
           console.error('fetchAllUsers error:', err);
           return [];
+        }
+      },
+
+      // =================================================
+      // HIERARCHY API - מבנה היררכי: מדינה > עיר > נושא
+      // =================================================
+
+      async fetchTopics() {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          const { data } = await sb
+            .from('topics')
+            .select('*')
+            .order('sort_order', { ascending: true });
+          return data || [];
+        } catch (err) {
+          console.error('fetchTopics error:', err);
+          return [];
+        }
+      },
+
+      async fetchAvailableCities() {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          const { data } = await sb
+            .from('plans')
+            .select('city, country')
+            .eq('status', 'active')
+            .not('city', 'is', null);
+
+          const cityMap = {};
+          (data || []).forEach(p => {
+            const key = `${p.country}:${p.city}`;
+            cityMap[key] = (cityMap[key] || 0) + 1;
+          });
+
+          return Object.entries(cityMap).map(([key, count]) => {
+            const [country, city] = key.split(':');
+            return { country, city, count };
+          }).sort((a, b) => b.count - a.count);
+        } catch (err) {
+          console.error('fetchAvailableCities error:', err);
+          return [];
+        }
+      },
+
+      async fetchPlansFiltered({ country, city, topic } = {}) {
+        if (!SUPABASE_ENABLED) return PLANS;
+        try {
+          let query = sb
+            .from('plans')
+            .select('*')
+            .eq('status', 'active');
+
+          if (country) query = query.eq('country', country);
+          if (city) query = query.eq('city', city);
+          if (topic) query = query.eq('topic', topic);
+
+          const { data: plans, error } = await query.order('start_date', { ascending: true });
+
+          if (error) {
+            console.error('fetchPlansFiltered error:', error);
+            return PLANS;
+          }
+
+          if (!plans || plans.length === 0) return [];
+
+          const creatorIds = [...new Set(plans.map(p => p.creator_id))];
+          const { data: creators } = await sb
+            .from('profiles')
+            .select('id, full_name, avatar_url, city, is_verified, bio')
+            .in('id', creatorIds);
+
+          const creatorMap = {};
+          (creators || []).forEach(c => { creatorMap[c.id] = c; });
+
+          return plans.map(p => transformPlanFromDB({ ...p, creator: creatorMap[p.creator_id] }));
+        } catch (err) {
+          console.error('fetchPlansFiltered error:', err);
+          return PLANS;
         }
       },
 
@@ -5823,22 +5981,123 @@
     // ============================================================
     // FILTERS
     // ============================================================
-    function setupFilters() {
-      const chips = document.querySelectorAll('.filter-chip');
-      chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-          chips.forEach(c => c.classList.remove('active'));
-          chip.classList.add('active');
-          const filter = chip.dataset.filter;
-          document.querySelectorAll('#plans-grid .plan-card').forEach(card => {
-            if (filter === 'all') {
-              card.style.display = '';
-            } else {
-              const cats = card.dataset.categories || '';
-              card.style.display = cats.includes(filter) ? '' : 'none';
-            }
+    async function setupFilters() {
+      const filterCountry = document.getElementById('filter-country');
+      const filterCity = document.getElementById('filter-city');
+      const filterTopic = document.getElementById('filter-topic');
+      const btnClear = document.getElementById('btn-clear-filters');
+
+      if (!filterCountry || !filterCity || !filterTopic) return;
+
+      // Load topics
+      try {
+        const topics = await api.fetchTopics();
+        if (topics.length > 0) {
+          // Group topics by category
+          const grouped = {};
+          topics.forEach(t => {
+            if (!grouped[t.category]) grouped[t.category] = [];
+            grouped[t.category].push(t);
           });
-        });
+
+          let html = '<option value="">כל הנושאים</option>';
+          const categoryNames = {
+            sport: '🏃 ספורט',
+            social: '🍻 חברתי',
+            food: '🍽️ אוכל',
+            culture: '🎨 תרבות',
+            travel: '✈️ טיולים',
+            other: '✨ אחר',
+          };
+          Object.keys(grouped).forEach(cat => {
+            html += `<optgroup label="${categoryNames[cat] || cat}">`;
+            grouped[cat].forEach(t => {
+              html += `<option value="${t.id}">${t.emoji} ${t.name_he}</option>`;
+            });
+            html += '</optgroup>';
+          });
+          filterTopic.innerHTML = html;
+        }
+      } catch (e) { console.error('Topics load failed:', e); }
+
+      // Load cities (dynamic based on country)
+      const loadCities = async () => {
+        const country = filterCountry.value;
+        try {
+          const cities = await api.fetchAvailableCities();
+          const filtered = country ? cities.filter(c => c.country === country) : cities;
+
+          // City name translations
+          const cityNames = {
+            'limassol': '📍 לימסול',
+            'larnaca': '📍 לרנקה',
+            'nicosia': '📍 ניקוסיה',
+            'paphos': '📍 פאפוס',
+            'tel-aviv': '📍 תל אביב',
+            'jerusalem': '📍 ירושלים',
+            'haifa': '📍 חיפה',
+            'eilat': '📍 אילת',
+            'athens': '📍 אתונה',
+          };
+
+          let html = '<option value="">כל הערים</option>';
+          filtered.forEach(c => {
+            const name = cityNames[c.city] || `📍 ${c.city}`;
+            html += `<option value="${c.city}">${name} (${c.count})</option>`;
+          });
+          filterCity.innerHTML = html;
+        } catch (e) { console.error('Cities load failed:', e); }
+      };
+      await loadCities();
+
+      // Apply filters
+      const applyFilters = async () => {
+        const country = filterCountry.value || null;
+        const city = filterCity.value || null;
+        const topic = filterTopic.value || null;
+
+        // Update URL hash for sharing
+        const params = [];
+        if (country) params.push(`country=${country}`);
+        if (city) params.push(`city=${city}`);
+        if (topic) params.push(`topic=${topic}`);
+
+        const grid = document.getElementById('plans-grid');
+        if (grid) {
+          grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">מסנן תוכניות...</div>';
+
+          const plans = await api.fetchPlansFiltered({ country, city, topic });
+
+          if (plans.length === 0) {
+            grid.innerHTML = `
+              <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: rgba(212, 88, 58, 0.05); border-radius: 16px;">
+                <div style="font-size: 64px; margin-bottom: 16px;">🔍</div>
+                <h3 style="color: var(--color-terracotta); margin-bottom: 8px;">לא נמצאו תוכניות</h3>
+                <p style="color: #777;">נסה לשנות את המסננים או היה הראשון לפרסם תוכנית כאן!</p>
+              </div>
+            `;
+          } else {
+            grid.innerHTML = plans.map(p => renderPlanCard(p)).join('');
+            attachPlanCardListeners();
+          }
+        }
+      };
+
+      filterCountry.addEventListener('change', async () => {
+        filterCity.value = '';
+        await loadCities();
+        await applyFilters();
+      });
+
+      filterCity.addEventListener('change', applyFilters);
+      filterTopic.addEventListener('change', applyFilters);
+
+      btnClear.addEventListener('click', async () => {
+        filterCountry.value = '';
+        filterCity.value = '';
+        filterTopic.value = '';
+        await loadCities();
+        await applyFilters();
       });
     }
 
@@ -6052,6 +6311,11 @@
             } catch (e) {}
           }
 
+          // Get hierarchical fields
+          const country = document.getElementById('create-country')?.value || 'CY';
+          const city = document.getElementById('create-city')?.value || 'limassol';
+          const topic = document.getElementById('create-topic')?.value || 'other';
+
           const planData = {
             title: titleInput,
             description: descInput || titleInput,
@@ -6063,6 +6327,9 @@
             tag: isPaid ? '💎 מקצועי' : '✦ חדש',
             type: 'טיול',
             categories: isPaid ? ['paid', 'guide'] : [],
+            country: country,
+            city: city,
+            topic: topic,
             ...paidFields,
           };
 
