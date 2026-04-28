@@ -3846,7 +3846,11 @@
           };
 
           console.log('🚀 Calling api.createPlan with:', planData);
-          const result = await api.createPlan(planData);
+          // Race the API call against a timeout
+          const result = await Promise.race([
+            api.createPlan(planData),
+            new Promise((_, reject) => setTimeout(() => reject(new Error('Request timeout - took too long')), 10000))
+          ]);
           console.log('✅ Plan created:', result);
 
           closeModal('modal-create');
