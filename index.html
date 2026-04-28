@@ -3970,12 +3970,30 @@
       if (!plan) plan = await api.fetchPlanById(id);
       if (!plan) return navigate('home');
 
-      const progress = (plan.joined / plan.spots) * 100;
-      const joinedListHtml = plan.joinedList.length === 0
-        ? '<p style="font-size: 13px; color: var(--color-stone); padding: 16px; text-align: center; background: var(--color-cream-warm); border-radius: var(--radius-md);">עדיין אין מצטרפים. תהיה הראשון!</p>'
-        : plan.joinedList.map(j => `
+      // Fetch approved members from database (real data)
+      let approvedMembers = [];
+      if (typeof id === 'string' && id.length > 10) {
+        // Real plan from DB - fetch members
+        approvedMembers = await api.fetchApprovedMembers(id);
+      }
+
+      // Build joined list HTML - prefer real members, fallback to plan.joinedList for demo
+      const realJoined = approvedMembers.length > 0 ? approvedMembers.map(m => ({
+        initial: (m.full_name || 'M').charAt(0).toUpperCase(),
+        avatarClass: 'av-' + ((m.full_name || '').charCodeAt(0) % 5 + 1),
+        name: m.full_name || 'משתמש',
+        bio: m.city || 'חבר/ה בקהילה',
+        avatar_url: m.avatar_url
+      })) : (plan.joinedList || []);
+
+      const progress = (realJoined.length / plan.spots) * 100;
+      const joinedListHtml = realJoined.length === 0
+        ? '<p style="font-size: 13px; color: var(--color-stone); padding: 16px; text-align: center; background: var(--color-cream-warm); border-radius: var(--radius-md);">עדיין אין מצטרפים מאושרים. תהיה הראשון!</p>'
+        : realJoined.map(j => `
             <div class="joined-item">
-              <div class="creator-avatar ${j.avatarClass}">${j.initial}</div>
+              <div class="creator-avatar ${j.avatarClass}" style="overflow: hidden;">
+                ${j.avatar_url ? `<img src="${j.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : j.initial}
+              </div>
               <div class="joined-info">
                 <div class="joined-name">${j.name}</div>
                 <div class="joined-bio">${j.bio}</div>
@@ -4048,7 +4066,7 @@
 
               <div class="detail-spots">
                 <span class="detail-spots-label">מקומות פנויים</span>
-                <span class="detail-spots-value">${plan.spots - plan.joined}/${plan.spots}</span>
+                <span class="detail-spots-value">${plan.spots - realJoined.length}/${plan.spots}</span>
               </div>
 
               <div class="progress-bar">
