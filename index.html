@@ -1491,43 +1491,86 @@
       .logo { font-size: 24px; }
 
       .hero { padding: 48px 20px 32px; }
-      .hero-stats { gap: 24px; }
+      .hero h1 { font-size: clamp(36px, 8vw, 56px); }
+      .hero p { font-size: 16px; }
+      .hero-stats { gap: 24px; flex-wrap: wrap; }
       .hero-stat-divider { display: none; }
 
       .filter-bar-inner { padding: 0 20px; }
+      .filter-chips { flex-wrap: wrap; gap: 8px; }
       .plans-section { padding: 32px 20px 48px; }
       .plans-grid { grid-template-columns: 1fr; gap: 20px; }
+      .plans-section-header { flex-direction: column; align-items: flex-start; gap: 8px; }
 
       .footer-inner { grid-template-columns: 1fr 1fr; gap: 32px; }
       .footer-bottom { flex-direction: column; text-align: center; }
 
       .how-section { padding: 48px 20px; }
       .how-title { font-size: 32px; }
+      .how-grid { grid-template-columns: 1fr; gap: 32px; }
 
       .detail-grid { grid-template-columns: 1fr; gap: 24px; }
       .detail-sidebar { position: static; }
       .plan-detail { padding: 20px; }
+      .detail-hero { height: 240px; }
+      .detail-hero-title { font-size: clamp(28px, 7vw, 48px); }
       .detail-hero-overlay { right: 20px; left: 20px; bottom: 16px; }
+      .detail-meta-grid { grid-template-columns: 1fr; gap: 12px; }
 
       .profile-page { padding: 20px; }
       .profile-header {
         grid-template-columns: 1fr;
         text-align: center;
         padding: 24px;
+        gap: 20px;
       }
-      .profile-stats { justify-content: center; }
-      .profile-info-meta { justify-content: center; }
+      .profile-avatar { margin: 0 auto; }
+      .profile-stats { justify-content: center; gap: 24px; }
+      .profile-info-meta { justify-content: center; flex-wrap: wrap; }
+      .profile-tabs { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; }
+      .profile-tab { white-space: nowrap; flex-shrink: 0; }
 
       .about-page { padding: 48px 20px; }
+      .about-page h1 { font-size: 36px; }
+      .timeline-values { gap: 24px; }
 
       .form-row { grid-template-columns: 1fr; }
+      .modal { width: calc(100% - 24px); max-width: 600px; max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
       .modal-header, .modal-body, .modal-footer { padding-left: 20px; padding-right: 20px; }
+
+      /* KPI section */
+      .kpi-grid { grid-template-columns: 1fr; gap: 16px; }
+
+      /* Testimonials */
+      .testimonials-grid { grid-template-columns: 1fr; }
+
+      /* Pricing */
+      .pricing-grid { grid-template-columns: 1fr; gap: 24px; }
+      .pricing-card.featured { transform: none; }
+
+      /* FAQ */
+      .faq-section { padding: 48px 20px; }
+
+      /* CTA */
+      .cta-final { padding: 64px 20px; }
+      .cta-final h2 { font-size: 32px; }
+      .cta-form-grid { grid-template-columns: 1fr; }
+
+      /* Partners */
+      .partners-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
     }
 
     @media (max-width: 480px) {
       .footer-inner { grid-template-columns: 1fr; }
       .modal-footer { flex-direction: column-reverse; }
       .modal-footer .btn-join-large { width: 100%; }
+      .modal-footer .btn-secondary { width: 100%; }
+      .partners-grid { grid-template-columns: repeat(2, 1fr); }
+      .hero-stats { gap: 16px; }
+      .hero-stat-num { font-size: 32px; }
+      .filter-chip { font-size: 12px; padding: 6px 12px; }
+      .request-item { padding: 14px !important; }
+      .joined-item { flex-direction: column; align-items: flex-start; gap: 8px; }
     }
 
     /* ============================================================
@@ -3205,6 +3248,32 @@
         return data;
       },
 
+      async updatePlan(planId, planData) {
+        if (!SUPABASE_ENABLED) return { success: true };
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const { error } = await sb.from('plans').update({
+          title: planData.title,
+          description: planData.description,
+          long_description: planData.longDescription,
+          location: planData.location,
+          start_date: planData.startDate,
+          spots_total: planData.spotsTotal,
+        }).eq('id', planId);
+
+        if (error) throw error;
+        return { success: true };
+      },
+
+      async deletePlan(planId) {
+        if (!SUPABASE_ENABLED) return { success: true };
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const { error } = await sb.from('plans').delete().eq('id', planId);
+        if (error) throw error;
+        return { success: true };
+      },
+
       async sendJoinRequest(planId, message, reason) {
         if (!SUPABASE_ENABLED) {
           console.log('Demo mode: join request:', { planId, message, reason });
@@ -3437,13 +3506,14 @@
         meetingPoint: dbPlan.meeting_point,
         categories: (dbPlan.categories || []).join(' '),
         creator: dbPlan.creator ? {
+          id: dbPlan.creator.id,
           initial: dbPlan.creator.full_name?.charAt(0) || '?',
           avatarClass: 'av-' + (Math.floor(Math.random() * 8) + 1),
           name: dbPlan.creator.full_name,
           meta: dbPlan.creator.city || '',
           verified: dbPlan.creator.is_verified,
           bio: dbPlan.creator.bio || '',
-        } : { initial: '?', avatarClass: 'av-1', name: 'משתמש', meta: '', verified: false, bio: '' },
+        } : { id: dbPlan.creator_id, initial: '?', avatarClass: 'av-1', name: 'משתמש', meta: '', verified: false, bio: '' },
       };
     }
 
@@ -3970,6 +4040,9 @@
       if (!plan) plan = await api.fetchPlanById(id);
       if (!plan) return navigate('home');
 
+      // Check if this is MY plan (so I can edit/delete it)
+      const isMyPlan = SUPABASE_ENABLED && currentUser && plan.creator?.id === currentUser.id;
+
       // Fetch approved members from database (real data)
       let approvedMembers = [];
       if (typeof id === 'string' && id.length > 10) {
@@ -4073,8 +4146,13 @@
                 <div class="progress-fill" style="width: ${progress}%"></div>
               </div>
 
-              <button class="btn-join-large" id="detail-join-btn">שלח בקשת הצטרפות</button>
-              <button class="btn-secondary">📤 שתף תוכנית</button>
+              ${isMyPlan ? `
+                <button class="btn-join-large" id="detail-edit-btn" style="background: #555;">✏️ ערוך תוכנית</button>
+                <button class="btn-secondary" id="detail-delete-btn" style="border-color: #d4583a; color: #d4583a;">🗑️ מחק תוכנית</button>
+              ` : `
+                <button class="btn-join-large" id="detail-join-btn">שלח בקשת הצטרפות</button>
+                <button class="btn-secondary" id="detail-share-btn">📤 שתף תוכנית</button>
+              `}
             </div>
           </aside>
         </div>
@@ -4084,6 +4162,62 @@
       document.querySelector('[data-route="home"].back-link')?.addEventListener('click', () => navigate('home'));
       document.querySelector('.detail-creator-block')?.addEventListener('click', () => navigate('profile'));
       document.getElementById('detail-join-btn')?.addEventListener('click', () => openModal('modal-join'));
+
+      // Share button
+      document.getElementById('detail-share-btn')?.addEventListener('click', async () => {
+        const url = window.location.href;
+        try {
+          if (navigator.share) {
+            await navigator.share({ title: plan.title, text: 'יוצא לטיול דרך יאלה — בוא איתי!', url });
+          } else {
+            await navigator.clipboard.writeText(url);
+            showToast('✓ הלינק הועתק! שתף אותו בוואטסאפ');
+          }
+        } catch (e) { /* user cancelled */ }
+      });
+
+      // Edit button (only for plan owner)
+      document.getElementById('detail-edit-btn')?.addEventListener('click', () => {
+        // Pre-fill the create modal with current values
+        const inputs = document.querySelectorAll('#modal-create input, #modal-create textarea');
+        const select = document.querySelector('#modal-create select');
+        if (inputs[0]) inputs[0].value = plan.title || '';
+        if (inputs[1]) inputs[1].value = plan.startDate || '';
+        if (inputs[2]) inputs[2].value = plan.longDesc || plan.desc || '';
+
+        // Mark we're editing
+        window._editingPlanId = id;
+
+        // Change publish button text
+        const publishBtn = document.getElementById('btn-publish-plan');
+        if (publishBtn) publishBtn.textContent = 'עדכן תוכנית';
+
+        // Change modal title
+        const modalTitle = document.querySelector('#modal-create .modal-title');
+        if (modalTitle) modalTitle.textContent = 'ערוך תוכנית';
+
+        openModal('modal-create');
+      });
+
+      // Delete button (only for plan owner)
+      document.getElementById('detail-delete-btn')?.addEventListener('click', async () => {
+        if (!confirm(`למחוק את "${plan.title}" לצמיתות?\nכל הבקשות וההצטרפויות לתוכנית הזו יימחקו.`)) return;
+
+        const btn = document.getElementById('detail-delete-btn');
+        btn.textContent = 'מוחק...';
+        btn.disabled = true;
+
+        try {
+          await api.deletePlan(id);
+          showToast('🗑️ התוכנית נמחקה');
+          navigate('home');
+        } catch (err) {
+          console.error('Delete error:', err);
+          showToast('❌ שגיאה במחיקה: ' + err.message);
+          btn.textContent = '🗑️ מחק תוכנית';
+          btn.disabled = false;
+        }
+      });
     }
 
     // ============================================================
@@ -4120,6 +4254,18 @@
     function closeModal(id) {
       document.getElementById(id).classList.remove('active');
       document.body.style.overflow = '';
+
+      // Reset edit state when closing create modal
+      if (id === 'modal-create') {
+        window._editingPlanId = null;
+        const modalTitle = document.querySelector('#modal-create .modal-title');
+        if (modalTitle) modalTitle.textContent = 'פרסם תוכנית חדשה';
+        const publishBtn = document.getElementById('btn-publish-plan');
+        if (publishBtn) publishBtn.textContent = 'פרסם';
+        // Clear form
+        const inputs = document.querySelectorAll('#modal-create input, #modal-create textarea');
+        inputs.forEach(i => i.value = '');
+      }
     }
 
     function setupModals() {
@@ -4240,16 +4386,34 @@
             categories: [],
           };
 
-          console.log('🚀 Calling api.createPlan with:', planData);
-          // Race the API call against a timeout
-          const result = await Promise.race([
-            api.createPlan(planData),
-            new Promise((_, reject) => setTimeout(() => reject(new Error('Request timeout - took too long')), 10000))
-          ]);
-          console.log('✅ Plan created:', result);
+          console.log('🚀 Calling api...');
+          const editingId = window._editingPlanId;
+          let result;
+
+          if (editingId) {
+            // Update existing plan
+            result = await Promise.race([
+              api.updatePlan(editingId, planData),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Request timeout - took too long')), 10000))
+            ]);
+            console.log('✅ Plan updated:', result);
+            window._editingPlanId = null;
+          } else {
+            // Create new plan
+            result = await Promise.race([
+              api.createPlan(planData),
+              new Promise((_, reject) => setTimeout(() => reject(new Error('Request timeout - took too long')), 10000))
+            ]);
+            console.log('✅ Plan created:', result);
+          }
 
           closeModal('modal-create');
-          showToast('✓ התוכנית פורסמה בקהילה!');
+          showToast(editingId ? '✓ התוכנית עודכנה!' : '✓ התוכנית פורסמה בקהילה!');
+
+          // Reset modal title and button
+          const modalTitle = document.querySelector('#modal-create .modal-title');
+          if (modalTitle) modalTitle.textContent = 'פרסם תוכנית חדשה';
+
           await renderHomePlans();
         } catch (err) {
           console.error('❌ Plan creation error:', err);
