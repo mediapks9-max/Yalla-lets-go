@@ -3191,18 +3191,15 @@
           <div class="form-group">
             <label class="form-label">📍 עיר</label>
             <select class="form-select" id="create-city">
-              <option value="limassol">לימסול</option>
-              <option value="larnaca">לרנקה</option>
-              <option value="nicosia">ניקוסיה</option>
-              <option value="paphos">פאפוס</option>
-              <option value="tel-aviv">תל אביב</option>
-              <option value="jerusalem">ירושלים</option>
-              <option value="haifa">חיפה</option>
-              <option value="eilat">אילת</option>
-              <option value="athens">אתונה</option>
-              <option value="other">אחר</option>
+              <!-- Cities will be populated dynamically based on country -->
             </select>
           </div>
+        </div>
+
+        <!-- Custom city input (shown only when "other" selected) -->
+        <div class="form-group" id="custom-city-group" style="display: none;">
+          <label class="form-label">✍️ שם העיר</label>
+          <input type="text" class="form-input" id="custom-city" placeholder="הזן שם עיר...">
         </div>
 
         <div class="form-group">
@@ -6027,18 +6024,13 @@
           const cities = await api.fetchAvailableCities();
           const filtered = country ? cities.filter(c => c.country === country) : cities;
 
-          // City name translations
-          const cityNames = {
-            'limassol': '📍 לימסול',
-            'larnaca': '📍 לרנקה',
-            'nicosia': '📍 ניקוסיה',
-            'paphos': '📍 פאפוס',
-            'tel-aviv': '📍 תל אביב',
-            'jerusalem': '📍 ירושלים',
-            'haifa': '📍 חיפה',
-            'eilat': '📍 אילת',
-            'athens': '📍 אתונה',
-          };
+          // Build city name lookup from CITIES_BY_COUNTRY
+          const cityNames = {};
+          Object.values(CITIES_BY_COUNTRY).forEach(countryList => {
+            countryList.forEach(city => {
+              cityNames[city.value] = city.label;
+            });
+          });
 
           let html = '<option value="">כל הערים</option>';
           filtered.forEach(c => {
@@ -6111,6 +6103,7 @@
       // Special: if opening create plan modal, check if user is approved guide
       if (id === 'modal-create') {
         checkAndShowPaidSection();
+        setupCountryCityDropdowns();
       }
     }
     window.openModal = openModal; // Make available globally for inline onclick
@@ -6144,6 +6137,90 @@
       } catch (err) {
         section.style.display = 'none';
       }
+    }
+
+    // ============================================================
+    // CITIES DATABASE - הגדרת רשימת ערים לפי מדינה
+    // ============================================================
+    const CITIES_BY_COUNTRY = {
+      CY: [
+        { value: 'limassol', label: '🏖️ לימסול / Limassol' },
+        { value: 'nicosia', label: '🏛️ ניקוסיה / Nicosia' },
+        { value: 'larnaca', label: '✈️ לרנקה / Larnaca' },
+        { value: 'paphos', label: '🌅 פאפוס / Paphos' },
+        { value: 'ayia-napa', label: '🌴 איה נאפה / Ayia Napa' },
+        { value: 'protaras', label: '🐠 פרוטרס / Protaras' },
+        { value: 'troodos', label: '🏔️ הרי טרודוס / Troodos' },
+        { value: 'other-cy', label: '✍️ עיר אחרת בקפריסין' },
+      ],
+      IL: [
+        { value: 'tel-aviv', label: '🌆 תל אביב' },
+        { value: 'jerusalem', label: '🏛️ ירושלים' },
+        { value: 'haifa', label: '⚓ חיפה' },
+        { value: 'eilat', label: '🐠 אילת' },
+        { value: 'beer-sheva', label: '🏜️ באר שבע' },
+        { value: 'netanya', label: '🌊 נתניה' },
+        { value: 'herzliya', label: '🏖️ הרצליה' },
+        { value: 'ashdod', label: '⛵ אשדוד' },
+        { value: 'raanana', label: '🌳 רעננה' },
+        { value: 'ramat-gan', label: '🏙️ רמת גן' },
+        { value: 'modiin', label: '🏘️ מודיעין' },
+        { value: 'tzfat', label: '🕯️ צפת' },
+        { value: 'tiberias', label: '🌅 טבריה' },
+        { value: 'ramon-crater', label: '🏜️ מכתש רמון' },
+        { value: 'dead-sea', label: '🧂 ים המלח' },
+        { value: 'other-il', label: '✍️ עיר אחרת בישראל' },
+      ],
+      GR: [
+        { value: 'athens', label: '🏛️ אתונה / Athens' },
+        { value: 'thessaloniki', label: '🌃 סלוניקי / Thessaloniki' },
+        { value: 'rhodes', label: '🏝️ רודוס / Rhodes' },
+        { value: 'santorini', label: '🌅 סנטוריני / Santorini' },
+        { value: 'mykonos', label: '🌊 מיקונוס / Mykonos' },
+        { value: 'corfu', label: '🌳 קורפו / Corfu' },
+        { value: 'crete-heraklion', label: '🏛️ הרקליון, כרתים' },
+        { value: 'crete-chania', label: '🌊 חניה, כרתים' },
+        { value: 'patras', label: '⚓ פטראס / Patras' },
+        { value: 'meteora', label: '⛰️ מטאורה / Meteora' },
+        { value: 'other-gr', label: '✍️ עיר אחרת ביוון' },
+      ],
+    };
+
+    // טען ערים בDropdown לפי מדינה נבחרת
+    function populateCitiesDropdown(country, selectId, defaultValue = null) {
+      const select = document.getElementById(selectId);
+      if (!select) return;
+
+      const cities = CITIES_BY_COUNTRY[country] || [];
+      select.innerHTML = cities.map(c =>
+        `<option value="${c.value}" ${defaultValue === c.value ? 'selected' : ''}>${c.label}</option>`
+      ).join('');
+    }
+
+    // האזן לשינוי במדינה במודאל יצירה
+    function setupCountryCityDropdowns() {
+      const countrySelect = document.getElementById('create-country');
+      const citySelect = document.getElementById('create-city');
+      const customCityGroup = document.getElementById('custom-city-group');
+
+      if (!countrySelect || !citySelect) return;
+
+      // טען ערים ראשוניות
+      populateCitiesDropdown(countrySelect.value, 'create-city');
+
+      // האזן לשינוי במדינה
+      countrySelect.onchange = () => {
+        populateCitiesDropdown(countrySelect.value, 'create-city');
+        if (customCityGroup) customCityGroup.style.display = 'none';
+      };
+
+      // האזן לבחירת "אחר"
+      citySelect.onchange = () => {
+        const isOther = citySelect.value.startsWith('other-');
+        if (customCityGroup) {
+          customCityGroup.style.display = isOther ? 'block' : 'none';
+        }
+      };
     }
 
     function closeModal(id) {
@@ -6313,7 +6390,22 @@
 
           // Get hierarchical fields
           const country = document.getElementById('create-country')?.value || 'CY';
-          const city = document.getElementById('create-city')?.value || 'limassol';
+          let city = document.getElementById('create-city')?.value || 'limassol';
+
+          // If "other" was selected, use the custom city input
+          if (city.startsWith('other-')) {
+            const customCity = document.getElementById('custom-city')?.value?.trim();
+            if (!customCity) {
+              showToast('⚠️ אנא הזן שם עיר');
+              btn.textContent = originalText;
+              btn.disabled = false;
+              btn.style.opacity = '';
+              return;
+            }
+            // Use slugified custom city name
+            city = customCity.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+          }
+
           const topic = document.getElementById('create-topic')?.value || 'other';
 
           const planData = {
