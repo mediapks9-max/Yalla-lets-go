@@ -2406,6 +2406,7 @@
         <span class="nav-link" data-route="profile">הפרופיל שלי</span>
         <span class="nav-link" data-route="guides">💎 מדריכים</span>
         <span class="nav-link" data-route="about">איך זה עובד</span>
+        <span class="nav-link" id="nav-admin" data-route="admin" style="display: none; color: #d4583a; font-weight: 600;">🛡️ אדמין</span>
       </nav>
       <div class="header-actions">
         <span class="lang-switch">EN</span>
@@ -3044,6 +3045,65 @@
       </div>
     </div>
 
+    <!-- ============================ ADMIN PAGE ============================ -->
+    <div class="page" data-page="admin">
+      <div class="admin-page" style="max-width: 1400px; margin: 0 auto; padding: 40px 20px;">
+        <div id="admin-not-authorized" style="display: none; text-align: center; padding: 80px 20px;">
+          <div style="font-size: 64px; margin-bottom: 16px;">🚫</div>
+          <h1 style="color: #d4583a; margin-bottom: 12px;">אין לך הרשאת אדמין</h1>
+          <p style="color: #777;">העמוד הזה זמין רק למנהלי הפלטפורמה</p>
+          <button class="btn-join-large" data-route="home" style="margin-top: 24px;">חזרה לעמוד הבית</button>
+        </div>
+
+        <div id="admin-content" style="display: none;">
+          <!-- Header -->
+          <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 32px; border-radius: 24px; margin-bottom: 32px;">
+            <h1 style="margin: 0 0 8px 0; font-size: 36px;">🛡️ דשבורד אדמין</h1>
+            <p style="margin: 0; opacity: 0.8;">ניהול הפלטפורמה - מדריכים, משתמשים, הזמנות, סטטיסטיקות</p>
+          </div>
+
+          <!-- Tabs -->
+          <div class="profile-tabs" style="margin-bottom: 24px;">
+            <button class="profile-tab active" data-admin-tab="overview">📊 סקירה כללית</button>
+            <button class="profile-tab" data-admin-tab="pending-guides">⏳ מדריכים ממתינים <span id="admin-pending-badge" style="display:none; background: #d4583a; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-right: 4px;"></span></button>
+            <button class="profile-tab" data-admin-tab="all-guides">💎 כל המדריכים</button>
+            <button class="profile-tab" data-admin-tab="all-users">👥 משתמשים</button>
+            <button class="profile-tab" data-admin-tab="all-bookings">💳 הזמנות</button>
+          </div>
+
+          <!-- Overview tab -->
+          <div class="admin-tab-content active" data-admin-content="overview">
+            <div id="admin-stats-grid"></div>
+          </div>
+
+          <!-- Pending guides tab -->
+          <div class="admin-tab-content" data-admin-content="pending-guides" style="display: none;">
+            <div id="admin-pending-guides-list"></div>
+          </div>
+
+          <!-- All guides tab -->
+          <div class="admin-tab-content" data-admin-content="all-guides" style="display: none;">
+            <div id="admin-all-guides-list"></div>
+          </div>
+
+          <!-- Users tab -->
+          <div class="admin-tab-content" data-admin-content="all-users" style="display: none;">
+            <div id="admin-users-list"></div>
+          </div>
+
+          <!-- Bookings tab -->
+          <div class="admin-tab-content" data-admin-content="all-bookings" style="display: none;">
+            <div id="admin-bookings-list"></div>
+          </div>
+        </div>
+
+        <div id="admin-loading" style="text-align: center; padding: 80px 20px; color: #999;">
+          <div style="font-size: 32px; margin-bottom: 16px;">⏳</div>
+          <p>בודק הרשאות...</p>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <!-- ============================ FOOTER ============================ -->
@@ -3344,7 +3404,7 @@
       return data;
     }
 
-    function updateAuthUI() {
+    async function updateAuthUI() {
       // Update header to show user name or login button
       const btn = document.getElementById('btn-create-plan');
       const headerActions = document.querySelector('.header-actions');
@@ -3365,6 +3425,17 @@
         `;
         chip.addEventListener('click', () => navigate('profile'));
         headerActions.insertBefore(chip, btn);
+      }
+
+      // Check if user is admin and show admin link
+      const adminLink = document.getElementById('nav-admin');
+      if (adminLink) {
+        if (currentUser) {
+          const isAdmin = await api.checkIsAdmin();
+          adminLink.style.display = isAdmin ? 'inline-flex' : 'none';
+        } else {
+          adminLink.style.display = 'none';
+        }
       }
     }
 
@@ -3844,6 +3915,215 @@
         return { success: true };
       },
 
+      // =================================================
+      // ADMIN API - ניהול אדמין
+      // =================================================
+
+      // האם המשתמש הנוכחי הוא אדמין?
+      async checkIsAdmin() {
+        if (!SUPABASE_ENABLED || !currentUser) return false;
+        try {
+          const { data } = await sb
+            .from('profiles')
+            .select('is_admin')
+            .eq('id', currentUser.id)
+            .single();
+          return data?.is_admin === true;
+        } catch (err) {
+          return false;
+        }
+      },
+
+      // טען את כל הסטטיסטיקות הכלליות (רק לאדמין)
+      async fetchAdminStats() {
+        if (!SUPABASE_ENABLED) return null;
+        try {
+          // Count users
+          const { count: usersCount } = await sb
+            .from('profiles')
+            .select('*', { count: 'exact', head: true });
+
+          // Count guides by status
+          const { data: guides } = await sb
+            .from('guides')
+            .select('status');
+          const guideCounts = {
+            total: (guides || []).length,
+            pending: (guides || []).filter(g => g.status === 'pending').length,
+            approved: (guides || []).filter(g => g.status === 'approved').length,
+            rejected: (guides || []).filter(g => g.status === 'rejected').length,
+          };
+
+          // Count plans (paid vs free)
+          const { data: plans } = await sb
+            .from('plans')
+            .select('is_paid, price');
+          const plansCount = {
+            total: (plans || []).length,
+            paid: (plans || []).filter(p => p.is_paid).length,
+            free: (plans || []).filter(p => !p.is_paid).length,
+          };
+
+          // Count bookings + revenue
+          const { data: bookings } = await sb
+            .from('bookings')
+            .select('status, amount_paid, platform_fee, guide_reported_paid');
+          const bookingsCount = {
+            total: (bookings || []).length,
+            pending: (bookings || []).filter(b => b.status === 'pending').length,
+            completed: (bookings || []).filter(b => b.status === 'completed').length,
+          };
+          const totalRevenue = (bookings || [])
+            .filter(b => b.guide_reported_paid)
+            .reduce((sum, b) => sum + (parseFloat(b.amount_paid) || 0), 0);
+          const platformRevenue = totalRevenue * 0.10;
+
+          // Count join requests
+          const { count: requestsCount } = await sb
+            .from('join_requests')
+            .select('*', { count: 'exact', head: true });
+
+          return {
+            users: usersCount || 0,
+            guides: guideCounts,
+            plans: plansCount,
+            bookings: bookingsCount,
+            totalRevenue,
+            platformRevenue,
+            requests: requestsCount || 0,
+          };
+        } catch (err) {
+          console.error('Admin stats error:', err);
+          return null;
+        }
+      },
+
+      // טען את כל המדריכים (כולל pending)
+      async fetchAllGuides() {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          const { data: guides } = await sb
+            .from('guides')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (!guides || guides.length === 0) return [];
+
+          const userIds = guides.map(g => g.user_id);
+          const { data: profiles } = await sb
+            .from('profiles')
+            .select('id, avatar_url, email')
+            .in('id', userIds);
+
+          const profileMap = {};
+          (profiles || []).forEach(p => { profileMap[p.id] = p; });
+
+          return guides.map(g => ({
+            ...g,
+            avatar_url: profileMap[g.user_id]?.avatar_url,
+            user_email: profileMap[g.user_id]?.email,
+          }));
+        } catch (err) {
+          console.error('fetchAllGuides error:', err);
+          return [];
+        }
+      },
+
+      // אדמין - אישור/דחיית מדריך
+      async adminUpdateGuideStatus(guideId, newStatus, notes = null) {
+        if (!SUPABASE_ENABLED || !currentUser) throw new Error('Not authorized');
+
+        const updateData = {
+          status: newStatus,
+        };
+
+        if (newStatus === 'approved') {
+          updateData.approved_at = new Date().toISOString();
+        }
+
+        const { error } = await sb
+          .from('guides')
+          .update(updateData)
+          .eq('id', guideId);
+
+        if (error) throw error;
+
+        // Log admin action
+        await sb.from('admin_actions').insert({
+          admin_id: currentUser.id,
+          action_type: newStatus === 'approved' ? 'approve_guide' : 'reject_guide',
+          target_type: 'guide',
+          target_id: guideId,
+          details: { notes, timestamp: new Date().toISOString() }
+        });
+
+        return { success: true };
+      },
+
+      // טען את כל המשתמשים (לאדמין)
+      async fetchAllUsers() {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          const { data } = await sb
+            .from('profiles')
+            .select('*')
+            .order('created_at', { ascending: false });
+          return data || [];
+        } catch (err) {
+          console.error('fetchAllUsers error:', err);
+          return [];
+        }
+      },
+
+      // טען את כל ההזמנות (לאדמין)
+      async fetchAllBookings() {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          const { data: bookings } = await sb
+            .from('bookings')
+            .select('*')
+            .order('created_at', { ascending: false });
+
+          if (!bookings || bookings.length === 0) return [];
+
+          const userIds = [...new Set(bookings.map(b => b.user_id))];
+          const planIds = [...new Set(bookings.map(b => b.plan_id))];
+          const guideIds = [...new Set(bookings.map(b => b.guide_id).filter(Boolean))];
+
+          const { data: profiles } = await sb
+            .from('profiles')
+            .select('id, full_name, email')
+            .in('id', userIds);
+
+          const { data: plans } = await sb
+            .from('plans')
+            .select('id, title')
+            .in('id', planIds);
+
+          const { data: guides } = guideIds.length > 0 ? await sb
+            .from('guides')
+            .select('id, full_name')
+            .in('id', guideIds) : { data: [] };
+
+          const profileMap = {};
+          (profiles || []).forEach(p => { profileMap[p.id] = p; });
+          const planMap = {};
+          (plans || []).forEach(p => { planMap[p.id] = p; });
+          const guideMap = {};
+          (guides || []).forEach(g => { guideMap[g.id] = g; });
+
+          return bookings.map(b => ({
+            ...b,
+            user: profileMap[b.user_id],
+            plan: planMap[b.plan_id],
+            guide: guideMap[b.guide_id],
+          }));
+        } catch (err) {
+          console.error('fetchAllBookings error:', err);
+          return [];
+        }
+      },
+
       async signUp(email, password, fullName) {
         if (!SUPABASE_ENABLED) throw new Error('Backend not configured');
         const { data, error } = await sb.auth.signUp({
@@ -4127,6 +4407,10 @@
 
       if (route === 'guide-register') {
         setupGuideRegisterPage();
+      }
+
+      if (route === 'admin') {
+        renderAdminPage();
       }
 
       // Scroll to top
@@ -4766,6 +5050,406 @@
             submitBtn.disabled = false;
           }
         };
+      }
+    }
+
+    // ============================================================
+    // ADMIN PAGE
+    // ============================================================
+    async function renderAdminPage() {
+      const loadingEl = document.getElementById('admin-loading');
+      const notAuthEl = document.getElementById('admin-not-authorized');
+      const contentEl = document.getElementById('admin-content');
+
+      // Show loading initially
+      if (loadingEl) loadingEl.style.display = 'block';
+      if (notAuthEl) notAuthEl.style.display = 'none';
+      if (contentEl) contentEl.style.display = 'none';
+
+      // Check authentication
+      if (!currentUser) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (notAuthEl) notAuthEl.style.display = 'block';
+        return;
+      }
+
+      // Check admin status
+      const isAdmin = await api.checkIsAdmin();
+      if (!isAdmin) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (notAuthEl) notAuthEl.style.display = 'block';
+        return;
+      }
+
+      // Show admin content
+      if (loadingEl) loadingEl.style.display = 'none';
+      if (contentEl) contentEl.style.display = 'block';
+
+      // Load all sections
+      await renderAdminOverview();
+      await renderAdminPendingGuides();
+
+      // Setup tab switching
+      document.querySelectorAll('.profile-tab[data-admin-tab]').forEach(tab => {
+        tab.onclick = () => {
+          // Update active states
+          document.querySelectorAll('.profile-tab[data-admin-tab]').forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+
+          // Hide all content
+          document.querySelectorAll('.admin-tab-content').forEach(c => c.style.display = 'none');
+
+          // Show selected
+          const target = document.querySelector(`.admin-tab-content[data-admin-content="${tab.dataset.adminTab}"]`);
+          if (target) target.style.display = 'block';
+
+          // Lazy-load tabs
+          const tabName = tab.dataset.adminTab;
+          if (tabName === 'all-guides') renderAdminAllGuides();
+          else if (tabName === 'all-users') renderAdminAllUsers();
+          else if (tabName === 'all-bookings') renderAdminAllBookings();
+        };
+      });
+    }
+
+    async function renderAdminOverview() {
+      const grid = document.getElementById('admin-stats-grid');
+      if (!grid) return;
+
+      grid.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">טוען סטטיסטיקות...</p>';
+
+      try {
+        const stats = await api.fetchAdminStats();
+        if (!stats) throw new Error('No stats');
+
+        // Update pending badge
+        const pendingBadge = document.getElementById('admin-pending-badge');
+        if (pendingBadge) {
+          if (stats.guides.pending > 0) {
+            pendingBadge.textContent = stats.guides.pending;
+            pendingBadge.style.display = 'inline-block';
+          } else {
+            pendingBadge.style.display = 'none';
+          }
+        }
+
+        const cardStyle = 'background: white; padding: 24px; border-radius: 16px; border: 1px solid #eee;';
+        const numStyle = 'font-size: 36px; font-weight: 700; line-height: 1;';
+
+        grid.innerHTML = `
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px;">
+            <div style="${cardStyle}">
+              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">👥 סה"כ משתמשים</div>
+              <div style="${numStyle} color: #2196f3;">${stats.users}</div>
+            </div>
+            <div style="${cardStyle}">
+              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">💎 מדריכים מאושרים</div>
+              <div style="${numStyle} color: var(--color-terracotta);">${stats.guides.approved}</div>
+              <div style="font-size: 11px; color: #999; margin-top: 4px;">סה"כ ${stats.guides.total} (${stats.guides.pending} ממתינים)</div>
+            </div>
+            <div style="${cardStyle}">
+              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">🗺️ סה"כ תוכניות</div>
+              <div style="${numStyle} color: #4caf50;">${stats.plans.total}</div>
+              <div style="font-size: 11px; color: #999; margin-top: 4px;">${stats.plans.paid} בתשלום · ${stats.plans.free} חינם</div>
+            </div>
+            <div style="${cardStyle}">
+              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">📨 בקשות הצטרפות</div>
+              <div style="${numStyle} color: #9c27b0;">${stats.requests}</div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px;">
+            <div style="background: linear-gradient(135deg, #fff8f5, #fff); padding: 24px; border-radius: 16px; border: 2px solid #d4583a33;">
+              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">💰 הכנסות פלטפורמה (10%)</div>
+              <div style="${numStyle} color: var(--color-terracotta);">€${stats.platformRevenue.toFixed(0)}</div>
+              <div style="font-size: 11px; color: #999; margin-top: 4px;">מתוך €${stats.totalRevenue.toFixed(0)} סה"כ</div>
+            </div>
+            <div style="${cardStyle}">
+              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">💳 סה"כ הזמנות</div>
+              <div style="${numStyle} color: #4caf50;">${stats.bookings.total}</div>
+              <div style="font-size: 11px; color: #999; margin-top: 4px;">${stats.bookings.completed} הושלמו · ${stats.bookings.pending} ממתינות</div>
+            </div>
+          </div>
+
+          ${stats.guides.pending > 0 ? `
+            <div style="background: #fff8e1; padding: 20px; border-radius: 12px; border: 2px solid #f57c00; margin-bottom: 24px;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <div style="font-size: 16px; font-weight: 600; color: #f57c00;">⏳ ${stats.guides.pending} מדריכים מחכים לאישור!</div>
+                  <div style="font-size: 13px; color: #777; margin-top: 4px;">לחץ על "מדריכים ממתינים" למעלה כדי לטפל</div>
+                </div>
+                <button class="btn-join-large" onclick="document.querySelector('[data-admin-tab=&quot;pending-guides&quot;]').click()">בדוק עכשיו</button>
+              </div>
+            </div>
+          ` : ''}
+        `;
+      } catch (err) {
+        console.error('Admin overview error:', err);
+        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #d4583a;">שגיאה בטעינת הסטטיסטיקות</p>';
+      }
+    }
+
+    async function renderAdminPendingGuides() {
+      const container = document.getElementById('admin-pending-guides-list');
+      if (!container) return;
+
+      container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">טוען...</p>';
+
+      try {
+        const guides = await api.fetchAllGuides();
+        const pending = guides.filter(g => g.status === 'pending');
+
+        if (pending.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 80px 20px; background: #e8f5e9; border-radius: 16px;">
+              <div style="font-size: 64px; margin-bottom: 16px;">✓</div>
+              <h3 style="color: #2e7d32;">אין מדריכים ממתינים</h3>
+              <p style="color: #777;">הכל מאושר! אם יבואו חדשים, הם יופיעו כאן</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = pending.map(g => renderAdminGuideCard(g, true)).join('');
+        attachAdminGuideListeners();
+      } catch (err) {
+        console.error('Admin pending guides error:', err);
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #d4583a;">שגיאה</p>';
+      }
+    }
+
+    async function renderAdminAllGuides() {
+      const container = document.getElementById('admin-all-guides-list');
+      if (!container) return;
+
+      container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">טוען...</p>';
+
+      try {
+        const guides = await api.fetchAllGuides();
+        if (guides.length === 0) {
+          container.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">עוד אין מדריכים בפלטפורמה</p>';
+          return;
+        }
+
+        container.innerHTML = guides.map(g => renderAdminGuideCard(g, false)).join('');
+        attachAdminGuideListeners();
+      } catch (err) {
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #d4583a;">שגיאה</p>';
+      }
+    }
+
+    function renderAdminGuideCard(g, showActions) {
+      const initial = (g.full_name || '?').charAt(0).toUpperCase();
+      const statusColors = {
+        pending: { bg: '#fff8e1', text: '#f57c00', label: '⏳ ממתין לאישור' },
+        approved: { bg: '#e8f5e9', text: '#2e7d32', label: '✓ מאושר' },
+        rejected: { bg: '#ffebee', text: '#c62828', label: '✗ נדחה' },
+      };
+      const sc = statusColors[g.status] || statusColors.pending;
+      const date = new Date(g.created_at).toLocaleDateString('he-IL');
+
+      return `
+        <div style="background: white; padding: 24px; border-radius: 16px; margin-bottom: 16px; border: 1px solid #eee;">
+          <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
+              ${g.avatar_url ? `<img src="${g.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+            </div>
+            <div style="flex: 1; min-width: 250px;">
+              <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
+                <h3 style="margin: 0;">${g.full_name}</h3>
+                <span style="background: ${sc.bg}; color: ${sc.text}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sc.label}</span>
+              </div>
+              <div style="font-size: 13px; color: #777; margin-bottom: 12px;">📧 ${g.email} ${g.whatsapp ? `· 📱 ${g.whatsapp}` : ''}</div>
+
+              ${g.bio ? `<p style="font-size: 14px; line-height: 1.6; color: #555; background: #f9f5ed; padding: 12px; border-radius: 8px; margin-bottom: 12px;">${g.bio}</p>` : ''}
+
+              <div style="display: flex; gap: 16px; font-size: 13px; color: #555; flex-wrap: wrap; margin-bottom: 12px;">
+                ${g.years_experience ? `<div>⭐ ${g.years_experience} שנות ניסיון</div>` : ''}
+                ${g.license_number ? `<div>📜 תעודה: ${g.license_number}</div>` : '<div style="color: #c62828;">⚠️ ללא תעודה</div>'}
+              </div>
+
+              ${g.specialties && g.specialties.length > 0 ? `
+                <div style="margin-bottom: 8px;">
+                  <strong style="font-size: 12px; color: #777;">תחומים:</strong>
+                  <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
+                    ${g.specialties.map(s => `<span style="background: #f5f5f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              ${g.languages && g.languages.length > 0 ? `
+                <div style="margin-bottom: 8px;">
+                  <strong style="font-size: 12px; color: #777;">שפות:</strong>
+                  <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
+                    ${g.languages.map(s => `<span style="background: #e3f2fd; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              ${g.cities && g.cities.length > 0 ? `
+                <div style="margin-bottom: 12px;">
+                  <strong style="font-size: 12px; color: #777;">ערים:</strong>
+                  <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
+                    ${g.cities.map(s => `<span style="background: #fff8f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                  </div>
+                </div>
+              ` : ''}
+
+              <div style="font-size: 11px; color: #999;">נרשם: ${date}</div>
+
+              ${showActions ? `
+                <div style="display: flex; gap: 8px; margin-top: 16px;">
+                  <button class="admin-approve-guide" data-guide-id="${g.id}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר מדריך</button>
+                  <button class="admin-reject-guide" data-guide-id="${g.id}" style="flex: 1; background: #f5f5f5; color: #c62828; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
+                </div>
+              ` : g.status === 'approved' ? `
+                <button class="admin-reject-guide" data-guide-id="${g.id}" style="margin-top: 12px; background: #f5f5f5; color: #c62828; padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">⚠️ בטל אישור</button>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function attachAdminGuideListeners() {
+      document.querySelectorAll('.admin-approve-guide').forEach(btn => {
+        btn.onclick = async (e) => {
+          const id = e.target.dataset.guideId;
+          if (!confirm('לאשר את המדריך? הוא יקבל גישה לפיצ\'רים מקצועיים.')) return;
+          e.target.textContent = 'מאשר...';
+          e.target.disabled = true;
+          try {
+            await api.adminUpdateGuideStatus(id, 'approved');
+            showToast('✓ המדריך אושר!');
+            await renderAdminPendingGuides();
+            await renderAdminOverview();
+          } catch (err) {
+            showToast('❌ שגיאה: ' + err.message);
+            e.target.textContent = '✓ אשר מדריך';
+            e.target.disabled = false;
+          }
+        };
+      });
+
+      document.querySelectorAll('.admin-reject-guide').forEach(btn => {
+        btn.onclick = async (e) => {
+          const id = e.target.dataset.guideId;
+          if (!confirm('לדחות את המדריך? הוא לא יוכל להעלות תוכניות בתשלום.')) return;
+          e.target.textContent = 'דוחה...';
+          e.target.disabled = true;
+          try {
+            await api.adminUpdateGuideStatus(id, 'rejected');
+            showToast('המדריך נדחה');
+            await renderAdminPendingGuides();
+            await renderAdminAllGuides();
+            await renderAdminOverview();
+          } catch (err) {
+            showToast('❌ שגיאה: ' + err.message);
+            e.target.disabled = false;
+          }
+        };
+      });
+    }
+
+    async function renderAdminAllUsers() {
+      const container = document.getElementById('admin-users-list');
+      if (!container) return;
+
+      container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">טוען...</p>';
+
+      try {
+        const users = await api.fetchAllUsers();
+        if (users.length === 0) {
+          container.innerHTML = '<p style="text-align: center; padding: 40px; color: #999;">אין משתמשים עדיין</p>';
+          return;
+        }
+
+        container.innerHTML = `
+          <div style="background: white; border-radius: 16px; overflow: hidden; border: 1px solid #eee;">
+            <div style="background: #f9f5ed; padding: 16px 20px; font-weight: 600; border-bottom: 1px solid #eee;">
+              👥 ${users.length} משתמשים רשומים
+            </div>
+            ${users.map(u => `
+              <div style="padding: 16px 20px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 16px; align-items: center;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; overflow: hidden; flex-shrink: 0;">
+                  ${u.avatar_url ? `<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : (u.full_name || '?').charAt(0).toUpperCase()}
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600;">${u.full_name || 'משתמש'} ${u.is_admin ? '<span class="badge-pro">🛡️ אדמין</span>' : ''}</div>
+                  <div style="font-size: 13px; color: #777;">${u.email || ''}</div>
+                </div>
+                <div style="font-size: 11px; color: #999;">${new Date(u.created_at).toLocaleDateString('he-IL')}</div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #d4583a;">שגיאה</p>';
+      }
+    }
+
+    async function renderAdminAllBookings() {
+      const container = document.getElementById('admin-bookings-list');
+      if (!container) return;
+
+      container.innerHTML = '<p style="text-align:center; padding: 40px; color: #999;">טוען...</p>';
+
+      try {
+        const bookings = await api.fetchAllBookings();
+        if (bookings.length === 0) {
+          container.innerHTML = `
+            <div style="text-align: center; padding: 60px 20px; background: #fff8f5; border-radius: 16px;">
+              <div style="font-size: 64px; margin-bottom: 16px;">💳</div>
+              <h3 style="color: var(--color-terracotta);">עדיין אין הזמנות</h3>
+              <p style="color: #777;">כשמדריכים יתחילו למכור טיולים, הם יופיעו כאן</p>
+            </div>
+          `;
+          return;
+        }
+
+        const totalRevenue = bookings.filter(b => b.guide_reported_paid).reduce((s, b) => s + (parseFloat(b.amount_paid) || 0), 0);
+        const platformFee = totalRevenue * 0.10;
+
+        container.innerHTML = `
+          <div style="background: linear-gradient(135deg, #d4583a 0%, #c44329 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+            <h3 style="margin: 0 0 8px 0;">💰 הכנסות הפלטפורמה</h3>
+            <div style="font-size: 36px; font-weight: 700;">€${platformFee.toFixed(0)}</div>
+            <div style="font-size: 13px; opacity: 0.8; margin-top: 4px;">מתוך €${totalRevenue.toFixed(0)} סה"כ במכירות</div>
+          </div>
+
+          <div style="background: white; border-radius: 16px; overflow: hidden; border: 1px solid #eee;">
+            ${bookings.map(b => {
+              const status = b.status;
+              const statusColors = {
+                pending: { bg: '#fff8e1', text: '#f57c00', label: 'ממתינה' },
+                completed: { bg: '#e8f5e9', text: '#2e7d32', label: 'הושלמה' },
+                cancelled: { bg: '#ffebee', text: '#c62828', label: 'בוטלה' },
+              };
+              const sc = statusColors[status] || statusColors.pending;
+
+              return `
+                <div style="padding: 16px 20px; border-bottom: 1px solid #f5f5f5;">
+                  <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap;">
+                    <div>
+                      <div style="font-weight: 600;">${b.user?.full_name || 'לקוח'} → ${b.guide?.full_name || 'מדריך'}</div>
+                      <div style="font-size: 13px; color: #777; margin-top: 2px;">${b.plan?.title || 'תוכנית'}</div>
+                    </div>
+                    <div style="text-align: left;">
+                      <div style="font-size: 18px; font-weight: 700; color: var(--color-terracotta);">€${b.amount_paid || 0}</div>
+                      <div style="font-size: 11px; color: #999;">עמלה: €${(b.platform_fee || 0).toFixed(2)}</div>
+                    </div>
+                  </div>
+                  <div style="display: flex; justify-content: space-between; margin-top: 8px;">
+                    <span style="background: ${sc.bg}; color: ${sc.text}; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600;">${sc.label}</span>
+                    <span style="font-size: 11px; color: #999;">${new Date(b.created_at).toLocaleDateString('he-IL')}</span>
+                  </div>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        `;
+      } catch (err) {
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #d4583a;">שגיאה</p>';
       }
     }
 
