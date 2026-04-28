@@ -3538,6 +3538,47 @@
     </div>
   </div>
 
+  <!-- ============================ WELCOME / ONBOARDING MODAL ============================ -->
+  <div class="modal-overlay" id="modal-welcome" role="dialog" aria-modal="true" aria-labelledby="welcome-title">
+    <div class="modal" style="max-width: 520px;">
+      <div class="modal-header" style="text-align: center; flex-direction: column; gap: 8px;">
+        <div style="font-size: 56px; line-height: 1;">👋</div>
+        <h2 class="modal-title" id="welcome-title" style="text-align: center;">ברוכים הבאים ליאלה</h2>
+      </div>
+      <div class="modal-body" style="text-align: center;">
+        <p style="font-size: 16px; color: var(--color-earth); line-height: 1.6; margin-bottom: 20px;">
+          הקהילה של מטיילים ישראלים שמחפשים שותפים — לטיול, לסופ"ש, או לבירה בנמל.
+        </p>
+        <div style="display: flex; flex-direction: column; gap: 14px; text-align: right; background: var(--color-cream-warm); padding: 20px; border-radius: var(--radius-md); margin-bottom: 16px;">
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <span style="font-size: 22px;">🔍</span>
+            <div>
+              <strong style="display: block; margin-bottom: 2px;">גלה</strong>
+              <span style="font-size: 14px; color: var(--color-earth);">חפש לפי עיר, נושא, או חיפוש חופשי</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <span style="font-size: 22px;">✨</span>
+            <div>
+              <strong style="display: block; margin-bottom: 2px;">פרסם</strong>
+              <span style="font-size: 14px; color: var(--color-earth);">יש לך תוכנית? פרסם אותה בדקה אחת</span>
+            </div>
+          </div>
+          <div style="display: flex; gap: 12px; align-items: flex-start;">
+            <span style="font-size: 22px;">🤝</span>
+            <div>
+              <strong style="display: block; margin-bottom: 2px;">הצטרף</strong>
+              <span style="font-size: 14px; color: var(--color-earth);">שלח בקשה למארגן, וכשמאשרים — תקבל את פרטי הקשר</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-join-large" id="btn-welcome-close" style="flex: 1;">בוא נתחיל</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============================ CONFIRM MODAL (replaces native confirm()) ============================ -->
   <div class="modal-overlay" id="modal-confirm" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
     <div class="modal" style="max-width: 420px;">
@@ -7254,9 +7295,24 @@
       document.getElementById('btn-login-submit').addEventListener('click', async () => {
         try {
           const inputs = document.querySelectorAll('#modal-login input');
-          const email = inputs[0]?.value;
-          const password = inputs[1]?.value;
+          const email = (inputs[0]?.value || '').trim();
+          const password = inputs[1]?.value || '';
           const isLogin = document.querySelector('[data-login-tab="login"]').classList.contains('active');
+
+          // Email format validation
+          const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (email && !emailRegex.test(email)) {
+            showToast('⚠️ אימייל לא תקין');
+            inputs[0]?.focus();
+            return;
+          }
+
+          // Password strength on signup
+          if (!isLogin && password && password.length < 6) {
+            showToast('⚠️ הסיסמה חייבת להיות לפחות 6 תווים');
+            inputs[1]?.focus();
+            return;
+          }
 
           if (!SUPABASE_ENABLED) {
             closeModal('modal-login');
@@ -7582,6 +7638,29 @@
     }
 
     // ============================================================
+    // FIRST-VISIT WELCOME MODAL
+    // ============================================================
+    function setupWelcomeOnboarding() {
+      const STORAGE_KEY = 'yalla_onboarded';
+      try {
+        if (localStorage.getItem(STORAGE_KEY)) return; // already seen
+      } catch { /* localStorage blocked */ return; }
+
+      // Show after a short delay (let page render first)
+      setTimeout(() => {
+        openModal('modal-welcome');
+      }, 800);
+
+      const closeBtn = document.getElementById('btn-welcome-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          try { localStorage.setItem(STORAGE_KEY, '1'); } catch {}
+          closeModal('modal-welcome');
+        });
+      }
+    }
+
+    // ============================================================
     // ONLINE / OFFLINE INDICATOR
     // ============================================================
     function setupOnlineMonitor() {
@@ -7621,6 +7700,7 @@
       setupEditProfile();
       setupPlanImageUpload();
       setupOnlineMonitor();
+      setupWelcomeOnboarding();
 
       // Listen for auth state changes (login/logout in another tab, OAuth redirect, etc.)
       if (SUPABASE_ENABLED && sb) {
