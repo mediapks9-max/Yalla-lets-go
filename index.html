@@ -2539,6 +2539,13 @@
           <div style="display: flex; gap: 8px; align-items: center; flex: 1; min-width: 200px;">
             <input type="search" id="filter-search" placeholder="🔍 חיפוש (כותרת, תיאור, מיקום...)" style="width: 100%; padding: 8px 14px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; font-size: 14px;">
           </div>
+          <!-- Date range chips -->
+          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+            <span class="filter-label" style="font-weight: 600;">📅 מתי:</span>
+            <button class="filter-chip date-chip active" data-date="all">כל הזמן</button>
+            <button class="filter-chip date-chip" data-date="week">השבוע</button>
+            <button class="filter-chip date-chip" data-date="month">החודש</button>
+          </div>
           <!-- Hierarchy filter dropdowns -->
           <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <span class="filter-label" style="font-weight: 600;">📍 מיקום:</span>
@@ -3617,6 +3624,39 @@
       // Fallback: deterministic pick by string hash so the same plan always gets the same image
       const seed = (text || 'plan').split('').reduce((a, c) => a + c.charCodeAt(0), 0);
       return all[seed % all.length];
+    }
+
+    // ============================================================
+    // 🌐 ERROR MESSAGE TRANSLATION (English → Hebrew)
+    // ============================================================
+    function translateError(err) {
+      if (!err) return 'שגיאה לא ידועה';
+      const msg = (err.message || err.error_description || String(err)).toLowerCase();
+
+      // Auth errors
+      if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) return 'אימייל או סיסמה שגויים';
+      if (msg.includes('email not confirmed')) return 'האימייל עוד לא אומת — בדוק את תיבת הדואר שלך';
+      if (msg.includes('user already registered')) return 'אימייל זה כבר רשום במערכת';
+      if (msg.includes('password should be at least')) return 'הסיסמה קצרה מדי (לפחות 6 תווים)';
+      if (msg.includes('rate limit')) return 'יותר מדי נסיונות — נסה שוב בעוד דקה';
+      if (msg.includes('network') || msg.includes('failed to fetch')) return 'בעיית תקשורת — בדוק את החיבור לאינטרנט';
+
+      // DB errors
+      if (err.code === '23505') return 'הרשומה כבר קיימת';
+      if (err.code === '23503') return 'נתון לא תקין (foreign key)';
+      if (err.code === '42501') return 'אין הרשאה לפעולה זו';
+      if (msg.includes('row-level security') || msg.includes('rls')) return 'אין הרשאה לפעולה זו';
+      if (msg.includes('violates check constraint')) return 'הנתון לא תקין';
+
+      // Storage errors
+      if (msg.includes('payload too large')) return 'הקובץ גדול מדי';
+      if (msg.includes('bucket not found')) return 'שטח האחסון עוד לא הוגדר — צור קשר עם מנהל';
+
+      // Timeout
+      if (msg.includes('timeout')) return 'הפעולה לקחה יותר מדי זמן — נסה שוב';
+
+      // Fallback to original message
+      return err.message || err.error_description || 'שגיאה';
     }
 
     // ============================================================
@@ -5078,6 +5118,8 @@
         ? `<button class="btn-join" data-join-id="${escapeHtml(plan.id)}" style="background: linear-gradient(135deg, #d4583a, #c44329);">הזמן עכשיו</button>`
         : `<button class="btn-join" data-join-id="${escapeHtml(plan.id)}">אני בעניין</button>`;
 
+      const shareButton = `<button class="btn-share-card" data-share-id="${escapeHtml(plan.id)}" data-share-title="${escapeHtml(plan.title)}" aria-label="שתף תוכנית" title="שתף" style="background: transparent; border: 1px solid var(--color-sand); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; padding: 0; display: inline-flex; align-items: center; justify-content: center; font-size: 14px; margin-left: 8px;">📤</button>`;
+
       const categoriesAttr = Array.isArray(plan.categories) ? plan.categories.join(',') : '';
 
       const imageContent = plan.imageUrl
@@ -5108,7 +5150,10 @@
             ${priceDisplay}
             <div class="plan-footer">
               <span class="plan-spots">${spotsLabel}</span>
-              ${ctaButton}
+              <div style="display: flex; align-items: center;">
+                ${shareButton}
+                ${ctaButton}
+              </div>
             </div>
           </div>
         </article>
@@ -5614,7 +5659,7 @@
     function attachPlanCardListeners() {
       document.querySelectorAll('.plan-card').forEach(card => {
         card.addEventListener('click', (e) => {
-          if (e.target.closest('.btn-join')) return;
+          if (e.target.closest('.btn-join') || e.target.closest('.btn-share-card')) return;
           const id = card.dataset.planId;
           navigate('plan-detail', id);
         });
@@ -5624,6 +5669,24 @@
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           openModal('modal-join');
+        });
+      });
+
+      // Share buttons on cards
+      document.querySelectorAll('.btn-share-card').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const id = e.currentTarget.dataset.shareId;
+          const title = e.currentTarget.dataset.shareTitle;
+          const url = `${window.location.origin}${window.location.pathname}#plan-detail/${id}`;
+          try {
+            if (navigator.share) {
+              await navigator.share({ title: `יאלה — ${title}`, text: 'בוא איתי לטיול', url });
+            } else {
+              await navigator.clipboard.writeText(url);
+              showToast('✓ הלינק הועתק! שתף בוואטסאפ');
+            }
+          } catch (err) { /* user cancelled */ }
         });
       });
     }
@@ -6553,6 +6616,8 @@
         const city = filterCity.value || null;
         const topic = filterTopic.value || null;
         const search = (document.getElementById('filter-search')?.value || '').trim().toLowerCase();
+        const activeDateChip = document.querySelector('.date-chip.active');
+        const dateRange = activeDateChip?.dataset?.date || 'all';
 
         // Update URL hash for sharing (only when on home — don't override plan-detail etc.)
         const currentRoute = (window.location.hash.slice(1).split('/')[0]) || 'home';
@@ -6585,6 +6650,21 @@
             });
           }
 
+          // Date range filter (client-side, based on plan.dateFull/startDate)
+          if (dateRange === 'week' || dateRange === 'month') {
+            const now = new Date();
+            const cutoff = new Date(now);
+            if (dateRange === 'week') cutoff.setDate(now.getDate() + 7);
+            else cutoff.setMonth(now.getMonth() + 1);
+            plans = plans.filter(p => {
+              const dateStr = p.dateFull || p.startDate;
+              if (!dateStr) return true; // Keep undated
+              const planDate = new Date(dateStr);
+              if (isNaN(planDate.getTime())) return true;
+              return planDate >= now && planDate <= cutoff;
+            });
+          }
+
           if (plans.length === 0) {
             grid.innerHTML = `
               <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: rgba(212, 88, 58, 0.05); border-radius: 16px;">
@@ -6608,6 +6688,15 @@
 
       filterCity.addEventListener('change', applyFilters);
       filterTopic.addEventListener('change', applyFilters);
+
+      // Date range chips
+      document.querySelectorAll('.date-chip').forEach(chip => {
+        chip.addEventListener('click', () => {
+          document.querySelectorAll('.date-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          applyFilters();
+        });
+      });
 
       // Text search with debounce
       const searchInput = document.getElementById('filter-search');
@@ -7060,7 +7149,7 @@
             details: err.details,
             hint: err.hint,
           });
-          showToast('❌ ' + (err.message || err.error_description || 'שגיאה - בדוק Console'));
+          showToast('❌ ' + translateError(err));
         } finally {
           btn.textContent = originalText;
           btn.disabled = false;
@@ -7153,7 +7242,7 @@
           if (err.code === '23505' || err.message?.includes('duplicate')) {
             showToast('⚠️ כבר שלחת בקשה לתוכנית זו');
           } else {
-            showToast('❌ ' + (err.message || 'שגיאה - בדוק Console'));
+            showToast('❌ ' + translateError(err));
           }
         } finally {
           btn.textContent = originalText;
@@ -7190,7 +7279,7 @@
           closeModal('modal-login');
           showToast(isLogin ? '👋 ברוך השב!' : '🎉 ברוך הבא לקהילה!');
         } catch (err) {
-          showToast('❌ ' + (err.message || 'שגיאה בהתחברות'));
+          showToast('❌ ' + translateError(err));
         }
       });
 
@@ -7204,7 +7293,7 @@
           try {
             if (idx === 0) await api.signInWithGoogle();
           } catch (err) {
-            showToast('❌ ' + err.message);
+            showToast('❌ ' + translateError(err));
           }
         });
       });
@@ -7228,7 +7317,7 @@
             await api.resetPassword(email);
             showToast('📧 נשלח לך מייל איפוס סיסמה');
           } catch (err) {
-            showToast('❌ ' + (err.message || 'שגיאה'));
+            showToast('❌ ' + translateError(err));
           }
         });
       }
@@ -7459,7 +7548,7 @@
           if (typeof renderProfilePlans === 'function') renderProfilePlans();
         } catch (err) {
           console.error('Profile update error:', err);
-          showToast('❌ ' + (err.message || 'שגיאה בעדכון'));
+          showToast('❌ ' + translateError(err));
         } finally {
           saveBtn.textContent = originalText;
           saveBtn.disabled = false;
@@ -7493,6 +7582,27 @@
     }
 
     // ============================================================
+    // ONLINE / OFFLINE INDICATOR
+    // ============================================================
+    function setupOnlineMonitor() {
+      let wasOffline = false;
+      const updateStatus = () => {
+        if (!navigator.onLine && !wasOffline) {
+          wasOffline = true;
+          showToast('📡 אין חיבור לאינטרנט');
+        } else if (navigator.onLine && wasOffline) {
+          wasOffline = false;
+          showToast('✓ חזרת לאוויר');
+          // Refresh data on reconnect
+          if (typeof renderHomePlans === 'function') renderHomePlans();
+          if (typeof refreshIncomingBadge === 'function') refreshIncomingBadge();
+        }
+      };
+      window.addEventListener('online', updateStatus);
+      window.addEventListener('offline', updateStatus);
+    }
+
+    // ============================================================
     // INIT
     // ============================================================
     document.addEventListener('DOMContentLoaded', async () => {
@@ -7510,6 +7620,7 @@
       setupContactForm();
       setupEditProfile();
       setupPlanImageUpload();
+      setupOnlineMonitor();
 
       // Listen for auth state changes (login/logout in another tab, OAuth redirect, etc.)
       if (SUPABASE_ENABLED && sb) {
