@@ -3402,12 +3402,16 @@
         <button class="modal-close" data-close-modal="modal-login">×</button>
       </div>
       <div class="modal-body">
-        <div class="login-tabs">
-          <button class="login-tab active" data-login-tab="login">התחברות</button>
-          <button class="login-tab" data-login-tab="signup">הרשמה</button>
+        <div style="text-align: center; padding: 24px 0;">
+          <div style="font-size: 48px; margin-bottom: 16px;">🇮🇱</div>
+          <h3 style="font-size: 22px; margin-bottom: 8px; color: var(--color-earth);">הצטרף לקהילה</h3>
+          <p style="color: var(--color-stone); font-size: 14px; line-height: 1.5; margin-bottom: 24px;">
+            הרשמה ב-10 שניות דרך חשבון Google שלך.<br>
+            ללא סיסמאות, ללא טפסים מיותרים.
+          </p>
         </div>
 
-        <button class="social-btn">
+        <button class="social-btn" style="width: 100%;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
             <path d="M22.5 12.27c0-.85-.08-1.67-.22-2.45H12v4.62h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.75h3.57c2.09-1.92 3.29-4.74 3.29-8.23z" fill="#4285F4"/>
             <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.75c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.15-4.53H2.16v2.84C3.97 20.53 7.7 23 12 23z" fill="#34A853"/>
@@ -3416,26 +3420,11 @@
           </svg>
           המשך עם Google
         </button>
-        <button class="social-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="#1877F2">
-            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-          </svg>
-          המשך עם Facebook
-        </button>
 
-        <div class="login-divider">או</div>
-
-        <div class="form-group">
-          <label class="form-label">אימייל</label>
-          <input type="email" class="form-input" placeholder="you@example.com">
-        </div>
-        <div class="form-group">
-          <label class="form-label">סיסמה</label>
-          <input type="password" class="form-input" placeholder="••••••••">
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn-join-large" id="btn-login-submit" style="width: 100%;">התחבר</button>
+        <p style="text-align: center; margin-top: 24px; font-size: 12px; color: var(--color-stone); line-height: 1.5;">
+          על ידי הרשמה אתה מסכים ל<a href="#" style="color: var(--color-terracotta);">תנאי שימוש</a> ו<a href="#" style="color: var(--color-terracotta);">מדיניות פרטיות</a>.
+          אנחנו לא משתפים את הנתונים שלך.
+        </p>
       </div>
     </div>
   </div>
@@ -6102,12 +6091,12 @@
 
           <aside class="detail-sidebar">
             <div class="detail-card">
-              <div class="detail-creator-block" data-route="profile">
+              <div class="detail-creator-block">
                 <div class="creator-avatar ${plan.creator.avatarClass}">${plan.creator.initial}</div>
                 <div>
                   <div class="detail-creator-name">${plan.creator.name}</div>
                   <div class="detail-creator-meta">
-                    ${plan.creator.meta}${plan.creator.verified ? ' · ✓ מאומת' : ''}
+                    ${plan.creator.meta || 'מארגן/ת'}
                   </div>
                 </div>
               </div>
@@ -6276,7 +6265,8 @@
       const filterTopic = document.getElementById('filter-topic');
       const btnClear = document.getElementById('btn-clear-filters');
 
-      if (!filterCountry || !filterCity || !filterTopic) return;
+      // 🇮🇱 Israel-only mode: filterCountry may not exist
+      if (!filterCity || !filterTopic) return;
 
       // Load topics
       try {
@@ -6309,9 +6299,9 @@
         }
       } catch (e) { console.error('Topics load failed:', e); }
 
-      // Load cities (dynamic based on country)
+      // Load cities (dynamic - Israel only)
       const loadCities = async () => {
-        const country = filterCountry.value;
+        const country = filterCountry ? filterCountry.value : 'IL';
         try {
           const cities = await api.fetchAvailableCities();
           const filtered = country ? cities.filter(c => c.country === country) : cities;
@@ -6336,13 +6326,13 @@
 
       // Apply filters
       const applyFilters = async () => {
-        const country = filterCountry.value || null;
+        const country = filterCountry ? (filterCountry.value || 'IL') : 'IL';
         const city = filterCity.value || null;
         const topic = filterTopic.value || null;
 
         // Update URL hash for sharing
         const params = [];
-        if (country) params.push(`country=${country}`);
+        if (country && country !== 'IL') params.push(`country=${country}`);
         if (city) params.push(`city=${city}`);
         if (topic) params.push(`topic=${topic}`);
 
@@ -6367,17 +6357,20 @@
         }
       };
 
-      filterCountry.addEventListener('change', async () => {
-        filterCity.value = '';
-        await loadCities();
-        await applyFilters();
-      });
+      // Country filter (only if exists)
+      if (filterCountry) {
+        filterCountry.addEventListener('change', async () => {
+          filterCity.value = '';
+          await loadCities();
+          await applyFilters();
+        });
+      }
 
       filterCity.addEventListener('change', applyFilters);
       filterTopic.addEventListener('change', applyFilters);
 
       btnClear.addEventListener('click', async () => {
-        filterCountry.value = '';
+        if (filterCountry) filterCountry.value = '';
         filterCity.value = '';
         filterTopic.value = '';
         await loadCities();
