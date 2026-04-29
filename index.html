@@ -3405,7 +3405,32 @@
   <script>
 
     // ============================================================
-    // SVG ILLUSTRATIONS - 8 unique scenes
+    // ============================================================
+    // 🖼️ REAL PHOTOS - Unsplash CDN (Free, Legal, Fast)
+    // ============================================================
+    // These are real high-quality photos hosted on Unsplash's CDN
+    // Free for commercial use, no attribution required
+    const REAL_PHOTOS = {
+      'limassol-beach': 'https://images.unsplash.com/photo-1623625434462-e98da82c0bee?auto=format&fit=crop&w=800&q=80',
+      'cyprus-coast': 'https://images.unsplash.com/photo-1531219432768-9f540ecaa874?auto=format&fit=crop&w=800&q=80',
+      'beach-running': 'https://images.unsplash.com/photo-1502904550040-7534597429ae?auto=format&fit=crop&w=800&q=80',
+      'sunrise-run': 'https://images.unsplash.com/photo-1546483875-ad9014c88eba?auto=format&fit=crop&w=800&q=80',
+      'football-pitch': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+      'football-sunset': 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
+      'troodos-mountains': 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80',
+      'cyprus-hiking': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80',
+      'cycling-coast': 'https://images.unsplash.com/photo-1517649763962-0c623066013b?auto=format&fit=crop&w=800&q=80',
+      'cycling-friends': 'https://images.unsplash.com/photo-1605034313761-73ea4a0cfbf3?auto=format&fit=crop&w=800&q=80',
+      'sea-swimming': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
+      'mediterranean': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+      'friends-beach': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
+      'community': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
+      'beer-friends': 'https://images.unsplash.com/photo-1575442395823-89cda156a6ee?auto=format&fit=crop&w=800&q=80',
+      'sunset-beach': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+    };
+
+    // ============================================================
+    // SVG ILLUSTRATIONS - 8 unique scenes (fallback)
     // ============================================================
     const ILLUSTRATIONS = {
       'ramon-crater': `<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="rc-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFD89B"/><stop offset="50%" stop-color="#F4A261"/><stop offset="100%" stop-color="#E76F51"/></linearGradient></defs><rect width="800" height="500" fill="url(#rc-sky)"/><circle cx="640" cy="140" r="55" fill="#FFE5B4" opacity="0.9"/><circle cx="640" cy="140" r="40" fill="#FFF8DC"/><path d="M0,280 L60,250 L120,265 L200,235 L280,255 L360,230 L440,250 L520,225 L600,245 L680,220 L760,240 L800,235 L800,500 L0,500 Z" fill="#C44536" opacity="0.7"/><path d="M0,330 L80,300 L160,320 L240,290 L320,310 L400,285 L480,305 L560,280 L640,300 L720,275 L800,295 L800,500 L0,500 Z" fill="#9C2D1F" opacity="0.85"/><path d="M0,400 L40,380 L100,395 L180,365 L260,385 L340,360 L420,380 L500,355 L580,375 L660,350 L740,370 L800,360 L800,500 L0,500 Z" fill="#5C1F0F"/><g transform="translate(380, 358)"><ellipse cx="0" cy="2" rx="3" ry="1.5" fill="#1a0a05"/><rect x="-1.5" y="-8" width="3" height="8" fill="#1a0a05"/><circle cx="0" cy="-10" r="2" fill="#1a0a05"/></g><g transform="translate(395, 360)"><ellipse cx="0" cy="2" rx="3" ry="1.5" fill="#1a0a05"/><rect x="-1.5" y="-8" width="3" height="8" fill="#1a0a05"/><circle cx="0" cy="-10" r="2" fill="#1a0a05"/></g></svg>`,
@@ -4694,7 +4719,9 @@
         <article class="plan-card ${staggerClass}" data-plan-id="${plan.id}" data-categories="${plan.categories}" style="position: relative;">
           ${paidBadge}
           <div class="plan-image">
-            ${ILLUSTRATIONS[plan.illustration] || ''}
+            ${REAL_PHOTOS[plan.illustration]
+              ? `<img src="${REAL_PHOTOS[plan.illustration]}" alt="${plan.title}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy">`
+              : (ILLUSTRATIONS[plan.illustration] || '')}
             <span class="plan-tag">${plan.tag}</span>
             <span class="plan-date">${plan.date}</span>
           </div>
@@ -5761,7 +5788,9 @@
         <span class="back-link" data-route="home">← חזרה לפיד</span>
 
         <div class="detail-hero">
-          ${ILLUSTRATIONS[plan.illustration] || ''}
+          ${REAL_PHOTOS[plan.illustration]
+            ? `<img src="${REAL_PHOTOS[plan.illustration]}" alt="${plan.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+            : (ILLUSTRATIONS[plan.illustration] || '')}
           <div class="detail-hero-overlay">
             <span class="detail-hero-tag">${plan.tag}</span>
             <h1 class="detail-hero-title">${plan.title}</h1>
