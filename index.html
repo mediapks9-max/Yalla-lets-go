@@ -2575,6 +2575,18 @@
         <div class="plans-grid" id="plans-grid"></div>
       </section>
 
+      <!-- ============================ TOURS PREVIEW ============================ -->
+      <section class="plans-section" style="background: linear-gradient(135deg, #fff8f5 0%, #ffffff 100%); padding: 60px 20px; margin-top: 40px;">
+        <div class="section-header" style="max-width: 1200px; margin: 0 auto;">
+          <div>
+            <h2 class="section-title">🗺️ סיורים מקצועיים</h2>
+            <p style="color: var(--color-stone); margin-top: 8px;">סיורים מודרכים ממדריכים מוסמכים בישראל</p>
+          </div>
+          <button data-route="tours" class="btn-secondary" style="padding: 10px 20px; background: white; border: 1.5px solid var(--color-terracotta); color: var(--color-terracotta); border-radius: 100px; cursor: pointer; font-family: inherit; font-weight: 600;">כל הסיורים ←</button>
+        </div>
+        <div class="plans-grid" id="tours-preview-grid" style="max-width: 1200px; margin: 24px auto 0;"></div>
+      </section>
+
       <section class="how-section">
         <div class="how-inner">
           <h2 class="how-title">ככה זה עובד</h2>
@@ -2957,6 +2969,8 @@
           <button class="profile-tab active" data-tab="my-plans">התוכניות שלי</button>
           <button class="profile-tab" data-tab="incoming-requests">🔔 בקשות נכנסות <span id="incoming-badge" style="display:none; background: #d4583a; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-right: 4px;"></span></button>
           <button class="profile-tab" data-tab="my-requests">בקשות ששלחתי</button>
+          <button class="profile-tab" data-tab="my-favorites">❤️ מועדפים</button>
+          <button class="profile-tab" data-tab="my-bookings">💳 ההזמנות שלי</button>
           <button class="profile-tab" data-tab="guide-dashboard" id="tab-guide" style="display: none;">💎 דשבורד מדריך</button>
         </div>
 
@@ -2970,6 +2984,14 @@
 
         <div class="profile-tab-content" data-content="my-requests">
           <div id="my-requests-list"></div>
+        </div>
+
+        <div class="profile-tab-content" data-content="my-favorites">
+          <div class="plans-grid" id="my-favorites-grid"></div>
+        </div>
+
+        <div class="profile-tab-content" data-content="my-bookings">
+          <div id="my-bookings-list"></div>
         </div>
 
         <div class="profile-tab-content" data-content="guide-dashboard">
@@ -3293,8 +3315,31 @@
         <button class="modal-close" data-close-modal="modal-create">×</button>
       </div>
       <div class="modal-body">
+        <!-- Progress steps indicator -->
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0 24px 0; border-bottom: 1px solid #eee; margin-bottom: 24px;">
+          <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: var(--color-terracotta); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">1</div>
+            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">מידע</div>
+          </div>
+          <div style="flex: 0.5; height: 2px; background: #eee;"></div>
+          <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: #eee; color: #999; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">2</div>
+            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">מיקום</div>
+          </div>
+          <div style="flex: 0.5; height: 2px; background: #eee;"></div>
+          <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: #eee; color: #999; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">3</div>
+            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">פרטים</div>
+          </div>
+          <div style="flex: 0.5; height: 2px; background: #eee;"></div>
+          <div style="text-align: center; flex: 1;">
+            <div style="width: 32px; height: 32px; background: #eee; color: #999; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">4</div>
+            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">סיכום</div>
+          </div>
+        </div>
+
         <div class="form-group">
-          <label class="form-label">לאן הולכים?</label>
+          <label class="form-label">לאן הולכים? <span style="color: #d4583a;">*</span></label>
           <input type="text" class="form-input" placeholder="למשל: ריצה בפארק הירקון, טיול בצפון, אופניים בחוף...">
         </div>
 
@@ -3950,6 +3995,30 @@
         });
 
         if (error) throw error;
+
+        // Create notification for the plan owner
+        try {
+          const { data: plan } = await sb
+            .from('plans')
+            .select('creator_id, title')
+            .eq('id', planId)
+            .single();
+          if (plan && plan.creator_id !== currentUser.id) {
+            const meta = currentUser.user_metadata || {};
+            const userName = meta.full_name || currentUser.email?.split('@')[0] || 'משתמש';
+            await sb.from('notifications').insert({
+              user_id: plan.creator_id,
+              type: 'join_request',
+              title: '🤝 בקשה להצטרף לתוכנית שלך',
+              message: `${userName} מבקש/ת להצטרף לתוכנית "${plan.title}"`,
+              related_id: planId
+            });
+          }
+        } catch (notifErr) {
+          console.error('Notification creation failed:', notifErr);
+          // Don't block the request if notification fails
+        }
+
         return { success: true };
       },
 
@@ -4068,6 +4137,13 @@
         }
         if (!currentUser) throw new Error('Must be logged in');
 
+        // Get request details before updating
+        const { data: request } = await sb
+          .from('join_requests')
+          .select('*, plan:plans(title, creator_id)')
+          .eq('id', requestId)
+          .single();
+
         const { error } = await sb
           .from('join_requests')
           .update({
@@ -4077,6 +4153,25 @@
           .eq('id', requestId);
 
         if (error) throw error;
+
+        // Create notification for the requester
+        if (request) {
+          try {
+            const isApproved = newStatus === 'approved';
+            await sb.from('notifications').insert({
+              user_id: request.user_id,
+              type: isApproved ? 'request_approved' : 'request_rejected',
+              title: isApproved ? '✅ בקשתך אושרה!' : '❌ בקשתך נדחתה',
+              message: isApproved
+                ? `אושרת לתוכנית "${request.plan?.title || 'תוכנית'}"!`
+                : `מצטערים, בקשתך לתוכנית "${request.plan?.title || 'תוכנית'}" לא אושרה הפעם`,
+              related_id: request.plan_id
+            });
+          } catch (notifErr) {
+            console.error('Notification creation failed:', notifErr);
+          }
+        }
+
         return { success: true };
       },
 
@@ -4621,6 +4716,45 @@
             .eq('user_id', currentUser.id);
           return data || [];
         } catch (err) {
+          return [];
+        }
+      },
+
+      // טען את התוכניות והסיורים המועדפים עם כל המידע שלהם
+      async fetchMyFavoritesFull() {
+        if (!SUPABASE_ENABLED || !currentUser) return { plans: [], tours: [] };
+        try {
+          const likes = await this.fetchMyLikes();
+          const planIds = likes.filter(l => l.target_type === 'plan').map(l => l.target_id);
+          const tourIds = likes.filter(l => l.target_type === 'tour').map(l => l.target_id);
+
+          const [plansRes, toursRes] = await Promise.all([
+            planIds.length ? sb.from('plans').select('*, creator:profiles!plans_creator_id_fkey(id, full_name, avatar_url, city, is_verified, bio)').in('id', planIds) : { data: [] },
+            tourIds.length ? sb.from('tours').select('*').in('id', tourIds) : { data: [] }
+          ]);
+
+          return {
+            plans: (plansRes.data || []).map(p => transformDbPlan(p)),
+            tours: toursRes.data || []
+          };
+        } catch (err) {
+          console.error('fetchMyFavoritesFull error:', err);
+          return { plans: [], tours: [] };
+        }
+      },
+
+      // טען את ההזמנות של המשתמש
+      async fetchMyBookings() {
+        if (!SUPABASE_ENABLED || !currentUser) return [];
+        try {
+          const { data } = await sb
+            .from('bookings')
+            .select('*, tour:tours(title, cover_image, price_per_person)')
+            .eq('user_id', currentUser.id)
+            .order('created_at', { ascending: false });
+          return data || [];
+        } catch (err) {
+          console.error('fetchMyBookings error:', err);
           return [];
         }
       },
@@ -5212,8 +5346,63 @@
       grid.innerHTML = plans.map((p, i) => renderPlanCard(p, true, i)).join('');
       attachPlanCardListeners();
 
+      // Load tours preview
+      renderToursPreview();
+
       // Load real stats for hero
       loadHeroStats();
+    }
+
+    async function renderToursPreview() {
+      const grid = document.getElementById('tours-preview-grid');
+      if (!grid) return;
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">טוען סיורים...</div>';
+
+      try {
+        const tours = await api.fetchTours();
+        if (tours.length === 0) {
+          grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--color-stone);padding:40px;">אין סיורים כרגע</p>';
+          return;
+        }
+
+        // Show top 3 by rating
+        const top3 = tours.slice(0, 3);
+        grid.innerHTML = top3.map(tour => `
+          <div class="plan-card" data-tour-id="${tour.id}" style="cursor: pointer; position: relative;">
+            <div class="plan-image" style="position: relative; aspect-ratio: 16/10;">
+              <img src="${tour.cover_image}" alt="${tour.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; top: 12px; right: 12px; background: var(--color-terracotta); color: white; padding: 6px 14px; border-radius: 100px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                ₪${tour.price_per_person}
+              </div>
+              <div style="position: absolute; bottom: 12px; right: 12px; background: rgba(255,255,255,0.95); padding: 4px 10px; border-radius: 100px; font-weight: 600; font-size: 12px;">
+                ⭐ ${tour.rating} (${tour.reviews_count})
+              </div>
+            </div>
+            <div class="plan-body">
+              <h3 class="plan-title">${tour.title}</h3>
+              <p class="plan-desc">${tour.short_description || ''}</p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--color-stone);">
+                <span>⏱ ${tour.duration_hours} שעות</span>
+                <span>·</span>
+                <span>👥 עד ${tour.max_participants}</span>
+              </div>
+              <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; font-size: 13px; color: var(--color-terracotta); font-weight: 600;">
+                לפרטים והזמנה ←
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Click handlers
+        grid.querySelectorAll('[data-tour-id]').forEach(card => {
+          card.addEventListener('click', () => {
+            navigate('tour-detail', card.dataset.tourId);
+          });
+        });
+      } catch (err) {
+        console.error('Tours preview error:', err);
+        grid.innerHTML = '';
+      }
     }
 
     // ============================================================
@@ -5866,6 +6055,131 @@
         });
       } catch (err) {
         console.error('loadUserLikes error:', err);
+      }
+    }
+
+    // ============================================================
+    // ⭐ RENDER MY FAVORITES + BOOKINGS
+    // ============================================================
+    async function renderMyFavorites() {
+      const grid = document.getElementById('my-favorites-grid');
+      if (!grid) return;
+      if (!currentUser) {
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#999;padding:40px;">התחבר כדי לראות מועדפים</p>';
+        return;
+      }
+
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">טוען מועדפים...</div>';
+
+      try {
+        const favs = await api.fetchMyFavoritesFull();
+        const total = favs.plans.length + favs.tours.length;
+
+        if (total === 0) {
+          grid.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:60px 20px;background:#fff8f5;border-radius:16px;">
+              <div style="font-size:48px;margin-bottom:16px;">❤️</div>
+              <h3 style="color:var(--color-terracotta);margin-bottom:8px;">עוד אין לך מועדפים</h3>
+              <p style="color:#777;">לחץ על 🤍 בכל תוכנית/סיור שאתה אוהב</p>
+            </div>
+          `;
+          return;
+        }
+
+        let html = '';
+        // Plans
+        favs.plans.forEach((p, i) => {
+          html += renderPlanCard(p, false, i);
+        });
+        // Tours
+        favs.tours.forEach(tour => {
+          html += `
+            <div class="plan-card" data-tour-id="${tour.id}" style="cursor: pointer; position: relative;">
+              <div class="plan-image" style="position: relative; aspect-ratio: 16/10;">
+                <img src="${tour.cover_image}" alt="${tour.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+                <div style="position: absolute; top: 12px; right: 12px; background: var(--color-terracotta); color: white; padding: 6px 14px; border-radius: 100px; font-weight: 600; font-size: 14px;">
+                  ₪${tour.price_per_person}
+                </div>
+                <div style="position: absolute; bottom: 12px; right: 12px; background: rgba(255,255,255,0.95); padding: 4px 10px; border-radius: 100px; font-weight: 600; font-size: 12px;">
+                  ⭐ ${tour.rating}
+                </div>
+              </div>
+              <div class="plan-body">
+                <h3 class="plan-title">${tour.title}</h3>
+                <p class="plan-desc">${tour.short_description || ''}</p>
+                <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #eee; font-size: 13px; color: var(--color-terracotta); font-weight: 600;">
+                  לפרטים והזמנה ←
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        grid.innerHTML = html;
+
+        // Click handlers for tour cards in favorites
+        grid.querySelectorAll('[data-tour-id]').forEach(card => {
+          card.addEventListener('click', () => {
+            navigate('tour-detail', card.dataset.tourId);
+          });
+        });
+      } catch (err) {
+        console.error('renderMyFavorites error:', err);
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#d4583a;padding:40px;">שגיאה בטעינה</p>';
+      }
+    }
+
+    async function renderMyBookings() {
+      const list = document.getElementById('my-bookings-list');
+      if (!list) return;
+      if (!currentUser) {
+        list.innerHTML = '<p style="text-align:center;color:#999;padding:40px;">התחבר כדי לראות הזמנות</p>';
+        return;
+      }
+
+      list.innerHTML = '<p style="text-align:center;padding:40px;color:var(--color-stone);">טוען הזמנות...</p>';
+
+      try {
+        const bookings = await api.fetchMyBookings();
+        if (bookings.length === 0) {
+          list.innerHTML = `
+            <div style="text-align:center;padding:60px 20px;background:#fff8f5;border-radius:16px;">
+              <div style="font-size:48px;margin-bottom:16px;">💳</div>
+              <h3 style="color:var(--color-terracotta);margin-bottom:8px;">אין הזמנות עדיין</h3>
+              <p style="color:#777;margin-bottom:20px;">דפדף בסיורים והזמן את הסיור הראשון שלך</p>
+              <button class="btn-cta" data-route="tours" style="background: var(--color-terracotta); color: white; padding: 12px 32px; border-radius: 100px; border: none; cursor: pointer; font-family: inherit; font-size: 16px; font-weight: 600;">🗺️ גלה סיורים</button>
+            </div>
+          `;
+          return;
+        }
+
+        list.innerHTML = `
+          <div style="display: flex; flex-direction: column; gap: 16px;">
+            ${bookings.map(b => `
+              <div style="background: white; border-radius: 16px; padding: 20px; box-shadow: 0 2px 12px rgba(0,0,0,0.05); display: flex; gap: 16px; align-items: center;">
+                <img src="${b.tour?.cover_image || ''}" alt="${b.tour?.title || ''}" style="width: 100px; height: 100px; border-radius: 12px; object-fit: cover; flex-shrink: 0;">
+                <div style="flex: 1;">
+                  <h3 style="margin: 0 0 4px 0; font-size: 18px;">${b.tour?.title || 'סיור'}</h3>
+                  <div style="font-size: 14px; color: #666; margin-bottom: 8px;">
+                    👥 ${b.participants} משתתפים · ${new Date(b.created_at).toLocaleDateString('he-IL')}
+                  </div>
+                  <div style="display: flex; gap: 8px; align-items: center;">
+                    <span style="padding: 4px 10px; border-radius: 100px; font-size: 12px; font-weight: 600; background: ${
+                      b.status === 'paid' ? '#e8f5e9' : b.status === 'cancelled' ? '#ffebee' : '#fff8f5'
+                    }; color: ${
+                      b.status === 'paid' ? '#2e7d32' : b.status === 'cancelled' ? '#d32f2f' : 'var(--color-terracotta)'
+                    };">
+                      ${b.status === 'paid' ? '✓ שולם' : b.status === 'cancelled' ? '✗ בוטל' : '⏳ ממתין'}
+                    </span>
+                    <span style="font-weight: 700; color: var(--color-terracotta);">₪${b.total_price}</span>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      } catch (err) {
+        console.error('renderMyBookings error:', err);
+        list.innerHTML = '<p style="text-align:center;color:#d4583a;padding:40px;">שגיאה בטעינה</p>';
       }
     }
 
@@ -7329,6 +7643,10 @@
         tab.classList.add('active');
         const content = document.querySelector(`[data-content="${target}"]`);
         if (content) content.classList.add('active');
+
+        // Load content based on tab
+        if (target === 'my-favorites') renderMyFavorites();
+        if (target === 'my-bookings') renderMyBookings();
       });
     }
 
@@ -7719,38 +8037,100 @@
     // INIT
     // ============================================================
     document.addEventListener('DOMContentLoaded', async () => {
-      // 🚀 MASTER EVENT DELEGATION - הוסף קודם כל לפני async logic
-      // עובד גם אם משהו אחר נכשל
-      document.addEventListener('click', (e) => {
-        // 1. Close modal buttons (X buttons)
-        const closeBtn = e.target.closest('[data-close-modal]');
-        if (closeBtn) {
-          e.preventDefault();
-          closeModal(closeBtn.dataset.closeModal);
-          return;
+      // 🔥 DIRECT LISTENERS - מהאמינים ביותר
+      // הוסף ישירות לכל כפתור בלי delegation
+      function attachDirectListeners() {
+        // כפתור פרסום בהדר
+        const headerBtn = document.getElementById('btn-create-plan');
+        if (headerBtn && !headerBtn.dataset.hasListener) {
+          headerBtn.dataset.hasListener = 'true';
+          headerBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('[Click] Header create-plan');
+            if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED && !currentUser) {
+              showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
+              openModal('modal-login');
+              return;
+            }
+            openModal('modal-create');
+          });
         }
 
-        // 2. Create plan buttons (anywhere)
-        const createBtn = e.target.closest('[data-action="create-plan"], #btn-create-plan');
-        if (createBtn) {
-          e.preventDefault();
-          if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED && !currentUser) {
-            showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
+        // כל כפתורי data-action="create-plan"
+        document.querySelectorAll('[data-action="create-plan"]').forEach(btn => {
+          if (btn.dataset.hasListener) return;
+          btn.dataset.hasListener = 'true';
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('[Click] data-action create-plan');
+            if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED && !currentUser) {
+              showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
+              openModal('modal-login');
+              return;
+            }
+            openModal('modal-create');
+          });
+        });
+
+        // כל כפתורי data-close-modal
+        document.querySelectorAll('[data-close-modal]').forEach(btn => {
+          if (btn.dataset.hasListener) return;
+          btn.dataset.hasListener = 'true';
+          btn.addEventListener('click', (e) => {
+            e.preventDefault();
+            console.log('[Click] close-modal');
+            closeModal(btn.dataset.closeModal);
+          });
+        });
+
+        // כפתור login בהדר
+        const loginBtn = document.getElementById('btn-header-login');
+        if (loginBtn && !loginBtn.dataset.hasListener) {
+          loginBtn.dataset.hasListener = 'true';
+          loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             openModal('modal-login');
-            return;
-          }
-          openModal('modal-create');
-          return;
+          });
         }
+      }
 
-        // 3. Login button (header)
-        const loginBtn = e.target.closest('#btn-header-login, [data-action="login"]');
-        if (loginBtn) {
-          e.preventDefault();
-          openModal('modal-login');
-          return;
-        }
-      });
+      // הפעל מיד
+      attachDirectListeners();
+
+      // 🔐 Google sign-in - direct listener
+      function attachGoogleListener() {
+        document.querySelectorAll('.social-btn').forEach(btn => {
+          if (btn.dataset.googleListener) return;
+          btn.dataset.googleListener = 'true';
+          btn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log('[Click] Google sign-in');
+            if (!SUPABASE_ENABLED) {
+              showToast('🟡 מצב הדגמה - חיבור Google דורש Backend');
+              return;
+            }
+            try {
+              btn.disabled = true;
+              btn.innerHTML = '<span style="font-size: 14px;">מתחבר...</span>';
+              await api.signInWithGoogle();
+            } catch (err) {
+              console.error('Google sign-in error:', err);
+              showToast('❌ ' + (err.message || 'שגיאה בחיבור'));
+              btn.disabled = false;
+              btn.innerHTML = `
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                  <path d="M22.5 12.27c0-.85-.08-1.67-.22-2.45H12v4.62h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.75h3.57c2.09-1.92 3.29-4.74 3.29-8.23z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.75c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.15-4.53H2.16v2.84C3.97 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.85 14.12c-.22-.66-.35-1.36-.35-2.12s.13-1.46.35-2.12V7.04H2.16C1.42 8.51 1 10.2 1 12s.42 3.49 1.16 4.96l3.69-2.84z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.97 3.47 2.16 7.04l3.69 2.84C6.71 7.31 9.14 5.38 12 5.38z" fill="#EA4335"/>
+                </svg>
+                המשך עם Google
+              `;
+            }
+          });
+        });
+      }
+      attachGoogleListener();
 
       // Setup navigation IMMEDIATELY
       setupNavigation();
@@ -7766,6 +8146,10 @@
       // Render plans immediately (works without auth)
       renderHomePlans();
 
+      // הפעל שוב אחרי 500ms למקרה שהcontent נטען דינמית
+      setTimeout(attachDirectListeners, 500);
+      setTimeout(attachDirectListeners, 1500);
+
       // Now do async stuff - if these fail, basic UI still works
       try {
         await checkAuthSession();
@@ -7773,6 +8157,9 @@
         setupNotificationsButton();
         loadNotifications();
         setInterval(loadNotifications, 60000);
+
+        // הפעל שוב אחרי auth
+        attachDirectListeners();
       } catch (err) {
         console.error('Auth/profile init error:', err);
         // Continue anyway - basic UI works
