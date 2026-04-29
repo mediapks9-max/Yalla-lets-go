@@ -2800,7 +2800,7 @@
             </ul>
           </div>
           <div class="contact-form" style="text-align: center;">
-            <div style="font-size: 64px; margin-bottom: 16px;">🇨🇾</div>
+            <div style="font-size: 64px; margin-bottom: 16px;">🇮🇱</div>
             <h3 style="font-size: 28px; margin-bottom: 16px;">בוא נתחיל</h3>
             <p class="contact-form-sub" style="margin-bottom: 32px; font-size: 16px;">
               שתי דרכים להיכנס לקהילה:
@@ -2928,7 +2928,7 @@
             </div>
           </div>
           <div class="timeline-item">
-            <div class="timeline-marker">🇨🇾</div>
+            <div class="timeline-marker">🇮🇱</div>
             <div class="timeline-content">
               <h3>מקומי בלב</h3>
               <p>בנינו את האפליקציה מתל אביב לקהילה הישראלית של אזור המרכז. אנחנו מכירים את הצורך, את העיר, את הקהילה. כל פיצ'ר נבנה מתוך הצרכים האמיתיים שלנו.</p>
@@ -6523,9 +6523,17 @@
         openModal('modal-create');
       });
 
-      // Footer "create plan" link
+      // Footer "create plan" link - same logic as main button
       document.querySelectorAll('[data-action="create-plan"]').forEach(el => {
-        el.addEventListener('click', () => openModal('modal-create'));
+        el.addEventListener('click', (e) => {
+          e.preventDefault();
+          if (SUPABASE_ENABLED && !currentUser) {
+            showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
+            openModal('modal-login');
+            return;
+          }
+          openModal('modal-create');
+        });
       });
 
       // Chip groups in modals
