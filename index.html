@@ -3568,6 +3568,30 @@
         return null;
       }
       currentProfile = data;
+
+      // Auto-update invited_by if URL has ?ref= and profile doesn't have one yet
+      try {
+        const urlParams = new URLSearchParams(window.location.search);
+        const refId = urlParams.get('ref');
+        if (refId && !currentProfile.invited_by && refId !== currentUser.id) {
+          // Check if the referrer exists
+          const { data: referrer } = await sb
+            .from('profiles')
+            .select('id')
+            .eq('id', refId)
+            .single();
+          if (referrer) {
+            await sb
+              .from('profiles')
+              .update({ invited_by: refId })
+              .eq('id', currentUser.id);
+            console.log('✓ Tracked invitation from:', refId);
+          }
+        }
+      } catch (e) {
+        // Silent - not critical
+      }
+
       updateAuthUI();
       return data;
     }
@@ -4183,6 +4207,25 @@
             .from('profiles')
             .select('*', { count: 'exact', head: true });
 
+          // KPI: New users this week
+          const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+          const { count: newUsersWeek } = await sb
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .gte('created_at', oneWeekAgo);
+
+          // KPI: Local users
+          const { count: localUsers } = await sb
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .eq('is_local', true);
+
+          // KPI: Invited users (organic vs invited)
+          const { count: invitedUsers } = await sb
+            .from('profiles')
+            .select('*', { count: 'exact', head: true })
+            .not('invited_by', 'is', null);
+
           // Count guides by status
           const { data: guides } = await sb
             .from('guides')
@@ -4197,11 +4240,13 @@
           // Count plans (paid vs free)
           const { data: plans } = await sb
             .from('plans')
-            .select('is_paid, price');
+            .select('is_paid, price, status, created_at');
           const plansCount = {
             total: (plans || []).length,
             paid: (plans || []).filter(p => p.is_paid).length,
             free: (plans || []).filter(p => !p.is_paid).length,
+            active: (plans || []).filter(p => p.status === 'active').length,
+            week: (plans || []).filter(p => p.created_at >= oneWeekAgo).length,
           };
 
           // Count bookings + revenue
@@ -4218,19 +4263,38 @@
             .reduce((sum, b) => sum + (parseFloat(b.amount_paid) || 0), 0);
           const platformRevenue = totalRevenue * 0.10;
 
-          // Count join requests
+          // Count join requests + KPIs
           const { count: requestsCount } = await sb
             .from('join_requests')
             .select('*', { count: 'exact', head: true });
+          const { count: requestsWeek } = await sb
+            .from('join_requests')
+            .select('*', { count: 'exact', head: true })
+            .gte('created_at', oneWeekAgo);
+          const { count: approvedWeek } = await sb
+            .from('join_requests')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'approved')
+            .gte('responded_at', oneWeekAgo);
+
+          // Calculate "Organic %" - users who signed up without invitation
+          const organicUsers = (usersCount || 0) - (invitedUsers || 0);
+          const organicPct = usersCount > 0 ? Math.round((organicUsers / usersCount) * 100) : 0;
 
           return {
             users: usersCount || 0,
+            newUsersWeek: newUsersWeek || 0,
+            localUsers: localUsers || 0,
+            invitedUsers: invitedUsers || 0,
+            organicPct: organicPct,
             guides: guideCounts,
             plans: plansCount,
             bookings: bookingsCount,
             totalRevenue,
             platformRevenue,
             requests: requestsCount || 0,
+            requestsWeek: requestsWeek || 0,
+            approvedWeek: approvedWeek || 0,
           };
         } catch (err) {
           console.error('Admin stats error:', err);
@@ -5489,10 +5553,35 @@
         const numStyle = 'font-size: 36px; font-weight: 700; line-height: 1;';
 
         grid.innerHTML = `
+          <!-- 🎯 KPI Section - The 3 Most Important Metrics -->
+          <div style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+            <h2 style="margin: 0 0 4px 0; font-size: 20px;">📊 מדדי הבריאות של הפלטפורמה</h2>
+            <p style="margin: 0 0 20px 0; opacity: 0.7; font-size: 13px;">3 המספרים שחשוב לעקוב אחריהם השבוע</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px;">
+              <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 12px;">
+                <div style="font-size: 12px; opacity: 0.7; margin-bottom: 6px;">🆕 משתמשים חדשים השבוע</div>
+                <div style="font-size: 32px; font-weight: 700;">${stats.newUsersWeek}</div>
+                <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">מתוך ${stats.users} סה"כ</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 12px;">
+                <div style="font-size: 12px; opacity: 0.7; margin-bottom: 6px;">📨 בקשות השבוע</div>
+                <div style="font-size: 32px; font-weight: 700;">${stats.requestsWeek}</div>
+                <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">${stats.approvedWeek} אושרו</div>
+              </div>
+              <div style="background: rgba(255,255,255,0.1); padding: 16px; border-radius: 12px;">
+                <div style="font-size: 12px; opacity: 0.7; margin-bottom: 6px;">🌱 צמיחה אורגנית</div>
+                <div style="font-size: 32px; font-weight: 700;">${stats.organicPct}%</div>
+                <div style="font-size: 11px; opacity: 0.6; margin-top: 4px;">${stats.invitedUsers} מוזמנים · ${stats.users - stats.invitedUsers} אורגניים</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- General Stats Grid -->
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 32px;">
             <div style="${cardStyle}">
               <div style="font-size: 13px; color: #999; margin-bottom: 8px;">👥 סה"כ משתמשים</div>
               <div style="${numStyle} color: #2196f3;">${stats.users}</div>
+              <div style="font-size: 11px; color: #999; margin-top: 4px;">${stats.localUsers} מקומיים בקפריסין</div>
             </div>
             <div style="${cardStyle}">
               <div style="font-size: 13px; color: #999; margin-bottom: 8px;">💎 מדריכים מאושרים</div>
@@ -5502,10 +5591,10 @@
             <div style="${cardStyle}">
               <div style="font-size: 13px; color: #999; margin-bottom: 8px;">🗺️ סה"כ תוכניות</div>
               <div style="${numStyle} color: #4caf50;">${stats.plans.total}</div>
-              <div style="font-size: 11px; color: #999; margin-top: 4px;">${stats.plans.paid} בתשלום · ${stats.plans.free} חינם</div>
+              <div style="font-size: 11px; color: #999; margin-top: 4px;">${stats.plans.active} פעילות · ${stats.plans.week} השבוע</div>
             </div>
             <div style="${cardStyle}">
-              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">📨 בקשות הצטרפות</div>
+              <div style="font-size: 13px; color: #999; margin-bottom: 8px;">📨 סה"כ בקשות</div>
               <div style="${numStyle} color: #9c27b0;">${stats.requests}</div>
             </div>
           </div>
@@ -5534,6 +5623,17 @@
               </div>
             </div>
           ` : ''}
+
+          <!-- Tip box -->
+          <div style="background: #e3f2fd; padding: 20px; border-radius: 12px; border: 1px solid #90caf9;">
+            <div style="font-weight: 600; color: #1565c0; margin-bottom: 8px;">💡 טיפ של היום</div>
+            <div style="font-size: 14px; color: #555; line-height: 1.6;">
+              ${stats.users < 20 ? 'תתמקד עכשיו בלהביא 20 משתמשים אמיתיים. שתף את הקישור עם חברים ובקבוצות פייסבוק ישראליות בקפריסין.' :
+                stats.users < 50 ? 'יפה! יש לך מעל 20 משתמשים. עכשיו תתמקד בלקבל 5 ביקורות אמיתיות מהמשתתפים שלך.' :
+                stats.organicPct < 50 ? 'רוב המשתמשים הגיעו דרך הזמנות. צריך עכשיו להביא משתמשים אורגניים - שיתופים בקבוצות, פוסטים שיווקיים.' :
+                'הפלטפורמה צומחת! זה הזמן לחשוב על הרחבה ליעדים נוספים.'}
+            </div>
+          </div>
         `;
       } catch (err) {
         console.error('Admin overview error:', err);
