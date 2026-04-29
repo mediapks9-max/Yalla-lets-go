@@ -8974,6 +8974,92 @@
     // ============================================================
     // 🥾 TRAILS PAGE - מסלולים עצמאיים
     // ============================================================
+
+    // Fallback list — beautiful Israeli trails with real photos.
+    // Used when the DB `trails` table is empty so the page always shines.
+    const FALLBACK_TRAILS = [
+      {
+        id: 't-1',
+        title: 'מסלול נחל דוד — עין גדי',
+        region: 'south',
+        difficulty: 'easy',
+        duration_text: '2-3 שעות',
+        description: 'אחד המסלולים היפים בישראל. בריכות טבעיות, מפלים, ויעלים בדרך. מתאים גם לילדים.',
+        tip: 'הגעו עד 9 בבוקר — אחרי זה החום מטריף ויש המון אנשים.',
+        cover_image: 'https://images.pexels.com/photos/1430676/pexels-photo-1430676.jpeg?auto=compress&cs=tinysrgb&w=1280',
+      },
+      {
+        id: 't-2',
+        title: 'נחל יהודיה — רמת הגולן',
+        region: 'north',
+        difficulty: 'medium',
+        duration_text: '4-5 שעות',
+        description: 'מסלול מים קלאסי. קפיצות לבריכות, גלישות בסלעים, נוף מדהים. דורש שנייה של אומץ.',
+        tip: 'נעלי הליכה רטובות חובה. אל תיקחו דברים שלא רוצים שיירטבו.',
+        cover_image: 'https://images.pexels.com/photos/2563040/pexels-photo-2563040.jpeg?auto=compress&cs=tinysrgb&w=1280',
+      },
+      {
+        id: 't-3',
+        title: 'מצדה — שביל הנחש',
+        region: 'south',
+        difficulty: 'hard',
+        duration_text: 'שעה וחצי לעלייה',
+        description: 'הזריחה מפסגת מצדה זה רגע ישראלי קלאסי. עלייה תלולה, אבל הנוף שווה כל שלב.',
+        tip: 'התחילו ב-4 בבוקר עם פנס. תקחו 2 ליטר מים לאדם.',
+        cover_image: '/images/masada-deadsea.jpg',
+      },
+      {
+        id: 't-4',
+        title: 'הר מירון — שביל ישראל',
+        region: 'north',
+        difficulty: 'medium',
+        duration_text: '3-4 שעות',
+        description: 'הפסגה הגבוהה בארץ. יער עתיק, נוף עד הים, ובימי בהירות רואים את החרמון.',
+        tip: 'בקיץ קריר, בחורף יורד שלג. תבדקו תחזית לפני.',
+        cover_image: 'https://images.pexels.com/photos/417173/pexels-photo-417173.jpeg?auto=compress&cs=tinysrgb&w=1280',
+      },
+      {
+        id: 't-5',
+        title: 'מכתש רמון — הר ארדון',
+        region: 'south',
+        difficulty: 'medium',
+        duration_text: '4 שעות',
+        description: 'נוף מדבר חד-פעמי. סלעים בצבעי תכלת ואדום, שקט מוחלט. כמו לבקר בכוכב אחר.',
+        tip: 'אל תלכו בחודשי הקיץ. אביב או סתיו אידיאלי.',
+        cover_image: 'https://images.pexels.com/photos/1227513/pexels-photo-1227513.jpeg?auto=compress&cs=tinysrgb&w=1280',
+      },
+      {
+        id: 't-6',
+        title: 'נחל אמוד — גליל עליון',
+        region: 'north',
+        difficulty: 'easy',
+        duration_text: '2 שעות',
+        description: 'מסלול קליל ויפה במיוחד באביב. פריחה, נחל זורם, וגלעין של חורבות. מתאים למשפחות.',
+        tip: 'יש מקטעים רטובים בחורף — קחו נעליים שלא אכפת לכם.',
+        cover_image: 'https://images.pexels.com/photos/1761279/pexels-photo-1761279.jpeg?auto=compress&cs=tinysrgb&w=1280',
+      },
+      {
+        id: 't-7',
+        title: 'תל-אביב לחוף — שביל החוף',
+        region: 'center',
+        difficulty: 'easy',
+        duration_text: '1-3 שעות (בחירה שלך)',
+        description: 'מנמל יפו עד תל ברוך. שביל מסומן, רחב, מתאים גם לאופניים. שקיעה כל ערב.',
+        tip: 'התחילו ביפו אחה"צ — תסיימו לראות את השקיעה הכי יפה.',
+        cover_image: '/images/sunset-jaffa.jpg',
+      },
+      {
+        id: 't-8',
+        title: 'חורבת מדרס — ירושלים',
+        region: 'jerusalem',
+        difficulty: 'easy',
+        duration_text: '2 שעות',
+        description: 'מערות עתיקות, פריחה אדירה באביב, ונופים פתוחים. מתאים גם לילדים.',
+        tip: 'לכו עם פנס לזחילה במערכת המסתור.',
+        cover_image: 'https://images.pexels.com/photos/2563040/pexels-photo-2563040.jpeg?auto=compress&cs=tinysrgb&w=1280',
+      },
+    ];
+
     async function renderTrailsPage() {
       const grid = document.getElementById('trails-grid');
       if (!grid) return;
@@ -8981,11 +9067,11 @@
       grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">טוען מסלולים...</div>';
 
       try {
-        const trails = await api.fetchTrails();
+        let trails = await api.fetchTrails();
 
-        if (trails.length === 0) {
-          grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:60px;color:var(--color-stone);">אין מסלולים כרגע</p>';
-          return;
+        // Fallback to curated list if DB is empty
+        if (!trails || trails.length === 0) {
+          trails = FALLBACK_TRAILS;
         }
 
         grid.innerHTML = trails.map(trail => `
