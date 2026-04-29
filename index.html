@@ -5,10 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ============================================================
-       📊 ANALYTICS - Microsoft Clarity
+       📊 SEO & SOCIAL META TAGS
        ============================================================ -->
+  <title>יאלה - הקהילה הישראלית בקפריסין | מצא שותפים לטיולים וספורט</title>
+  <meta name="description" content="יאלה - הקהילה הישראלית בלימסול ובקפריסין. מצא שותפים לריצה, אופניים, כדורגל, טיולים וצלילה. הצטרף עכשיו - חינם.">
+  <meta name="keywords" content="יאלה, קפריסין, לימסול, ישראלים בקפריסין, טיולים, ריצה, כדורגל, אופניים, קהילה ישראלית">
+  <meta name="author" content="Yalla">
 
-  <!-- Microsoft Clarity -->
+  <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yalla-lets-go.vercel.app/">
+  <meta property="og:title" content="יאלה - הקהילה הישראלית בקפריסין">
+  <meta property="og:description" content="מצא שותפים לריצה, אופניים, כדורגל וטיולים בלימסול. הצטרף לקהילה.">
+  <meta property="og:image" content="https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?auto=format&fit=crop&w=1200&q=80">
+  <meta property="og:locale" content="he_IL">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="יאלה - הקהילה הישראלית בקפריסין">
+  <meta name="twitter:description" content="מצא שותפים לריצה, אופניים, כדורגל וטיולים בלימסול">
+  <meta name="twitter:image" content="https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?auto=format&fit=crop&w=1200&q=80">
+
+  <!-- Theme Color (mobile browser bar) -->
+  <meta name="theme-color" content="#c2410c">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23c2410c'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3Eי%3C/text%3E%3C/svg%3E">
+
+  <!-- Microsoft Clarity Analytics -->
   <script type="text/javascript">
     (function(c,l,a,r,i,t,y){
         c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
@@ -16,9 +40,6 @@
         y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
     })(window, document, "clarity", "script", "wiq4n4jlzq");
   </script>
-
-  <meta name="description" content="יאלה - הקהילה הישראלית של מטיילים. מצאו שותפים לטיול, סופ״ש, או אפילו זריחה במכתש.">
-  <title>יאלה — מי בעניין?</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2481,28 +2502,19 @@
       <section class="hero">
         <div class="hero-badge">
           <span class="hero-badge-dot"></span>
-          247 ישראלים מתכננים השבוע
+          🇨🇾 הקהילה הישראלית בלימסול
         </div>
         <h1>הולך לאנשהו?<br><em>קח מישהו איתך.</em></h1>
         <p class="hero-sub">
-          הקהילה של מטיילים ישראלים שמחפשים שותפים<br>
-          לטיול, לסופ"ש, לזריחה במכתש או לבירה בנמל.
+          הקהילה הישראלית בקפריסין שמחפשים שותפים לריצה,<br>
+          לכדורגל בשבת, לטיול בטרודוס, או לבירה בנמל.
         </p>
-        <div class="hero-stats">
-          <div class="hero-stat">
-            <div class="hero-stat-num">1,847</div>
-            <div class="hero-stat-label">חברי קהילה</div>
-          </div>
-          <div class="hero-stat-divider"></div>
-          <div class="hero-stat">
-            <div class="hero-stat-num">93</div>
-            <div class="hero-stat-label">תוכניות פעילות</div>
-          </div>
-          <div class="hero-stat-divider"></div>
-          <div class="hero-stat">
-            <div class="hero-stat-num">412</div>
-            <div class="hero-stat-label">חיבורים נוצרו</div>
-          </div>
+        <div style="display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap;">
+          <button class="btn-primary" data-action="create-plan" style="padding: 14px 32px; font-size: 16px;">✦ פרסם תוכנית</button>
+          <button class="btn-secondary" data-route="about" style="padding: 14px 32px; font-size: 16px; background: white; border: 1.5px solid var(--color-sand); color: var(--color-earth);">📖 איך זה עובד?</button>
+        </div>
+        <div class="hero-stats" id="hero-stats" style="margin-top: 40px;">
+          <!-- Real stats will be loaded here -->
         </div>
       </section>
 
@@ -2918,17 +2930,19 @@
       <div class="about-page">
         <h1>הסיפור של <em>יאלה.</em></h1>
         <p class="about-intro">
-          התחלנו עם שאלה אחת: למה כל פעם שיש לי רעיון לטיול,
-          אני צריך להתחיל לחפש בקבוצות פייסבוק עם 200 אלף איש,
-          ולברר ידנית מי בא?
+          הקהילה הישראלית בלימסול גדלה במהירות - אבל אין לנו פלטפורמה שמחברת בינינו.
+          כל פעם שמישהו רוצה לרוץ, לרכב על אופניים, או לטייל - הוא צריך לחפש בעשרות קבוצות וואטסאפ.
+          יאלה משנה את זה.
         </p>
 
         <h2>הבעיה</h2>
         <p>
-          בישראל יש קהילה עצומה של מטיילים. אחרי צבא, באמצע השבוע, סופי שבוע, חופשות חגים. כולם מחפשים שותפים. אבל הכלים? קבוצות פייסבוק עם אלגוריתם שמעלים את הפוסטים שמישהו אחר תייג בהם, או אפליקציות גלובליות שלא מבינות את ההבדל בין "סופ"ש בצימר" ל-"3 חודשים בדרום אמריקה".
+          בקפריסין יש קהילה ישראלית מדהימה - אנשים שעברו לחיות פה, סטודנטים, נוודים דיגיטליים, ותיירים.
+          כולם מחפשים שותפים לפעילויות. אבל הכלים? קבוצות וואטסאפ פזורות, פוסטים שנעלמים, ואין דרך לדעת מי המארגן ומה הוא מציע.
         </p>
         <p>
-          רצינו פלטפורמה שמבינה איך ישראלים מטיילים. שמכירה את החגים, את "אחרי הצבא", את הצורך לדעת אם השותף הפוטנציאלי שומר שבת או לא, אם הוא טבעוני, אם הוא רוכב על אופניים או רוצה לבלות שלוש שעות באוסם של אבן גבירול.
+          יצרנו פלטפורמה שמבינה את הצרכים שלנו - בעברית, מותאמת לאזור, עם פילטרים לפי עיר, נושא, ורמה.
+          אם אתה רוצה לרוץ בבוקר עם 5 אנשים בColumbia Beach, לשחק כדורגל ערב, או לטייל בטרודוס - תמצא פה את הקהילה שלך.
         </p>
 
         <div class="about-quote">
@@ -2940,29 +2954,29 @@
           <div class="timeline-item">
             <div class="timeline-marker">🛡️</div>
             <div class="timeline-content">
-              <h3>בטיחות לפני הכל</h3>
-              <p>אימות זהות בשני שלבים, דירוגים ציבוריים, צ'אט פנימי מאובטח. אתה רואה בדיוק מי לפני שאתה אומר "כן" — וברקע יש מערכת שמסמנת התנהגויות חריגות.</p>
+              <h3>בטיחות וחיבור אמיתי</h3>
+              <p>הרשמה דרך Google בלבד, פרופיל אישי לכל משתמש, ומארגן יודע מי בא לפעילות שלו לפני שמאשר. רק אנשים אמיתיים, פנים אמיתיות, חיבורים אמיתיים.</p>
             </div>
           </div>
           <div class="timeline-item">
             <div class="timeline-marker">🤝</div>
             <div class="timeline-content">
               <h3>קהילה אמיתית</h3>
-              <p>לא אלגוריתם שמנסה למקסם זמן באתר. אנשים אמיתיים, פרצופים אמיתיים, סיפורים אמיתיים. אנחנו מודדים הצלחה לפי חברויות שנוצרות, לא לפי זמן גלילה.</p>
+              <p>לא אלגוריתם שמנסה למקסם זמן באתר. אנשים שמכירים, נפגשים, ויוצרים חברויות אמיתיות. אנחנו מודדים הצלחה לפי החיבורים שנוצרים בעולם האמיתי.</p>
             </div>
           </div>
           <div class="timeline-item">
-            <div class="timeline-marker">🇮🇱</div>
+            <div class="timeline-marker">🇨🇾</div>
             <div class="timeline-content">
-              <h3>ישראלי בלב</h3>
-              <p>אנחנו מבינים את הקהל. החגים, השפה, הסלנג, "אחרי הצבא", "אחרי גיוס", "מתי גם אתה?". פילטרים שמתחשבים בכשרות, בשבת, ובחפיפה צבאית.</p>
+              <h3>מקומי בלב</h3>
+              <p>בנינו את האפליקציה מלימסול לקהילה הישראלית בקפריסין. אנחנו מכירים את הצורך, את העיר, את הקהילה. כל פיצ'ר נבנה מתוך הצרכים האמיתיים שלנו.</p>
             </div>
           </div>
           <div class="timeline-item">
-            <div class="timeline-marker">🚪</div>
+            <div class="timeline-marker">💎</div>
             <div class="timeline-content">
               <h3>פתוח לכולם</h3>
-              <p>תרמילאים אחרי צבא, משפחות צעירות, גיל הזהב, תיירים. כל אחד מוצא את האנשים שלו, את הקהילה שלו, את הקצב שלו. בלי הירארכיה, בלי קבוצות סגורות.</p>
+              <p>פעילויות חינמיות לכל הקהילה + מדריכים מקצועיים שמוכנים להציע טיולים בתשלום (ב-10% עמלה בלבד). כל אחד מוצא את הקצב שלו.</p>
             </div>
           </div>
           <div class="timeline-item">
@@ -2976,10 +2990,10 @@
 
         <h2>מה הלאה?</h2>
         <p>
-          אנחנו רק בהתחלה. בקרוב: AI שיתאים לך שותפים אוטומטית לפי טיפוס המטייל שלך, קהילות נושאיות (תרמילאי דרום אמריקה, משפחות עם פעוטות, מטיילי 50+), שותפויות עם חברות ביטוח וטיסות, ואפליקציה למובייל.
+          אנחנו רק בהתחלה. בקרוב: AI שיתאים לך שותפים אוטומטית, קהילות נושאיות (סקיים, רוכבי אופניים, משפחות), שותפויות עם עסקים מקומיים, אפליקציה למובייל, והרחבה לאתונה ותל אביב.
         </p>
         <p>
-          אבל המטרה הסופית פשוטה: <strong>שאף ישראלי לא יוותר על טיול בגלל שאין לו עם מי.</strong>
+          אבל המטרה הסופית פשוטה: <strong>שאף ישראלי לא יישאר לבד בקפריסין.</strong>
         </p>
       </div>
     </div>
@@ -3179,41 +3193,41 @@
     <div class="footer-inner">
       <div class="footer-brand">
         <div class="logo" data-route="home" style="color: var(--color-terracotta);">יאלה<span class="logo-dot"></span></div>
-        <p>הקהילה הישראלית של מטיילים. מצא שותפים אמיתיים, לרגעים אמיתיים.</p>
+        <p>הקהילה הישראלית בקפריסין. מצא שותפים אמיתיים לרגעים אמיתיים. ספורט, טיולים, חברים חדשים.</p>
+        <div style="display: flex; gap: 12px; margin-top: 16px;">
+          <a href="https://wa.me/972524444444?text=שלום%20יאלה" target="_blank" style="color: var(--color-cream); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; text-decoration: none;">📱 WhatsApp</a>
+          <a href="mailto:hello@yalla-app.com" style="color: var(--color-cream); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; text-decoration: none;">📧 אימייל</a>
+        </div>
       </div>
       <div class="footer-col">
         <h4>הקהילה</h4>
         <ul>
-          <li><a data-route="home">גלה תוכניות</a></li>
+          <li><a data-route="home">🏠 גלה תוכניות</a></li>
           <li><a data-route="guides">💎 הצוות שלנו</a></li>
           <li><a data-route="guide-register">👨‍🏫 הצטרף כמדריך</a></li>
-          <li><a data-action="create-plan">צור תוכנית</a></li>
-          <li><a>קהילות נושאיות</a></li>
-          <li><a>סיפורי דרך</a></li>
+          <li><a data-action="create-plan">✦ צור תוכנית חדשה</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>תמיכה</h4>
         <ul>
-          <li><a data-route="about">איך זה עובד</a></li>
-          <li><a>בטיחות ואמון</a></li>
-          <li><a>שאלות נפוצות</a></li>
-          <li><a>צור קשר</a></li>
+          <li><a data-route="about">📖 איך זה עובד</a></li>
+          <li><a href="https://wa.me/972524444444" target="_blank">💬 צור קשר</a></li>
+          <li><a data-route="profile">👤 הפרופיל שלי</a></li>
         </ul>
       </div>
       <div class="footer-col">
-        <h4>חברה</h4>
+        <h4>איפה אנחנו</h4>
         <ul>
-          <li><a data-route="about">עלינו</a></li>
-          <li><a>בלוג</a></li>
-          <li><a>תנאי שימוש</a></li>
-          <li><a>פרטיות</a></li>
+          <li><a>🇨🇾 לימסול, קפריסין</a></li>
+          <li><a>🇮🇱 ישראל</a></li>
+          <li><a>🇬🇷 יוון (בקרוב)</a></li>
         </ul>
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© 2026 יאלה · עשוי בישראל באהבה 🇮🇱</span>
-      <span>אביב 2026 · גרסה 0.1</span>
+      <span>© 2026 יאלה · נבנה בלימסול באהבה 🇨🇾🇮🇱</span>
+      <span>אביב 2026 · גרסה 1.0</span>
     </div>
   </footer>
 
@@ -3227,7 +3241,7 @@
       <div class="modal-body">
         <div class="form-group">
           <label class="form-label">לאן הולכים?</label>
-          <input type="text" class="form-input" placeholder="למשל: מכתש רמון, יפו, חרמון...">
+          <input type="text" class="form-input" placeholder="למשל: ריצה ב-Columbia Beach, טיול בטרודוס, אופניים בלימסול...">
         </div>
 
         <!-- Country/City/Topic selectors -->
@@ -3458,40 +3472,79 @@
 
     // ============================================================
     // ============================================================
-    // 🖼️ REAL PHOTOS - Unsplash CDN (Free, Legal, Fast)
+    // 🖼️ REAL PHOTOS - תמונה ייחודית לכל פעילות
     // ============================================================
-    // All links verified working from Unsplash's verified collection
+    // All Unsplash links - tested working, free for commercial use
     const REAL_PHOTOS = {
-      // Beach & Coast (Cyprus/Mediterranean style)
-      'limassol-beach': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-      'cyprus-coast': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+      // 🏃 ספורט
+      'running': 'https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=800&q=80',
+      'sunrise-run': 'https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=800&q=80',
+      'beach-running': 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=800&q=80',
+
+      'cycling': 'https://images.unsplash.com/photo-1517649763962-0c62306601ca?auto=format&fit=crop&w=800&q=80',
+      'cycling-coast': 'https://images.unsplash.com/photo-1517649763962-0c62306601ca?auto=format&fit=crop&w=800&q=80',
+      'cycling-friends': 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?auto=format&fit=crop&w=800&q=80',
+
+      'football': 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
+      'football-pitch': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
+      'football-sunset': 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
+
+      'basketball': 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80',
+
+      'swimming': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
+      'sea-swimming': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
+
+      'yoga': 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80',
+
+      'hiking': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80',
+      'cyprus-hiking': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80',
+      'troodos-mountains': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
+
+      'climbing': 'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=800&q=80',
+
+      'diving': 'https://images.unsplash.com/photo-1582967788606-a171c1080cb0?auto=format&fit=crop&w=800&q=80',
+
+      // 🌊 חוף וים
+      'beach': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+      'limassol-beach': 'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?auto=format&fit=crop&w=800&q=80',
+      'cyprus-coast': 'https://images.unsplash.com/photo-1612698093158-e07ac200d44e?auto=format&fit=crop&w=800&q=80',
       'mediterranean': 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80',
+      'sunset': 'https://images.unsplash.com/photo-1495954484750-af469f2f9be5?auto=format&fit=crop&w=800&q=80',
       'sunset-beach': 'https://images.unsplash.com/photo-1495954484750-af469f2f9be5?auto=format&fit=crop&w=800&q=80',
+
+      // 🍻 חברתי ואוכל
+      'beer': 'https://images.unsplash.com/photo-1559526324-c1f275fbfa32?auto=format&fit=crop&w=800&q=80',
+      'beer-friends': 'https://images.unsplash.com/photo-1559526324-c1f275fbfa32?auto=format&fit=crop&w=800&q=80',
+      'coffee': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80',
+      'food': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80',
+
+      // 🎨 תרבות
+      'photo': 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&w=800&q=80',
+      'music': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=800&q=80',
+
+      // ✈️ טיולים
+      'travel': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80',
+      'roadtrip': 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80',
+      'camping': 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80',
+
+      // 👥 חברתי כללי
+      'language': 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
+      'networking': 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80',
+      'family': 'https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80',
       'friends-beach': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
       'community': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
 
-      // Sports - Running
-      'beach-running': 'https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=800&q=80',
-      'sunrise-run': 'https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=800&q=80',
-
-      // Sports - Football
-      'football-pitch': 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
-      'football-sunset': 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
-
-      // Sports - Mountains & Hiking
-      'troodos-mountains': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
-      'cyprus-hiking': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80',
-
-      // Sports - Cycling
-      'cycling-coast': 'https://images.unsplash.com/photo-1517649763962-0c62306601ca?auto=format&fit=crop&w=800&q=80',
-      'cycling-friends': 'https://images.unsplash.com/photo-1517649763962-0c62306601ca?auto=format&fit=crop&w=800&q=80',
-
-      // Sports - Swimming
-      'sea-swimming': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
-
-      // Social
-      'beer-friends': 'https://images.unsplash.com/photo-1559526324-c1f275fbfa32?auto=format&fit=crop&w=800&q=80',
+      // ✨ ברירת מחדל
+      'other': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80',
     };
+
+    // Helper: get the right photo for a plan based on topic OR illustration
+    function getPhotoForPlan(plan) {
+      if (!plan) return null;
+      // Try by topic first (new plans), then by illustration (old plans)
+      return REAL_PHOTOS[plan.topic] || REAL_PHOTOS[plan.illustration] || REAL_PHOTOS['other'];
+    }
+    window.getPhotoForPlan = getPhotoForPlan;
 
     // ============================================================
     // SVG ILLUSTRATIONS - 8 unique scenes (fallback)
@@ -4847,8 +4900,8 @@
         <article class="plan-card ${staggerClass}" data-plan-id="${plan.id}" data-categories="${plan.categories}" style="position: relative;">
           ${paidBadge}
           <div class="plan-image" style="background: linear-gradient(135deg, #FFD89B 0%, #F4A261 50%, #E76F51 100%);">
-            ${REAL_PHOTOS[plan.illustration]
-              ? `<img src="${REAL_PHOTOS[plan.illustration]}" alt="${plan.title}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.style.display='none';">`
+            ${getPhotoForPlan(plan)
+              ? `<img src="${getPhotoForPlan(plan)}" alt="${plan.title}" style="width:100%;height:100%;object-fit:cover;display:block;" loading="lazy" onerror="this.style.display='none';">`
               : (ILLUSTRATIONS[plan.illustration] || ILLUSTRATIONS['ramon-crater'] || '')}
             <span class="plan-tag">${plan.tag}</span>
             <span class="plan-date">${plan.date}</span>
@@ -4882,6 +4935,66 @@
       const plans = await api.fetchPlans();
       grid.innerHTML = plans.map(p => renderPlanCard(p)).join('');
       attachPlanCardListeners();
+
+      // Load real stats for hero
+      loadHeroStats();
+    }
+
+    async function loadHeroStats() {
+      const heroStatsEl = document.getElementById('hero-stats');
+      if (!heroStatsEl) return;
+
+      try {
+        // Get real stats from Supabase
+        let stats = {
+          users: 0,
+          plans: 0,
+          requests: 0,
+        };
+
+        if (SUPABASE_ENABLED && sb) {
+          const [usersRes, plansRes, requestsRes] = await Promise.all([
+            sb.from('profiles').select('*', { count: 'exact', head: true }),
+            sb.from('plans').select('*', { count: 'exact', head: true }).eq('status', 'active'),
+            sb.from('join_requests').select('*', { count: 'exact', head: true }),
+          ]);
+
+          stats.users = usersRes.count || 0;
+          stats.plans = plansRes.count || 0;
+          stats.requests = requestsRes.count || 0;
+        }
+
+        // If we have very few users, show "growing community" message instead
+        if (stats.users < 10) {
+          heroStatsEl.innerHTML = `
+            <div style="text-align: center; padding: 24px; background: rgba(212, 88, 58, 0.05); border-radius: 16px; border: 2px dashed var(--color-terracotta);">
+              <div style="font-size: 32px; margin-bottom: 8px;">🌱</div>
+              <div style="font-size: 18px; font-weight: 600; color: var(--color-terracotta); margin-bottom: 4px;">קהילה צעירה - היה אחד הראשונים</div>
+              <div style="font-size: 14px; color: var(--color-stone);">${stats.plans} תוכניות פעילות עכשיו · ${stats.users} חברים · ${stats.requests} חיבורים</div>
+            </div>
+          `;
+        } else {
+          heroStatsEl.innerHTML = `
+            <div class="hero-stat">
+              <div class="hero-stat-num">${stats.users}</div>
+              <div class="hero-stat-label">חברי קהילה</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <div class="hero-stat-num">${stats.plans}</div>
+              <div class="hero-stat-label">תוכניות פעילות</div>
+            </div>
+            <div class="hero-stat-divider"></div>
+            <div class="hero-stat">
+              <div class="hero-stat-num">${stats.requests}</div>
+              <div class="hero-stat-label">חיבורים</div>
+            </div>
+          `;
+        }
+      } catch (e) {
+        console.error('Hero stats error:', e);
+        heroStatsEl.style.display = 'none';
+      }
     }
 
     async function renderProfilePlans() {
@@ -5952,8 +6065,8 @@
         <span class="back-link" data-route="home">← חזרה לפיד</span>
 
         <div class="detail-hero">
-          ${REAL_PHOTOS[plan.illustration]
-            ? `<img src="${REAL_PHOTOS[plan.illustration]}" alt="${plan.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+          ${getPhotoForPlan(plan)
+            ? `<img src="${getPhotoForPlan(plan)}" alt="${plan.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`
             : (ILLUSTRATIONS[plan.illustration] || '')}
           <div class="detail-hero-overlay">
             <span class="detail-hero-tag">${plan.tag}</span>
