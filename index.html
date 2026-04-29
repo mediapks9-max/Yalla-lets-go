@@ -7577,37 +7577,42 @@
         }
       });
 
-      document.getElementById('btn-login-submit').addEventListener('click', async () => {
-        try {
-          const inputs = document.querySelectorAll('#modal-login input');
-          const email = inputs[0]?.value;
-          const password = inputs[1]?.value;
-          const isLogin = document.querySelector('[data-login-tab="login"]').classList.contains('active');
+      // Login submit button - only attach if button exists (we may have a Google-only login modal)
+      const loginSubmitBtn = document.getElementById('btn-login-submit');
+      if (loginSubmitBtn) {
+        loginSubmitBtn.addEventListener('click', async () => {
+          try {
+            const inputs = document.querySelectorAll('#modal-login input');
+            const email = inputs[0]?.value;
+            const password = inputs[1]?.value;
+            const loginTab = document.querySelector('[data-login-tab="login"]');
+            const isLogin = loginTab ? loginTab.classList.contains('active') : true;
 
-          if (!SUPABASE_ENABLED) {
+            if (!SUPABASE_ENABLED) {
+              closeModal('modal-login');
+              showToast('ברוך הבא ליאלה 👋 (מצב הדגמה)');
+              return;
+            }
+
+            if (!email || !password) {
+              showToast('❌ אימייל וסיסמה נדרשים');
+              return;
+            }
+
+            if (isLogin) {
+              await api.signIn(email, password);
+            } else {
+              await api.signUp(email, password, email.split('@')[0]);
+            }
+
+            await checkAuthSession();
             closeModal('modal-login');
-            showToast('ברוך הבא ליאלה 👋 (מצב הדגמה)');
-            return;
+            showToast(isLogin ? '👋 ברוך השב!' : '🎉 ברוך הבא לקהילה!');
+          } catch (err) {
+            showToast('❌ ' + (err.message || 'שגיאה בהתחברות'));
           }
-
-          if (!email || !password) {
-            showToast('❌ אימייל וסיסמה נדרשים');
-            return;
-          }
-
-          if (isLogin) {
-            await api.signIn(email, password);
-          } else {
-            await api.signUp(email, password, email.split('@')[0]);
-          }
-
-          await checkAuthSession();
-          closeModal('modal-login');
-          showToast(isLogin ? '👋 ברוך השב!' : '🎉 ברוך הבא לקהילה!');
-        } catch (err) {
-          showToast('❌ ' + (err.message || 'שגיאה בהתחברות'));
-        }
-      });
+        });
+      }
 
       // Google sign-in
       document.querySelectorAll('.social-btn').forEach((btn, idx) => {
