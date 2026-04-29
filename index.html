@@ -32,14 +32,7 @@
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23c2410c'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3Eי%3C/text%3E%3C/svg%3E">
 
-  <!-- Microsoft Clarity Analytics -->
-  <script type="text/javascript">
-    (function(c,l,a,r,i,t,y){
-        c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
-        t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;
-        y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
-    })(window, document, "clarity", "script", "wiq4n4jlzq");
-  </script>
+  <!-- Microsoft Clarity Analytics - removed temporarily due to 503 errors -->
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -2720,7 +2713,7 @@
             יאלה זה הקהל המושלם לעסק שלך.
           </p>
           <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://wa.me/972524444444?text=שלום%20יאלה%20-%20אני%20רוצה%20להיות%20שותף%20עסקי" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: #25D366; color: white; border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;">
+            <a href="https://wa.me/?text=שלום%20יאלה%20-%20אני%20רוצה%20להיות%20שותף%20עסקי" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: #25D366; color: white; border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;">
               📱 WhatsApp
             </a>
             <a href="mailto:partnerships@yalla-app.com" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--color-terracotta); color: white; border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;">
@@ -3100,7 +3093,7 @@
         <div style="background: white; padding: 32px; border-radius: 16px; border: 1px solid #eee;">
           <h2 style="font-size: 24px; margin: 0 0 24px 0;">פרטי ההרשמה</h2>
 
-          <div id="guide-register-form">
+          <form id="guide-register-form" onsubmit="return false;">
             <div class="form-group">
               <label class="form-label">שם מלא *</label>
               <input class="form-input" id="guide-fullname" placeholder="ישראל ישראלי" />
@@ -3170,14 +3163,14 @@
               <span style="font-size: 12px; color: #999; margin-top: 4px; display: block;">הפרד בפסיקים</span>
             </div>
 
-            <button class="btn-join-large" id="btn-submit-guide" style="width: 100%; margin-top: 24px;">
+            <button class="btn-join-large" id="btn-submit-guide" type="submit" style="width: 100%; margin-top: 24px;">
               📤 שלח הרשמה לאישור
             </button>
 
             <p style="font-size: 13px; color: #999; text-align: center; margin-top: 16px;">
               לאחר השליחה תקבל אישור תוך 24-48 שעות.
             </p>
-          </div>
+          </form>
         </div>
       </div>
     </div>
@@ -3270,34 +3263,34 @@
         <div class="logo" data-route="home" style="color: var(--color-terracotta);">יאלה<span class="logo-dot"></span></div>
         <p>הקהילה הישראלית של אזור המרכז. מצא שותפים אמיתיים לרגעים אמיתיים. ספורט, טיולים, חברים חדשים.</p>
         <div style="display: flex; gap: 12px; margin-top: 16px;">
-          <a href="https://wa.me/972524444444?text=שלום%20יאלה" target="_blank" style="color: var(--color-cream); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; text-decoration: none;">📱 WhatsApp</a>
+          <a href="https://wa.me/?text=שלום%20יאלה" target="_blank" style="color: var(--color-cream); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; text-decoration: none;">📱 WhatsApp</a>
           <a href="mailto:hello@yalla-app.com" style="color: var(--color-cream); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; text-decoration: none;">📧 אימייל</a>
         </div>
       </div>
       <div class="footer-col">
         <h4>הקהילה</h4>
         <ul>
-          <li><a data-route="home">🏠 גלה תוכניות</a></li>
-          <li><a data-route="guides">💎 הצוות שלנו</a></li>
-          <li><a data-route="guide-register">👨‍🏫 הצטרף כמדריך</a></li>
-          <li><a data-action="create-plan">✦ צור תוכנית חדשה</a></li>
+          <li><a href="#home" data-route="home">🏠 גלה תוכניות</a></li>
+          <li><a href="#tours" data-route="tours">🗺️ סיורים מקצועיים</a></li>
+          <li><a href="#trails" data-route="trails">🥾 מסלולים עצמאיים</a></li>
+          <li><a href="#guide-register" data-route="guide-register">👨‍🏫 הצטרף כמדריך</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>תמיכה</h4>
         <ul>
-          <li><a data-route="about">📖 איך זה עובד</a></li>
-          <li><a href="https://wa.me/972524444444" target="_blank">💬 צור קשר</a></li>
-          <li><a data-route="profile">👤 הפרופיל שלי</a></li>
+          <li><a href="#about" data-route="about">📖 איך זה עובד</a></li>
+          <li><a href="mailto:hello@yalla-app.com" target="_blank" rel="noopener">💬 צור קשר</a></li>
+          <li><a href="#profile" data-route="profile">👤 הפרופיל שלי</a></li>
         </ul>
       </div>
       <div class="footer-col">
         <h4>איפה אנחנו</h4>
         <ul>
-          <li><a>🌆 תל אביב</a></li>
-          <li><a>🏘️ יהוד מונוסון</a></li>
-          <li><a>🏙️ אזור המרכז</a></li>
-          <li><a>🚀 חיפה וירושלים (בקרוב)</a></li>
+          <li>🌆 תל אביב</li>
+          <li>🏘️ יהוד מונוסון</li>
+          <li>🏙️ אזור המרכז</li>
+          <li>🚀 חיפה וירושלים (בקרוב)</li>
         </ul>
       </div>
     </div>
@@ -3747,7 +3740,16 @@
         if (loginBtn) loginBtn.style.display = 'none';
 
         const meta = currentUser?.user_metadata || {};
-        const fullName = currentProfile.full_name || meta.full_name || 'משתמש';
+        // Smart fallback: profile name → google name → email username → 'משתמש'
+        let fullName = currentProfile.full_name || meta.full_name || meta.name;
+        if (!fullName && currentUser.email) {
+          fullName = currentUser.email.split('@')[0];
+          // Capitalize: "matanmanteka" → "Matanmanteka"
+          fullName = fullName.charAt(0).toUpperCase() + fullName.slice(1);
+        }
+        if (!fullName) fullName = 'משתמש';
+
+        // First letter for avatar fallback
         const initial = fullName.charAt(0).toUpperCase();
         const avatarUrl = currentProfile.avatar_url || meta.avatar_url || meta.picture;
 
@@ -4734,7 +4736,7 @@
           ]);
 
           return {
-            plans: (plansRes.data || []).map(p => transformDbPlan(p)),
+            plans: (plansRes.data || []).map(p => transformPlanFromDB({ ...p, creator: p.creator })),
             tours: toursRes.data || []
           };
         } catch (err) {
@@ -4762,12 +4764,12 @@
       async fetchLikeCount(targetType, targetId) {
         if (!SUPABASE_ENABLED) return 0;
         try {
-          const { count } = await sb
+          const { data } = await sb
             .from('likes')
-            .select('*', { count: 'exact', head: true })
+            .select('id')
             .eq('target_type', targetType)
             .eq('target_id', targetId);
-          return count || 0;
+          return data?.length || 0;
         } catch (err) {
           return 0;
         }
@@ -4806,12 +4808,12 @@
       async getUnreadNotificationsCount() {
         if (!SUPABASE_ENABLED || !currentUser) return 0;
         try {
-          const { count } = await sb
+          const { data } = await sb
             .from('notifications')
-            .select('*', { count: 'exact', head: true })
+            .select('id')
             .eq('user_id', currentUser.id)
             .eq('is_read', false);
-          return count || 0;
+          return data?.length || 0;
         } catch (err) {
           return 0;
         }
@@ -5393,12 +5395,8 @@
           </div>
         `).join('');
 
-        // Click handlers
-        grid.querySelectorAll('[data-tour-id]').forEach(card => {
-          card.addEventListener('click', () => {
-            navigate('tour-detail', card.dataset.tourId);
-          });
-        });
+        // Click handlers - now handled globally by attachPlanCardListeners
+        attachPlanCardListeners();
       } catch (err) {
         console.error('Tours preview error:', err);
         grid.innerHTML = '';
@@ -5489,14 +5487,14 @@
 
         if (SUPABASE_ENABLED && sb) {
           const [usersRes, plansRes, requestsRes] = await Promise.all([
-            sb.from('profiles').select('*', { count: 'exact', head: true }),
-            sb.from('plans').select('*', { count: 'exact', head: true }).eq('status', 'active'),
-            sb.from('join_requests').select('*', { count: 'exact', head: true }),
+            sb.from('profiles').select('id'),
+            sb.from('plans').select('id').eq('status', 'active'),
+            sb.from('join_requests').select('id'),
           ]);
 
-          stats.users = usersRes.count || 0;
-          stats.plans = plansRes.count || 0;
-          stats.requests = requestsRes.count || 0;
+          stats.users = usersRes.data?.length || 0;
+          stats.plans = plansRes.data?.length || 0;
+          stats.requests = requestsRes.data?.length || 0;
         }
 
         // If we have very few users, show "growing community" message instead
@@ -5960,12 +5958,16 @@
     }
 
     function attachPlanCardListeners() {
-      // 🚀 Performance: Use event delegation instead of attaching to every card
-      const grid = document.getElementById('plans-grid');
-      if (!grid || grid.dataset.listenersAttached) return;
-      grid.dataset.listenersAttached = 'true';
+      // 🚀 GLOBAL Event Delegation - works for ALL plan-cards on the entire page
+      // This handles plans-grid, tours-grid, tours-preview-grid, my-favorites-grid, etc.
+      if (window._planCardListenersAttached) {
+        // Already attached - just refresh likes
+        loadUserLikes();
+        return;
+      }
+      window._planCardListenersAttached = true;
 
-      grid.addEventListener('click', async (e) => {
+      document.addEventListener('click', async (e) => {
         // Handle like button
         const likeBtn = e.target.closest('.btn-like');
         if (likeBtn) {
@@ -5990,11 +5992,17 @@
           return;
         }
 
-        // Handle card clicks
+        // Handle card clicks - on ANY plan-card on the page
         const card = e.target.closest('.plan-card');
         if (card && !e.target.closest('.btn-join') && !e.target.closest('.btn-like') && !e.target.closest('.btn-share')) {
-          const id = card.dataset.planId;
-          navigate('plan-detail', id);
+          // Check if this is a tour card or plan card
+          const tourId = card.dataset.tourId;
+          const planId = card.dataset.planId;
+          if (tourId) {
+            navigate('tour-detail', tourId);
+          } else if (planId) {
+            navigate('plan-detail', planId);
+          }
         }
       });
 
@@ -6116,12 +6124,8 @@
         });
         grid.innerHTML = html;
 
-        // Click handlers for tour cards in favorites
-        grid.querySelectorAll('[data-tour-id]').forEach(card => {
-          card.addEventListener('click', () => {
-            navigate('tour-detail', card.dataset.tourId);
-          });
-        });
+        // Click handlers - now handled globally by attachPlanCardListeners
+        attachPlanCardListeners();
       } catch (err) {
         console.error('renderMyFavorites error:', err);
         grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#d4583a;padding:40px;">שגיאה בטעינה</p>';
@@ -7315,7 +7319,8 @@
       });
 
       // Submit handlers — connect to API or fallback gracefully
-      document.getElementById('btn-publish-plan').addEventListener('click', async () => {
+      const publishBtnEl = document.getElementById('btn-publish-plan');
+      if (publishBtnEl) publishBtnEl.addEventListener('click', async () => {
         const btn = document.getElementById('btn-publish-plan');
         const originalText = btn.textContent;
 
@@ -7483,7 +7488,8 @@
         }
       });
 
-      document.getElementById('btn-send-join').addEventListener('click', async () => {
+      const sendJoinBtnEl = document.getElementById('btn-send-join');
+      if (sendJoinBtnEl) sendJoinBtnEl.addEventListener('click', async () => {
         const btn = document.getElementById('btn-send-join');
         const originalText = btn.textContent;
 
@@ -7791,12 +7797,8 @@
           </div>
         `).join('');
 
-        // Attach click listeners
-        grid.querySelectorAll('[data-tour-id]').forEach(card => {
-          card.addEventListener('click', () => {
-            navigate('tour-detail', card.dataset.tourId);
-          });
-        });
+        // Attach click listeners - global delegation
+        attachPlanCardListeners();
       } catch (err) {
         console.error('Tours render error:', err);
         grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#d4583a;">שגיאה בטעינת סיורים</p>';
@@ -8007,20 +8009,18 @@
 
         grid.innerHTML = trails.map(trail => `
           <div class="plan-card">
-            <div class="plan-image">
+            <div class="plan-image" style="position: relative; aspect-ratio: 16/10;">
               <img src="${trail.cover_image}" alt="${trail.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
               <div style="position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.95); padding: 4px 10px; border-radius: 100px; font-weight: 600; font-size: 12px;">
                 ${DIFFICULTY_LABELS[trail.difficulty] || trail.difficulty}
               </div>
             </div>
-            <div class="plan-content">
-              <div class="plan-header">
-                <h3 class="plan-title">${trail.title}</h3>
-              </div>
+            <div class="plan-body">
               <div style="font-size: 13px; color: var(--color-terracotta); font-weight: 600; margin-bottom: 8px;">
                 ${REGION_LABELS[trail.region] || trail.region}
               </div>
-              <p class="plan-description">${trail.description}</p>
+              <h3 class="plan-title">${trail.title}</h3>
+              <p class="plan-desc">${trail.description}</p>
               <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--color-stone);">
                 <span>⏱ ${trail.duration_text}</span>
               </div>
