@@ -2512,13 +2512,18 @@
     <div class="header-inner">
       <div class="logo" data-route="home">יאלה<span class="logo-dot"></span></div>
       <nav class="nav-main">
-        <span class="nav-link active" data-route="home">גלה</span>
-        <span class="nav-link" data-route="profile">הפרופיל שלי</span>
-        <span class="nav-link" data-route="guides">💎 מדריכים</span>
-        <span class="nav-link" data-route="about">איך זה עובד</span>
+        <span class="nav-link active" data-route="home">🤝 קהילה</span>
+        <span class="nav-link" data-route="tours">🗺️ סיורים</span>
+        <span class="nav-link" data-route="trails">🥾 מסלולים</span>
+        <span class="nav-link" data-route="profile">👤 הפרופיל שלי</span>
+        <span class="nav-link" data-route="about">📖 איך זה עובד</span>
         <span class="nav-link" id="nav-admin" data-route="admin" style="display: none; color: #d4583a; font-weight: 600;">🛡️ אדמין</span>
       </nav>
       <div class="header-actions">
+        <button id="btn-notifications" aria-label="התראות" style="display: none; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: var(--color-cream); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 18px; position: relative; align-items: center; justify-content: center;">
+          🔔
+          <span id="notif-badge" style="display: none; position: absolute; top: -4px; left: -4px; background: var(--color-terracotta); color: white; border-radius: 12px; padding: 2px 6px; font-size: 10px; font-weight: 700; min-width: 18px; text-align: center;"></span>
+        </button>
         <button class="btn-secondary" id="btn-header-login" aria-label="התחבר לחשבון" style="display: none; padding: 8px 16px; border-radius: 100px; background: rgba(255,255,255,0.15); color: var(--color-cream); border: 1px solid rgba(255,255,255,0.3); cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 500;">🔑 התחבר</button>
         <button class="btn-primary" id="btn-create-plan" aria-label="פרסם תוכנית חדשה">+ פרסם תוכנית</button>
       </div>
@@ -2835,6 +2840,75 @@
         </div>
       </section>
 
+    </div>
+
+    <!-- ============================ TOURS PAGE ============================ -->
+    <div class="page" data-page="tours">
+      <section class="hero" style="padding-bottom: 40px;">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          🗺️ סיורים מקצועיים בישראל
+        </div>
+        <h1>סיורים מודרכים<br><em>ממדריכים מוסמכים.</em></h1>
+        <p class="hero-sub">
+          16 סיורים אותנטיים בישראל. מירושלים העתיקה ועד מצדה בזריחה.<br>
+          הזמן מקום, פגוש מדריך מקצועי, וצא לטיול בלתי נשכח.
+        </p>
+      </section>
+
+      <div class="filter-bar">
+        <div class="filter-bar-inner" style="display: flex; align-items: center; gap: 10px; padding: 14px 24px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap;">
+          <span class="filter-label" style="font-weight: 600; color: var(--color-stone); font-size: 13px; white-space: nowrap;">📍 סנן:</span>
+          <select id="tours-filter-region" class="filter-select-compact" aria-label="סנן לפי איזור">
+            <option value="">🌍 כל האזורים</option>
+            <option value="center">🏙️ מרכז</option>
+            <option value="north">🌲 צפון</option>
+            <option value="south">🏜️ דרום</option>
+            <option value="jerusalem">🏛️ ירושלים</option>
+          </select>
+          <select id="tours-filter-category" class="filter-select-compact" aria-label="סנן לפי קטגוריה">
+            <option value="">🏷️ כל הקטגוריות</option>
+            <option value="history">🏛️ היסטוריה</option>
+            <option value="nature">🌿 טבע</option>
+            <option value="culinary">🍜 קולינרי</option>
+            <option value="culture">🎨 תרבות ואמנות</option>
+            <option value="adventure">🧗 הרפתקה</option>
+          </select>
+          <button id="btn-tours-clear" class="filter-clear-btn" aria-label="נקה">🔄 נקה</button>
+        </div>
+      </div>
+
+      <section class="plans-section">
+        <div class="section-header">
+          <h2 class="section-title">סיורים זמינים</h2>
+          <span class="section-meta">🇮🇱 16 סיורים בישראל</span>
+        </div>
+        <div class="plans-grid" id="tours-grid"></div>
+      </section>
+    </div>
+
+    <!-- ============================ TOUR DETAIL PAGE ============================ -->
+    <div class="page" data-page="tour-detail">
+      <div id="tour-detail-content"></div>
+    </div>
+
+    <!-- ============================ TRAILS PAGE ============================ -->
+    <div class="page" data-page="trails">
+      <section class="hero" style="padding-bottom: 40px;">
+        <div class="hero-badge">
+          <span class="hero-badge-dot"></span>
+          🥾 טייל בעצמך
+        </div>
+        <h1>מסלולים מומלצים<br><em>לסיור עצמאי.</em></h1>
+        <p class="hero-sub">
+          המסלולים הכי יפים בישראל. בלי מדריך, בלי תשלום.<br>
+          קח את החברים, את המים, ואת ההרפתקה.
+        </p>
+      </section>
+
+      <section class="plans-section">
+        <div class="plans-grid" id="trails-grid"></div>
+      </section>
     </div>
 
     <!-- ============================ PLAN DETAIL PAGE ============================ -->
@@ -4438,6 +4512,223 @@
         }
       },
 
+      // =================================================
+      // 🗺️ TOURS API - סיורים מקצועיים
+      // =================================================
+
+      async fetchTours({ region, category } = {}) {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          let query = sb
+            .from('tours')
+            .select('*')
+            .eq('status', 'active')
+            .order('rating', { ascending: false });
+
+          if (region) query = query.eq('region', region);
+          if (category) query = query.eq('category', category);
+
+          const { data, error } = await query;
+          if (error) throw error;
+          return data || [];
+        } catch (err) {
+          console.error('fetchTours error:', err);
+          return [];
+        }
+      },
+
+      async fetchTourById(id) {
+        if (!SUPABASE_ENABLED) return null;
+        try {
+          const { data, error } = await sb
+            .from('tours')
+            .select('*')
+            .eq('id', id)
+            .single();
+          if (error) throw error;
+
+          // Also fetch dates
+          const { data: dates } = await sb
+            .from('tour_dates')
+            .select('*')
+            .eq('tour_id', id)
+            .gte('tour_date', new Date().toISOString().split('T')[0])
+            .order('tour_date', { ascending: true });
+
+          return { ...data, dates: dates || [] };
+        } catch (err) {
+          console.error('fetchTourById error:', err);
+          return null;
+        }
+      },
+
+      async fetchTrails({ region } = {}) {
+        if (!SUPABASE_ENABLED) return [];
+        try {
+          let query = sb.from('trails').select('*');
+          if (region) query = query.eq('region', region);
+          const { data, error } = await query;
+          if (error) throw error;
+          return data || [];
+        } catch (err) {
+          console.error('fetchTrails error:', err);
+          return [];
+        }
+      },
+
+      // =================================================
+      // ❤️ LIKES API
+      // =================================================
+      async toggleLike(targetType, targetId) {
+        if (!SUPABASE_ENABLED || !currentUser) {
+          throw new Error('יש להתחבר כדי לאהוב');
+        }
+        try {
+          // Check if already liked
+          const { data: existing } = await sb
+            .from('likes')
+            .select('id')
+            .eq('user_id', currentUser.id)
+            .eq('target_type', targetType)
+            .eq('target_id', targetId)
+            .maybeSingle();
+
+          if (existing) {
+            // Unlike
+            await sb.from('likes').delete().eq('id', existing.id);
+            return { liked: false };
+          } else {
+            // Like
+            await sb.from('likes').insert([{
+              user_id: currentUser.id,
+              target_type: targetType,
+              target_id: targetId,
+            }]);
+            return { liked: true };
+          }
+        } catch (err) {
+          console.error('toggleLike error:', err);
+          throw err;
+        }
+      },
+
+      async fetchMyLikes() {
+        if (!SUPABASE_ENABLED || !currentUser) return [];
+        try {
+          const { data } = await sb
+            .from('likes')
+            .select('*')
+            .eq('user_id', currentUser.id);
+          return data || [];
+        } catch (err) {
+          return [];
+        }
+      },
+
+      async fetchLikeCount(targetType, targetId) {
+        if (!SUPABASE_ENABLED) return 0;
+        try {
+          const { count } = await sb
+            .from('likes')
+            .select('*', { count: 'exact', head: true })
+            .eq('target_type', targetType)
+            .eq('target_id', targetId);
+          return count || 0;
+        } catch (err) {
+          return 0;
+        }
+      },
+
+      // =================================================
+      // 🔔 NOTIFICATIONS API
+      // =================================================
+      async fetchMyNotifications() {
+        if (!SUPABASE_ENABLED || !currentUser) return [];
+        try {
+          const { data } = await sb
+            .from('notifications')
+            .select('*')
+            .eq('user_id', currentUser.id)
+            .order('created_at', { ascending: false })
+            .limit(20);
+          return data || [];
+        } catch (err) {
+          return [];
+        }
+      },
+
+      async markNotificationRead(notificationId) {
+        if (!SUPABASE_ENABLED) return;
+        try {
+          await sb
+            .from('notifications')
+            .update({ is_read: true })
+            .eq('id', notificationId);
+        } catch (err) {
+          console.error('markNotificationRead error:', err);
+        }
+      },
+
+      async getUnreadNotificationsCount() {
+        if (!SUPABASE_ENABLED || !currentUser) return 0;
+        try {
+          const { count } = await sb
+            .from('notifications')
+            .select('*', { count: 'exact', head: true })
+            .eq('user_id', currentUser.id)
+            .eq('is_read', false);
+          return count || 0;
+        } catch (err) {
+          return 0;
+        }
+      },
+
+      // =================================================
+      // ✏️ EDIT PLAN API
+      // =================================================
+      async updatePlan(planId, updates) {
+        if (!SUPABASE_ENABLED || !currentUser) {
+          throw new Error('יש להתחבר');
+        }
+        try {
+          const { data, error } = await sb
+            .from('plans')
+            .update(updates)
+            .eq('id', planId)
+            .eq('creator_id', currentUser.id) // Security: only owner can edit
+            .select()
+            .single();
+          if (error) throw error;
+          return data;
+        } catch (err) {
+          console.error('updatePlan error:', err);
+          throw err;
+        }
+      },
+
+      async createBooking({ tour_id, tour_date_id, participants, total_price, contact_name, contact_email, contact_phone }) {
+        if (!SUPABASE_ENABLED || !currentUser) {
+          throw new Error('יש להתחבר כדי להזמין');
+        }
+        try {
+          const { data, error } = await sb
+            .from('bookings')
+            .insert([{
+              user_id: currentUser.id,
+              tour_id, tour_date_id, participants, total_price,
+              contact_name, contact_email, contact_phone,
+              status: 'pending'
+            }])
+            .select()
+            .single();
+          if (error) throw error;
+          return data;
+        } catch (err) {
+          console.error('createBooking error:', err);
+          throw err;
+        }
+      },
+
       async fetchPlansFiltered({ country, city, topic } = {}) {
         if (!SUPABASE_ENABLED) return PLANS;
         try {
@@ -4813,6 +5104,18 @@
         renderAdminPage();
       }
 
+      if (route === 'tours') {
+        renderToursPage();
+      }
+
+      if (route === 'tour-detail' && params) {
+        renderTourDetail(params);
+      }
+
+      if (route === 'trails') {
+        renderTrailsPage();
+      }
+
       // Scroll to top
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -4867,6 +5170,11 @@
       return `
         <article class="plan-card ${staggerClass}" data-plan-id="${plan.id}" data-categories="${plan.categories}" style="position: relative;">
           ${paidBadge}
+          <!-- Action buttons: like + share -->
+          <div style="position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; z-index: 3;">
+            <button class="btn-like" data-target-type="plan" data-target-id="${plan.id}" aria-label="אהבתי" style="background: rgba(255,255,255,0.95); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">🤍</button>
+            <button class="btn-share" data-share-id="${plan.id}" data-share-title="${plan.title}" aria-label="שתף" style="background: rgba(255,255,255,0.95); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">📤</button>
+          </div>
           <div class="plan-image" style="background: linear-gradient(135deg, #FFD89B 0%, #F4A261 50%, #E76F51 100%); aspect-ratio: 16/10;">
             ${getPhotoForPlan(plan)
               ? `<img src="${getPhotoForPlan(plan)}" alt="${plan.title}" width="800" height="500" style="width:100%;height:100%;object-fit:cover;display:block;" loading="${loadingAttr}" fetchpriority="${fetchAttr}" decoding="async" onerror="this.style.display='none';">`
@@ -4906,6 +5214,76 @@
 
       // Load real stats for hero
       loadHeroStats();
+    }
+
+    // ============================================================
+    // 🔔 NOTIFICATIONS UI
+    // ============================================================
+    async function loadNotifications() {
+      if (!currentUser || !SUPABASE_ENABLED) return;
+      const btn = document.getElementById('btn-notifications');
+      const badge = document.getElementById('notif-badge');
+      if (!btn || !badge) return;
+
+      try {
+        const count = await api.getUnreadNotificationsCount();
+        btn.style.display = count > 0 ? 'inline-flex' : 'inline-flex';
+        if (count > 0) {
+          badge.textContent = count > 9 ? '9+' : count;
+          badge.style.display = 'inline-block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('loadNotifications error:', err);
+      }
+    }
+
+    function setupNotificationsButton() {
+      const btn = document.getElementById('btn-notifications');
+      if (!btn) return;
+
+      btn.addEventListener('click', async () => {
+        const notifs = await api.fetchMyNotifications();
+        if (notifs.length === 0) {
+          showToast('🔔 אין התראות חדשות');
+          return;
+        }
+
+        // Show notifications popup
+        const popup = document.createElement('div');
+        popup.style.cssText = 'position:fixed;top:80px;left:20px;background:white;border-radius:16px;padding:20px;box-shadow:0 8px 32px rgba(0,0,0,0.2);z-index:10000;max-width:400px;max-height:500px;overflow-y:auto;';
+        popup.innerHTML = `
+          <h3 style="margin:0 0 16px 0;font-size:18px;">🔔 התראות</h3>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            ${notifs.map(n => `
+              <div data-notif-id="${n.id}" style="padding:12px;background:${n.is_read ? '#f9f5ed' : '#fff8f5'};border-right:3px solid ${n.is_read ? '#ddd' : 'var(--color-terracotta)'};border-radius:8px;cursor:pointer;">
+                <div style="font-weight:600;font-size:14px;margin-bottom:4px;">${n.title}</div>
+                ${n.message ? `<div style="font-size:13px;color:#666;">${n.message}</div>` : ''}
+                <div style="font-size:11px;color:#999;margin-top:4px;">${new Date(n.created_at).toLocaleString('he-IL')}</div>
+              </div>
+            `).join('')}
+          </div>
+          <button id="close-notif-popup" style="margin-top:16px;width:100%;padding:8px;border:none;background:#f5f5f5;border-radius:8px;cursor:pointer;">סגור</button>
+        `;
+        document.body.appendChild(popup);
+
+        // Mark all as read
+        for (const n of notifs.filter(x => !x.is_read)) {
+          await api.markNotificationRead(n.id);
+        }
+        loadNotifications(); // Refresh badge
+
+        document.getElementById('close-notif-popup').onclick = () => popup.remove();
+        setTimeout(() => {
+          document.addEventListener('click', function dismissNotif(e) {
+            if (!popup.contains(e.target) && e.target !== btn) {
+              popup.remove();
+              document.removeEventListener('click', dismissNotif);
+            }
+          });
+        }, 100);
+      });
     }
 
     async function loadHeroStats() {
@@ -5398,7 +5776,23 @@
       if (!grid || grid.dataset.listenersAttached) return;
       grid.dataset.listenersAttached = 'true';
 
-      grid.addEventListener('click', (e) => {
+      grid.addEventListener('click', async (e) => {
+        // Handle like button
+        const likeBtn = e.target.closest('.btn-like');
+        if (likeBtn) {
+          e.stopPropagation();
+          await handleLikeClick(likeBtn);
+          return;
+        }
+
+        // Handle share button
+        const shareBtn = e.target.closest('.btn-share');
+        if (shareBtn) {
+          e.stopPropagation();
+          handleShareClick(shareBtn);
+          return;
+        }
+
         // Handle join button clicks
         const joinBtn = e.target.closest('[data-join-id]');
         if (joinBtn) {
@@ -5409,11 +5803,70 @@
 
         // Handle card clicks
         const card = e.target.closest('.plan-card');
-        if (card && !e.target.closest('.btn-join')) {
+        if (card && !e.target.closest('.btn-join') && !e.target.closest('.btn-like') && !e.target.closest('.btn-share')) {
           const id = card.dataset.planId;
           navigate('plan-detail', id);
         }
       });
+
+      // Load likes status
+      loadUserLikes();
+    }
+
+    // ============================================================
+    // ❤️ LIKES + SHARE handlers
+    // ============================================================
+    async function handleLikeClick(btn) {
+      if (!currentUser) {
+        showToast('🔒 יש להתחבר כדי לאהוב');
+        openModal('modal-login');
+        return;
+      }
+      const targetType = btn.dataset.targetType;
+      const targetId = btn.dataset.targetId;
+
+      try {
+        const result = await api.toggleLike(targetType, targetId);
+        btn.textContent = result.liked ? '❤️' : '🤍';
+        btn.style.transform = 'scale(1.2)';
+        setTimeout(() => btn.style.transform = '', 200);
+      } catch (err) {
+        showToast('❌ ' + err.message);
+      }
+    }
+
+    function handleShareClick(btn) {
+      const id = btn.dataset.shareId;
+      const title = btn.dataset.shareTitle;
+      const url = `${window.location.origin}${window.location.pathname}#plan-detail/${id}`;
+      const text = `${title} - יאלה`;
+
+      // Try Web Share API first (mobile)
+      if (navigator.share) {
+        navigator.share({ title: text, url }).catch(() => {});
+      } else {
+        // Fallback: copy to clipboard
+        navigator.clipboard.writeText(url).then(() => {
+          showToast('🔗 הקישור הועתק! שתף אותו עם חברים');
+        }).catch(() => {
+          // Last resort: WhatsApp
+          window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`);
+        });
+      }
+    }
+
+    async function loadUserLikes() {
+      if (!currentUser) return;
+      try {
+        const likes = await api.fetchMyLikes();
+        const likeIds = new Set(likes.map(l => `${l.target_type}:${l.target_id}`));
+        document.querySelectorAll('.btn-like').forEach(btn => {
+          const key = `${btn.dataset.targetType}:${btn.dataset.targetId}`;
+          if (likeIds.has(key)) btn.textContent = '❤️';
+        });
+      } catch (err) {
+        console.error('loadUserLikes error:', err);
+      }
     }
 
     // ============================================================
@@ -6514,39 +6967,10 @@
         });
       });
 
-      // Close buttons
-      document.querySelectorAll('[data-close-modal]').forEach(btn => {
-        btn.addEventListener('click', () => closeModal(btn.dataset.closeModal));
-      });
-
       // ESC to close
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           document.querySelectorAll('.modal-overlay.active').forEach(m => closeModal(m.id));
-        }
-      });
-
-      // 🚀 Event Delegation - works even for dynamically added elements
-      document.addEventListener('click', (e) => {
-        // Handle "create-plan" actions from anywhere on the page
-        const createBtn = e.target.closest('[data-action="create-plan"], #btn-create-plan');
-        if (createBtn) {
-          e.preventDefault();
-          if (SUPABASE_ENABLED && !currentUser) {
-            showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
-            openModal('modal-login');
-            return;
-          }
-          openModal('modal-create');
-          return;
-        }
-
-        // Handle "login" action
-        const loginBtn = e.target.closest('[data-action="login"], #btn-header-login');
-        if (loginBtn) {
-          e.preventDefault();
-          openModal('modal-login');
-          return;
         }
       });
 
@@ -6909,12 +7333,15 @@
     // NAVIGATION SETUP
     // ============================================================
     function setupNavigation() {
-      // Header navigation
-      document.querySelectorAll('[data-route]').forEach(el => {
-        el.addEventListener('click', (e) => {
+      // 🚀 Event Delegation - works for ALL [data-route] elements, even dynamic ones
+      document.addEventListener('click', (e) => {
+        const routeEl = e.target.closest('[data-route]');
+        if (routeEl) {
           e.preventDefault();
-          navigate(el.dataset.route);
-        });
+          e.stopPropagation();
+          const route = routeEl.dataset.route;
+          if (route) navigate(route);
+        }
       });
     }
 
@@ -6959,6 +7386,328 @@
     }
 
     // ============================================================
+    // 🗺️ TOURS PAGE - רינדור עמוד הסיורים
+    // ============================================================
+    const REGION_LABELS = {
+      'center': '🏙️ מרכז',
+      'north': '🌲 צפון',
+      'south': '🏜️ דרום',
+      'jerusalem': '🏛️ ירושלים',
+    };
+    const CATEGORY_LABELS = {
+      'history': '🏛️ היסטוריה',
+      'nature': '🌿 טבע',
+      'culinary': '🍜 קולינרי',
+      'culture': '🎨 תרבות ואמנות',
+      'adventure': '🧗 הרפתקה',
+    };
+    const DIFFICULTY_LABELS = {
+      'easy': 'קל',
+      'medium': 'בינוני',
+      'hard': 'מאתגר',
+    };
+
+    async function renderToursPage() {
+      const grid = document.getElementById('tours-grid');
+      if (!grid) return;
+
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">טוען סיורים...</div>';
+
+      const region = document.getElementById('tours-filter-region')?.value || null;
+      const category = document.getElementById('tours-filter-category')?.value || null;
+
+      try {
+        const tours = await api.fetchTours({ region, category });
+
+        if (tours.length === 0) {
+          grid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: rgba(212, 88, 58, 0.05); border-radius: 16px;">
+              <div style="font-size: 64px; margin-bottom: 16px;">🔍</div>
+              <h3 style="color: var(--color-terracotta); margin-bottom: 8px;">לא נמצאו סיורים</h3>
+              <p style="color: #777;">נסה לשנות את המסננים</p>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = tours.map(tour => `
+          <div class="plan-card" data-tour-id="${tour.id}" style="cursor: pointer;">
+            <div class="plan-image" style="position: relative;">
+              <img src="${tour.cover_image}" alt="${tour.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; top: 12px; right: 12px; background: var(--color-terracotta); color: white; padding: 6px 14px; border-radius: 100px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+                ₪${tour.price_per_person}
+              </div>
+              <div style="position: absolute; bottom: 12px; right: 12px; background: rgba(255,255,255,0.95); padding: 4px 10px; border-radius: 100px; font-weight: 600; font-size: 12px;">
+                ⭐ ${tour.rating} (${tour.reviews_count})
+              </div>
+            </div>
+            <div class="plan-content">
+              <div class="plan-header">
+                <h3 class="plan-title">${tour.title}</h3>
+              </div>
+              <p class="plan-description">${tour.short_description || ''}</p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--color-stone);">
+                <span>${CATEGORY_LABELS[tour.category] || tour.category}</span>
+                <span>·</span>
+                <span>⏱ ${tour.duration_hours} שעות</span>
+                <span>·</span>
+                <span>👥 עד ${tour.max_participants}</span>
+              </div>
+              <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; font-size: 13px; color: var(--color-terracotta); font-weight: 600;">
+                לפרטים והזמנה ←
+              </div>
+            </div>
+          </div>
+        `).join('');
+
+        // Attach click listeners
+        grid.querySelectorAll('[data-tour-id]').forEach(card => {
+          card.addEventListener('click', () => {
+            navigate('tour-detail', card.dataset.tourId);
+          });
+        });
+      } catch (err) {
+        console.error('Tours render error:', err);
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#d4583a;">שגיאה בטעינת סיורים</p>';
+      }
+    }
+
+    // Setup tours filters
+    function setupToursFilters() {
+      const filters = ['tours-filter-region', 'tours-filter-category'];
+      filters.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.addEventListener('change', renderToursPage);
+      });
+      const clearBtn = document.getElementById('btn-tours-clear');
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          filters.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+          });
+          renderToursPage();
+        });
+      }
+    }
+
+    // ============================================================
+    // 📝 TOUR DETAIL PAGE - דף פרטי סיור
+    // ============================================================
+    async function renderTourDetail(tourId) {
+      const container = document.getElementById('tour-detail-content');
+      if (!container) return;
+
+      container.innerHTML = '<div style="text-align:center;padding:80px;color:var(--color-stone);">טוען סיור...</div>';
+
+      try {
+        const tour = await api.fetchTourById(tourId);
+        if (!tour) {
+          container.innerHTML = '<div style="text-align:center;padding:80px;color:#d4583a;">סיור לא נמצא</div>';
+          return;
+        }
+
+        const datesHtml = (tour.dates || []).slice(0, 5).map((d, i) => {
+          const date = new Date(d.tour_date);
+          const dateStr = `${date.getDate()}.${date.getMonth() + 1}`;
+          const isFirst = i === 0;
+          return `
+            <button class="tour-date-btn ${isFirst ? 'selected' : ''}" data-date-id="${d.id}" data-date="${d.tour_date}" data-spots="${d.available_spots}" style="padding: 10px 16px; border: 2px solid ${isFirst ? 'var(--color-terracotta)' : '#ddd'}; border-radius: 12px; background: ${isFirst ? 'var(--color-terracotta)' : 'white'}; color: ${isFirst ? 'white' : '#333'}; cursor: pointer; font-weight: 600; font-size: 14px;">
+              ${dateStr} · ${d.available_spots} מקומות
+            </button>
+          `;
+        }).join('');
+
+        const stepsHtml = (tour.steps || []).map((s, i) => `
+          <div style="display: flex; gap: 16px; margin-bottom: 24px; align-items: flex-start;">
+            <div style="background: var(--color-terracotta); color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0;">
+              ${s.step || (i + 1)}
+            </div>
+            <div>
+              <h3 style="font-size: 18px; margin: 0 0 8px 0;">${s.title}</h3>
+              <p style="color: var(--color-stone); margin: 0; line-height: 1.6;">${s.description}</p>
+            </div>
+          </div>
+        `).join('');
+
+        const includesHtml = (tour.includes || []).map(item => `
+          <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px;">
+            <span style="color: var(--color-terracotta); font-weight: 700;">✓</span>
+            <span>${item}</span>
+          </li>
+        `).join('');
+
+        container.innerHTML = `
+          <div style="max-width: 1100px; margin: 0 auto; padding: 40px 20px;">
+            <span class="back-link" data-route="tours" style="cursor: pointer; color: var(--color-terracotta); display: inline-block; margin-bottom: 24px;">← חזרה לסיורים</span>
+
+            <div style="border-radius: 24px; overflow: hidden; margin-bottom: 32px; height: 400px;">
+              <img src="${tour.cover_image}" alt="${tour.title}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 380px; gap: 40px;">
+              <div>
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px; flex-wrap: wrap;">
+                  <span style="background: rgba(212, 88, 58, 0.1); color: var(--color-terracotta); padding: 6px 14px; border-radius: 100px; font-weight: 600; font-size: 13px;">${CATEGORY_LABELS[tour.category] || tour.category}</span>
+                  <span style="color: var(--color-stone); font-size: 14px;">⭐ ${tour.rating} (${tour.reviews_count} ביקורות)</span>
+                </div>
+
+                <h1 style="font-size: clamp(32px, 5vw, 48px); margin: 0 0 16px 0; color: var(--color-earth);">${tour.title}</h1>
+                <p style="font-size: 18px; color: var(--color-stone); line-height: 1.6; margin-bottom: 32px;">${tour.short_description || ''}</p>
+
+                <h2 style="font-size: 24px; margin: 32px 0 16px 0;">על הסיור</h2>
+                <p style="font-size: 16px; line-height: 1.7; color: #444;">${tour.long_description || ''}</p>
+
+                ${stepsHtml ? `
+                <h2 style="font-size: 24px; margin: 40px 0 24px 0;">🗺️ הסיור שלב אחר שלב</h2>
+                ${stepsHtml}
+                ` : ''}
+              </div>
+
+              <aside>
+                <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); position: sticky; top: 100px;">
+                  <div style="font-size: 32px; font-weight: 700; color: var(--color-terracotta); margin-bottom: 4px;">₪${tour.price_per_person}</div>
+                  <div style="font-size: 14px; color: var(--color-stone); margin-bottom: 24px;">לאדם</div>
+
+                  <div style="margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 12px;">📅 בחר תאריך</div>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      ${datesHtml || '<p style="color: var(--color-stone); font-size: 14px;">אין תאריכים זמינים כרגע</p>'}
+                    </div>
+                  </div>
+
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; margin-bottom: 20px; font-size: 14px;">
+                    <div><strong>⏱</strong> ${tour.duration_hours} שעות</div>
+                    <div><strong>🏃</strong> ${DIFFICULTY_LABELS[tour.difficulty] || 'קל'}</div>
+                    <div><strong>👥</strong> עד ${tour.max_participants}</div>
+                    <div><strong>📍</strong> ${REGION_LABELS[tour.region] || tour.region}</div>
+                  </div>
+
+                  ${includesHtml ? `
+                  <div style="margin-bottom: 20px;">
+                    <div style="font-size: 14px; font-weight: 600; margin-bottom: 8px;">✨ מה כולל</div>
+                    <ul style="list-style: none; padding: 0; margin: 0; font-size: 14px;">
+                      ${includesHtml}
+                    </ul>
+                  </div>
+                  ` : ''}
+
+                  <button id="btn-book-tour" class="btn-primary" data-tour-id="${tour.id}" style="width: 100%; padding: 14px; font-size: 16px; margin-top: 12px;">
+                    הזמן עכשיו ←
+                  </button>
+
+                  <p style="text-align: center; font-size: 12px; color: var(--color-stone); margin: 12px 0 0 0;">
+                    📍 מפגש: ${tour.meeting_point || 'יישלח לאחר ההזמנה'}
+                  </p>
+                </div>
+              </aside>
+            </div>
+          </div>
+        `;
+
+        // Date selection
+        container.querySelectorAll('.tour-date-btn').forEach(btn => {
+          btn.addEventListener('click', () => {
+            container.querySelectorAll('.tour-date-btn').forEach(b => {
+              b.classList.remove('selected');
+              b.style.background = 'white';
+              b.style.color = '#333';
+              b.style.borderColor = '#ddd';
+            });
+            btn.classList.add('selected');
+            btn.style.background = 'var(--color-terracotta)';
+            btn.style.color = 'white';
+            btn.style.borderColor = 'var(--color-terracotta)';
+          });
+        });
+
+        // Book button
+        const bookBtn = document.getElementById('btn-book-tour');
+        if (bookBtn) {
+          bookBtn.addEventListener('click', async () => {
+            if (!currentUser) {
+              showToast('🔒 יש להתחבר קודם');
+              openModal('modal-login');
+              return;
+            }
+            const selectedDate = container.querySelector('.tour-date-btn.selected');
+            if (!selectedDate) {
+              showToast('📅 בחר תאריך');
+              return;
+            }
+            try {
+              await api.createBooking({
+                tour_id: tour.id,
+                tour_date_id: selectedDate.dataset.dateId,
+                participants: 1,
+                total_price: tour.price_per_person,
+                contact_name: currentProfile?.full_name || currentUser.email,
+                contact_email: currentUser.email,
+                contact_phone: ''
+              });
+              showToast('✅ ההזמנה התקבלה! נחזור אליך בהקדם.');
+            } catch (err) {
+              showToast('❌ ' + err.message);
+            }
+          });
+        }
+      } catch (err) {
+        console.error('Tour detail error:', err);
+        container.innerHTML = '<div style="text-align:center;padding:80px;color:#d4583a;">שגיאה בטעינת הסיור</div>';
+      }
+    }
+
+    // ============================================================
+    // 🥾 TRAILS PAGE - מסלולים עצמאיים
+    // ============================================================
+    async function renderTrailsPage() {
+      const grid = document.getElementById('trails-grid');
+      if (!grid) return;
+
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--color-stone);">טוען מסלולים...</div>';
+
+      try {
+        const trails = await api.fetchTrails();
+
+        if (trails.length === 0) {
+          grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:60px;color:var(--color-stone);">אין מסלולים כרגע</p>';
+          return;
+        }
+
+        grid.innerHTML = trails.map(trail => `
+          <div class="plan-card">
+            <div class="plan-image">
+              <img src="${trail.cover_image}" alt="${trail.title}" loading="lazy" style="width: 100%; height: 100%; object-fit: cover;">
+              <div style="position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,0.95); padding: 4px 10px; border-radius: 100px; font-weight: 600; font-size: 12px;">
+                ${DIFFICULTY_LABELS[trail.difficulty] || trail.difficulty}
+              </div>
+            </div>
+            <div class="plan-content">
+              <div class="plan-header">
+                <h3 class="plan-title">${trail.title}</h3>
+              </div>
+              <div style="font-size: 13px; color: var(--color-terracotta); font-weight: 600; margin-bottom: 8px;">
+                ${REGION_LABELS[trail.region] || trail.region}
+              </div>
+              <p class="plan-description">${trail.description}</p>
+              <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; font-size: 13px; color: var(--color-stone);">
+                <span>⏱ ${trail.duration_text}</span>
+              </div>
+              ${trail.tip ? `
+              <div style="margin-top: 12px; padding: 12px; background: rgba(212, 88, 58, 0.05); border-radius: 8px; font-size: 13px; color: #555;">
+                💡 ${trail.tip}
+              </div>
+              ` : ''}
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Trails render error:', err);
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#d4583a;">שגיאה בטעינת מסלולים</p>';
+      }
+    }
+
+    // ============================================================
     // INIT
     // ============================================================
     document.addEventListener('DOMContentLoaded', async () => {
@@ -6969,11 +7718,53 @@
       renderHomePlans();
       renderProfilePlans();
       setupFilters();
+      setupToursFilters();
       setupModals();
       setupProfileTabs();
       setupNavigation();
       setupFAQ();
       setupContactForm();
+      setupNotificationsButton();
+      loadNotifications();
+
+      // Refresh notifications every 60 seconds
+      setInterval(loadNotifications, 60000);
+
+      // 🚀 MASTER EVENT DELEGATION - handles ALL clicks on the page
+      // Works for elements that exist now AND elements added later
+      document.addEventListener('click', (e) => {
+        // 1. Close modal buttons (X buttons)
+        const closeBtn = e.target.closest('[data-close-modal]');
+        if (closeBtn) {
+          e.preventDefault();
+          closeModal(closeBtn.dataset.closeModal);
+          return;
+        }
+
+        // 2. Create plan buttons (anywhere)
+        const createBtn = e.target.closest('[data-action="create-plan"], #btn-create-plan');
+        if (createBtn) {
+          e.preventDefault();
+          if (SUPABASE_ENABLED && !currentUser) {
+            showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
+            openModal('modal-login');
+            return;
+          }
+          openModal('modal-create');
+          return;
+        }
+
+        // 3. Login button (header)
+        const loginBtn = e.target.closest('#btn-header-login, [data-action="login"]');
+        if (loginBtn) {
+          e.preventDefault();
+          openModal('modal-login');
+          return;
+        }
+
+        // Note: data-route handled by setupNavigation() - separate delegation
+        // Note: data-tab handled by setupProfileTabs() - direct listeners
+      });
 
       // Listen for auth state changes (login/logout in another tab, OAuth redirect, etc.)
       if (SUPABASE_ENABLED && sb) {
