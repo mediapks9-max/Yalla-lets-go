@@ -6644,54 +6644,77 @@
      * Runs async in the background after cards are rendered
      */
     async function upgradePlanImages() {
-      // Find all plan cards that don't have cover_image_url
+      // Find all plan cards
       const cards = document.querySelectorAll('.plan-card[data-plan-id]');
       if (cards.length === 0) return;
 
-      // Process up to 6 cards at a time to avoid rate limits
-      const cardsToUpgrade = Array.from(cards).slice(0, 6);
+      // Process up to 8 cards in parallel
+      const cardsToUpgrade = Array.from(cards).slice(0, 8);
 
       for (const card of cardsToUpgrade) {
-        // Skip if already upgraded
+        // Skip if already upgraded this session
         if (card.dataset.imageUpgraded) continue;
         card.dataset.imageUpgraded = 'true';
 
         const img = card.querySelector('img');
         if (!img) continue;
 
-        // Extract data from card (used for richer Pexels query + per-plan cache)
         const topic = card.dataset.topic;
         const city = card.dataset.city;
         const title = card.dataset.title;
         const planId = card.dataset.planId;
 
-        // Only upgrade if we have a topic and current image is from REAL_PHOTOS (not user upload)
-        if (!topic) continue;
+        // Always try to upgrade (even Pexels URLs from old system can be wrong/broken)
+        // Skip only if user uploaded their own image to Supabase storage
         const currentSrc = img.src;
-        const isGenericFallback = currentSrc.includes('images.unsplash.com');
-        if (!isGenericFallback) continue;
+        const isUserUpload = currentSrc.includes('supabase.co/storage/');
+        if (isUserUpload) continue;
+
+        // Need at least a topic OR title to search
+        if (!topic && !title) continue;
 
         try {
-          // Use plan id for stable per-plan caching, title for richer query
           const newUrl = await searchPexelsPhoto(topic, city, title, planId);
           if (newUrl && newUrl !== currentSrc) {
-            // Smooth transition
+            // Pre-load to avoid flash of broken image
             img.style.transition = 'opacity 0.3s';
-            img.style.opacity = '0.5';
             const tempImg = new Image();
             tempImg.onload = () => {
-              img.src = newUrl;
-              img.style.opacity = '1';
+              img.style.opacity = '0';
+              setTimeout(() => {
+                img.src = newUrl;
+                img.style.opacity = '1';
+              }, 200);
             };
-            tempImg.onerror = () => {
-              img.style.opacity = '1';
-            };
+            tempImg.onerror = () => { /* keep original */ };
             tempImg.src = newUrl;
           }
-        } catch (e) {
-          // Silent fail - keep original image
-        }
+        } catch (e) { /* silent fail */ }
       }
+    }
+
+    // Handle broken images (404 / network errors) by triggering upgrade immediately
+    function setupImageErrorRecovery() {
+      document.addEventListener('error', async (e) => {
+        const img = e.target;
+        if (!img || img.tagName !== 'IMG') return;
+        if (img.dataset.recoveryTried) return;
+        img.dataset.recoveryTried = 'true';
+
+        const card = img.closest('.plan-card[data-plan-id]');
+        if (!card) return;
+
+        const topic = card.dataset.topic;
+        const city = card.dataset.city;
+        const title = card.dataset.title;
+        const planId = card.dataset.planId;
+        if (!topic && !title) return;
+
+        try {
+          const newUrl = await searchPexelsPhoto(topic, city, title, planId);
+          if (newUrl) img.src = newUrl;
+        } catch (err) { /* hide silently */ }
+      }, true); // capture phase to catch errors before they bubble
     }
 
     // ============================================================
@@ -9062,6 +9085,7 @@
       setupContactForm();
       setupImageUpload();
       setupEditProfile();
+      setupImageErrorRecovery();
 
       // Render plans immediately (works without auth)
       renderHomePlans();
