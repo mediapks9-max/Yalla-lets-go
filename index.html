@@ -301,7 +301,7 @@
       background: var(--color-cream-warm);
       border-top: 2px dashed var(--color-sand);
       border-bottom: 2px dashed var(--color-sand);
-      padding: 20px 0;
+      padding: 0;
       position: sticky;
       top: 60px;
       z-index: 50;
@@ -310,11 +310,58 @@
     .filter-bar-inner {
       max-width: var(--max-width);
       margin: 0 auto;
-      padding: 0 32px;
+      padding: 14px 32px;
       display: flex;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       flex-wrap: wrap;
+    }
+
+    .filter-select-compact {
+      padding: 7px 14px;
+      padding-left: 30px;
+      border-radius: 100px;
+      border: 1.5px solid var(--color-sand);
+      background: white;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 13px;
+      color: var(--color-earth);
+      min-width: 120px;
+      max-width: 180px;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'%3e%3cpath d='M1 1L5 5L9 1' stroke='%23999' stroke-width='1.5' stroke-linecap='round'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: 12px center;
+      transition: all 0.2s;
+    }
+
+    .filter-select-compact:hover {
+      border-color: var(--color-terracotta);
+    }
+
+    .filter-select-compact:focus {
+      outline: none;
+      border-color: var(--color-terracotta);
+      box-shadow: 0 0 0 3px rgba(212, 88, 58, 0.1);
+    }
+
+    .filter-clear-btn {
+      background: transparent;
+      color: var(--color-stone);
+      border: 1px solid transparent;
+      cursor: pointer;
+      font-size: 13px;
+      padding: 7px 14px;
+      border-radius: 100px;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .filter-clear-btn:hover {
+      background: var(--color-sand);
+      color: var(--color-terracotta);
     }
 
     .filter-label {
@@ -1550,7 +1597,15 @@
       .hero-stats { gap: 24px; flex-wrap: wrap; }
       .hero-stat-divider { display: none; }
 
-      .filter-bar-inner { padding: 0 20px; }
+      .filter-bar-inner { padding: 12px 20px; gap: 8px; }
+      .filter-select-compact { 
+        min-width: 0; 
+        flex: 1 1 auto; 
+        font-size: 12px; 
+        padding: 6px 10px 6px 24px; 
+        background-position: 8px center;
+      }
+      .filter-clear-btn { padding: 6px 10px; font-size: 12px; }
       .filter-chips { flex-wrap: wrap; gap: 8px; }
       .plans-section { padding: 32px 20px 48px; }
       .plans-grid { grid-template-columns: 1fr; gap: 20px; }
@@ -2452,24 +2507,21 @@
       </section>
 
       <div class="filter-bar">
-        <div class="filter-bar-inner" style="flex-wrap: wrap; gap: 12px; padding: 16px 24px;">
-          <!-- Hierarchy filter dropdowns -->
-          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
-            <span class="filter-label" style="font-weight: 600;">📍 מיקום:</span>
-            <select id="filter-country" class="form-select" style="padding: 6px 12px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; cursor: pointer;">
-              <option value="">כל המדינות</option>
-              <option value="CY">🇨🇾 קפריסין</option>
-              <option value="IL">🇮🇱 ישראל</option>
-              <option value="GR">🇬🇷 יוון</option>
-            </select>
-            <select id="filter-city" class="form-select" style="padding: 6px 12px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; cursor: pointer;">
-              <option value="">כל הערים</option>
-            </select>
-            <select id="filter-topic" class="form-select" style="padding: 6px 12px; border-radius: 100px; border: 1.5px solid var(--color-sand); background: white; font-family: inherit; cursor: pointer;">
-              <option value="">כל הנושאים</option>
-            </select>
-            <button id="btn-clear-filters" style="background: transparent; color: #777; border: none; cursor: pointer; font-size: 13px; padding: 6px 12px;">🔄 נקה</button>
-          </div>
+        <div class="filter-bar-inner" style="display: flex; align-items: center; gap: 10px; padding: 14px 24px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap;">
+          <span class="filter-label" style="font-weight: 600; color: var(--color-stone); font-size: 13px; white-space: nowrap;">📍 סנן:</span>
+          <select id="filter-country" class="filter-select-compact">
+            <option value="">🌍 מדינה</option>
+            <option value="CY">🇨🇾 קפריסין</option>
+            <option value="IL">🇮🇱 ישראל</option>
+            <option value="GR">🇬🇷 יוון</option>
+          </select>
+          <select id="filter-city" class="filter-select-compact">
+            <option value="">📍 עיר</option>
+          </select>
+          <select id="filter-topic" class="filter-select-compact">
+            <option value="">🏷️ נושא</option>
+          </select>
+          <button id="btn-clear-filters" class="filter-clear-btn">🔄 נקה</button>
         </div>
       </div>
 
