@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- ============================================================
+       🛡️ CONTENT SECURITY POLICY (defense-in-depth XSS protection)
+       ============================================================ -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.clarity.ms https://*.clarity.ms; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.clarity.ms https://api.pexels.com; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+
+  <!-- ============================================================
        📊 SEO & SOCIAL META TAGS
        ============================================================ -->
   <title>יאלה - הקהילה הישראלית של אזור המרכז | מצא שותפים לטיולים וספורט</title>
@@ -2954,6 +2959,7 @@
 
           <!-- Profile actions -->
           <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee; flex-wrap: wrap;">
+            <button id="btn-edit-profile" style="background: var(--color-terracotta); color: white; padding: 10px 20px; border: none; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">✏️ ערוך פרופיל</button>
             <button id="btn-profile-logout" style="background: #f5f5f5; color: #d4583a; padding: 10px 20px; border: 1px solid #d4583a33; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">🚪 התנתק</button>
           </div>
         </div>
@@ -3333,7 +3339,7 @@
 
         <div class="form-group">
           <label class="form-label">לאן הולכים? <span style="color: #d4583a;">*</span></label>
-          <input type="text" class="form-input" placeholder="למשל: ריצה בפארק הירקון, טיול בצפון, אופניים בחוף...">
+          <input type="text" class="form-input" id="create-title" placeholder="למשל: ריצה בפארק הירקון, טיול בצפון, אופניים בחוף...">
         </div>
 
         <!-- Country/City/Topic selectors -->
@@ -3407,21 +3413,21 @@
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">מתי</label>
-            <input type="date" class="form-input">
+            <input type="date" class="form-input" id="create-date">
           </div>
           <div class="form-group">
             <label class="form-label">כמה אנשים</label>
-            <select class="form-select">
+            <select class="form-select" id="create-spots">
               <option>2 אנשים</option>
               <option>3 אנשים</option>
-              <option>4 אנשים</option>
+              <option selected>4 אנשים</option>
               <option>5+ אנשים</option>
             </select>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">מה התוכנית? מה עושים שם?</label>
-          <textarea class="form-textarea" placeholder="ספר קצת על התוכנית - מה תיקח? מה הרמה? איזה אווירה אתה מחפש?"></textarea>
+          <textarea class="form-textarea" id="create-desc" placeholder="ספר קצת על התוכנית - מה תיקח? מה הרמה? איזה אווירה אתה מחפש?"></textarea>
         </div>
 
         <!-- 📸 Image upload section -->
@@ -3561,8 +3567,42 @@
     </div>
   </div>
 
+  <!-- ============================ EDIT PROFILE MODAL ============================ -->
+  <div class="modal-overlay" id="modal-edit-profile" role="dialog" aria-modal="true" aria-labelledby="modal-edit-profile-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-edit-profile-title">ערוך פרופיל</h2>
+        <button class="modal-close" data-close-modal="modal-edit-profile" aria-label="סגור">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">שם מלא</label>
+          <input type="text" class="form-input" id="edit-profile-name" placeholder="ישראל ישראלי">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">עיר</label>
+            <input type="text" class="form-input" id="edit-profile-city" placeholder="תל אביב">
+          </div>
+          <div class="form-group">
+            <label class="form-label">גיל</label>
+            <input type="number" class="form-input" id="edit-profile-age" min="13" max="120" placeholder="29">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">קצת עליי (Bio)</label>
+          <textarea class="form-textarea" id="edit-profile-bio" rows="4" placeholder="איזה טיולים אני אוהב, איפה הייתי, עם מי כיף לטייל..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" data-close-modal="modal-edit-profile" style="flex: 1; margin: 0;">ביטול</button>
+        <button class="btn-join-large" id="btn-save-profile">שמור</button>
+      </div>
+    </div>
+  </div>
+
   <!-- ============================ TOAST ============================ -->
-  <div class="toast" id="toast"></div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
   <!-- ============================================================
        JAVASCRIPT
@@ -3953,6 +3993,48 @@
       get: function() { return FALLBACK_SVG; }
     });
 
+    // ============================================================
+    // 🛡️ XSS PROTECTION HELPERS
+    // ============================================================
+    function escapeHtml(s) {
+      if (s == null) return '';
+      return String(s)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function safeUrl(url) {
+      if (!url) return '';
+      const s = String(url).trim();
+      if (/^(https?:\/\/|\/|data:image\/)/i.test(s)) return escapeHtml(s);
+      return '';
+    }
+
+    // ============================================================
+    // 🌐 ERROR MESSAGE TRANSLATION (English → Hebrew)
+    // ============================================================
+    function translateError(err) {
+      if (!err) return 'שגיאה לא ידועה';
+      const msg = (err.message || err.error_description || String(err)).toLowerCase();
+
+      if (msg.includes('invalid login credentials') || msg.includes('invalid credentials')) return 'אימייל או סיסמה שגויים';
+      if (msg.includes('email not confirmed')) return 'האימייל עוד לא אומת — בדוק את תיבת הדואר';
+      if (msg.includes('user already registered')) return 'אימייל זה כבר רשום במערכת';
+      if (msg.includes('password should be at least')) return 'הסיסמה קצרה מדי (לפחות 6 תווים)';
+      if (msg.includes('rate limit')) return 'יותר מדי נסיונות — נסה שוב בעוד דקה';
+      if (msg.includes('network') || msg.includes('failed to fetch')) return 'בעיית תקשורת — בדוק את החיבור לאינטרנט';
+      if (err.code === '23505') return 'הרשומה כבר קיימת';
+      if (err.code === '23503') return 'נתון לא תקין';
+      if (err.code === '42501') return 'אין הרשאה לפעולה זו';
+      if (msg.includes('row-level security') || msg.includes('rls')) return 'אין הרשאה לפעולה זו';
+      if (msg.includes('payload too large')) return 'הקובץ גדול מדי';
+      if (msg.includes('bucket not found')) return 'שטח האחסון עוד לא הוגדר';
+      if (msg.includes('timeout')) return 'הפעולה לקחה יותר מדי זמן — נסה שוב';
+      return err.message || err.error_description || 'שגיאה';
+    }
 
     // ============================================================
     // ⚡ SUPABASE CONFIGURATION
@@ -4126,9 +4208,13 @@
               try {
                 await api.signOut();
                 showToast('👋 התנתקת בהצלחה');
-                setTimeout(() => window.location.reload(), 800);
+                currentUser = null;
+                currentProfile = null;
+                updateAuthUI();
+                navigate('home');
+                renderHomePlans();
               } catch (err) {
-                showToast('❌ שגיאה בהתנתקות');
+                showToast('❌ ' + translateError(err));
               }
             }
           });
@@ -4278,14 +4364,31 @@
         if (!SUPABASE_ENABLED) return { success: true };
         if (!currentUser) throw new Error('Must be logged in');
 
-        const { error } = await sb.from('plans').update({
+        const updateFields = {
           title: planData.title,
           description: planData.description,
           long_description: planData.longDescription,
           location: planData.location,
           start_date: planData.startDate,
           spots_total: planData.spotsTotal,
-        }).eq('id', planId);
+          country: planData.country,
+          city: planData.city,
+          topic: planData.topic,
+          is_paid: planData.isPaid || false,
+          price: planData.price ?? null,
+          currency: planData.currency ?? null,
+          price_includes: planData.priceIncludes ?? null,
+          price_excludes: planData.priceExcludes ?? null,
+        };
+        if (planData.cover_image_url !== undefined) {
+          updateFields.cover_image_url = planData.cover_image_url;
+        }
+
+        const { error } = await sb
+          .from('plans')
+          .update(updateFields)
+          .eq('id', planId)
+          .eq('creator_id', currentUser.id); // Security: only owner can edit
 
         if (error) throw error;
         return { success: true };
@@ -4546,6 +4649,51 @@
           cities: guideData.cities || [],
           status: 'pending',
         });
+
+        if (error) throw error;
+        return { success: true };
+      },
+
+      // עדכון פרופיל אישי (full_name/bio/city/age)
+      async updateMyProfile(profileData) {
+        if (!SUPABASE_ENABLED) return { success: true };
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const updates = {};
+        if (profileData.full_name !== undefined) updates.full_name = profileData.full_name;
+        if (profileData.bio !== undefined) updates.bio = profileData.bio;
+        if (profileData.city !== undefined) updates.city = profileData.city;
+        if (profileData.age !== undefined) updates.age = profileData.age;
+
+        const { error } = await sb
+          .from('profiles')
+          .update(updates)
+          .eq('id', currentUser.id);
+
+        if (error) throw error;
+        await loadCurrentProfile();
+        return { success: true };
+      },
+
+      async resetPassword(email) {
+        if (!SUPABASE_ENABLED) throw new Error('Demo mode');
+        const { error } = await sb.auth.resetPasswordForEmail(email, {
+          redirectTo: window.location.origin + window.location.pathname,
+        });
+        if (error) throw error;
+        return { success: true };
+      },
+
+      // ביטול בקשת הצטרפות (משתמש מבטל את הבקשה שלו)
+      async cancelMyRequest(requestId) {
+        if (!SUPABASE_ENABLED) return { success: true };
+        if (!currentUser) throw new Error('Must be logged in');
+
+        const { error } = await sb
+          .from('join_requests')
+          .update({ status: 'cancelled' })
+          .eq('id', requestId)
+          .eq('user_id', currentUser.id);
 
         if (error) throw error;
         return { success: true };
@@ -5138,30 +5286,8 @@
         }
       },
 
-      // =================================================
-      // ✏️ EDIT PLAN API
-      // =================================================
-      async updatePlan(planId, updates) {
-        if (!SUPABASE_ENABLED || !currentUser) {
-          throw new Error('יש להתחבר');
-        }
-        try {
-          const { data, error } = await sb
-            .from('plans')
-            .update(updates)
-            .eq('id', planId)
-            .eq('creator_id', currentUser.id) // Security: only owner can edit
-            .select()
-            .single();
-          if (error) throw error;
-          return data;
-        } catch (err) {
-          console.error('updatePlan error:', err);
-          throw err;
-        }
-      },
-
-      async createBooking({ tour_id, tour_date_id, participants, total_price, contact_name, contact_email, contact_phone }) {
+      // 🗺️ Tour booking (different from plan booking which is createBooking above)
+      async createTourBooking({ tour_id, tour_date_id, participants, total_price, contact_name, contact_email, contact_phone }) {
         if (!SUPABASE_ENABLED || !currentUser) {
           throw new Error('יש להתחבר כדי להזמין');
         }
@@ -5179,7 +5305,7 @@
           if (error) throw error;
           return data;
         } catch (err) {
-          console.error('createBooking error:', err);
+          console.error('createTourBooking error:', err);
           throw err;
         }
       },
@@ -5303,7 +5429,6 @@
         await sb.auth.signOut();
         currentUser = null;
         currentProfile = null;
-        location.reload();
       },
 
       // =================================================
@@ -5667,34 +5792,35 @@
         ? `<button class="btn-join" data-join-id="${plan.id}" style="background: linear-gradient(135deg, #d4583a, #c44329);">הזמן עכשיו</button>`
         : `<button class="btn-join" data-join-id="${plan.id}">אני בעניין</button>`;
 
+      const photoUrl = getPhotoForPlan(plan);
       return `
-        <article class="plan-card ${staggerClass}" data-plan-id="${plan.id}" data-categories="${plan.categories}" data-topic="${plan.topic || ''}" data-city="${plan.city || ''}" style="position: relative;">
+        <article class="plan-card ${staggerClass}" data-plan-id="${escapeHtml(plan.id)}" data-categories="${escapeHtml(plan.categories)}" data-topic="${escapeHtml(plan.topic || '')}" data-city="${escapeHtml(plan.city || '')}" style="position: relative;">
           ${paidBadge}
           <!-- Action buttons: like + share -->
           <div style="position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; z-index: 3;">
-            <button class="btn-like" data-target-type="plan" data-target-id="${plan.id}" aria-label="אהבתי" style="background: rgba(255,255,255,0.95); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">🤍</button>
-            <button class="btn-share" data-share-id="${plan.id}" data-share-title="${plan.title}" aria-label="שתף" style="background: rgba(255,255,255,0.95); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">📤</button>
+            <button class="btn-like" data-target-type="plan" data-target-id="${escapeHtml(plan.id)}" aria-label="אהבתי" style="background: rgba(255,255,255,0.95); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">🤍</button>
+            <button class="btn-share" data-share-id="${escapeHtml(plan.id)}" data-share-title="${escapeHtml(plan.title)}" aria-label="שתף" style="background: rgba(255,255,255,0.95); border: none; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">📤</button>
           </div>
           <div class="plan-image" style="background: linear-gradient(135deg, #FFD89B 0%, #F4A261 50%, #E76F51 100%); aspect-ratio: 16/10;">
-            ${getPhotoForPlan(plan)
-              ? `<img src="${getPhotoForPlan(plan)}" alt="${plan.title}" width="800" height="500" style="width:100%;height:100%;object-fit:cover;display:block;" loading="${loadingAttr}" fetchpriority="${fetchAttr}" decoding="async" onerror="this.style.display='none';">`
+            ${photoUrl
+              ? `<img src="${safeUrl(photoUrl)}" alt="${escapeHtml(plan.title)}" width="800" height="500" style="width:100%;height:100%;object-fit:cover;display:block;" loading="${loadingAttr}" fetchpriority="${fetchAttr}" decoding="async" onerror="this.style.display='none';">`
               : (ILLUSTRATIONS[plan.illustration] || ILLUSTRATIONS['ramon-crater'] || '')}
-            <span class="plan-tag">${plan.tag}</span>
-            <span class="plan-date">${plan.date}</span>
+            <span class="plan-tag">${escapeHtml(plan.tag)}</span>
+            <span class="plan-date">${escapeHtml(plan.date)}</span>
           </div>
           <div class="plan-body">
             <div class="plan-creator">
-              <div class="creator-avatar ${plan.creator.avatarClass}">${plan.creator.initial}</div>
+              <div class="creator-avatar ${escapeHtml(plan.creator.avatarClass)}">${escapeHtml(plan.creator.initial)}</div>
               <div class="creator-info">
-                <div class="creator-name">${plan.creator.name}</div>
+                <div class="creator-name">${escapeHtml(plan.creator.name)}</div>
                 <div class="creator-meta">
-                  <span>${plan.creator.meta}</span>
+                  <span>${escapeHtml(plan.creator.meta)}</span>
                   ${plan.creator.verified ? '<span>·</span><span class="verified-badge">✓ מאומת</span>' : ''}
                 </div>
               </div>
             </div>
-            <h3 class="plan-title">${plan.title}</h3>
-            <p class="plan-desc">${plan.desc}</p>
+            <h3 class="plan-title">${escapeHtml(plan.title)}</h3>
+            <p class="plan-desc">${escapeHtml(plan.desc)}</p>
             ${priceDisplay}
             <div class="plan-footer">
               <span class="plan-spots">${spotsLabel}</span>
@@ -5907,17 +6033,24 @@
       // 1. Update profile header with real data if logged in
       if (SUPABASE_ENABLED && currentUser) {
         const meta = currentUser.user_metadata || {};
-        const fullName = meta.full_name || currentUser.email?.split('@')[0] || 'משתמש';
-        const avatarUrl = meta.avatar_url || meta.picture;
+        // Prefer DB profile values, fallback to OAuth metadata
+        const fullName = currentProfile?.full_name || meta.full_name || currentUser.email?.split('@')[0] || 'משתמש';
+        const avatarUrl = currentProfile?.avatar_url || meta.avatar_url || meta.picture;
         const initial = fullName.charAt(0).toUpperCase();
 
         // Update name
         const nameEl = document.getElementById('profile-name');
         if (nameEl) nameEl.textContent = fullName;
 
-        // Update location
+        // Update location (prefer DB)
         const locEl = document.getElementById('profile-location');
-        if (locEl) locEl.textContent = meta.city || 'יאלה קהילה';
+        if (locEl) locEl.textContent = currentProfile?.city || meta.city || 'יאלה קהילה';
+
+        // Update bio
+        const bioEl = document.getElementById('profile-bio');
+        if (bioEl) {
+          bioEl.textContent = currentProfile?.bio || 'ספר לקהילה קצת על עצמך — לחץ "ערוך פרופיל"';
+        }
 
         // Update "since" with real signup date
         const sinceEl = document.getElementById('profile-since');
@@ -5944,9 +6077,13 @@
             try {
               await api.signOut();
               showToast('👋 התנתקת בהצלחה');
-              setTimeout(() => window.location.reload(), 800);
+              currentUser = null;
+              currentProfile = null;
+              updateAuthUI();
+              navigate('home');
+              renderHomePlans();
             } catch (err) {
-              showToast('❌ שגיאה בהתנתקות');
+              showToast('❌ ' + translateError(err));
             }
           };
         }
@@ -6196,7 +6333,7 @@
               showToast('✓ הסטטוס עודכן');
               await renderGuideDashboard(guide);
             } catch (err) {
-              showToast('❌ שגיאה: ' + err.message);
+              showToast('❌ ' + translateError(err));
               e.target.textContent = '✓ סמן כשולם';
               e.target.disabled = false;
             }
@@ -6230,8 +6367,8 @@
 
         const actionsHtml = request.status === 'pending' ? `
           <div style="display: flex; gap: 8px; margin-top: 16px;">
-            <button class="btn-approve-request" data-request-id="${request.id}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר</button>
-            <button class="btn-decline-request" data-request-id="${request.id}" style="flex: 1; background: #f5f5f5; color: #666; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
+            <button class="btn-approve-request" data-request-id="${escapeHtml(request.id)}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר</button>
+            <button class="btn-decline-request" data-request-id="${escapeHtml(request.id)}" style="flex: 1; background: #f5f5f5; color: #666; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
           </div>
         ` : `
           <div style="margin-top: 12px; padding: 8px 12px; background: ${status.bg}; color: ${status.text}; border-radius: 8px; display: inline-block; font-size: 14px; font-weight: 600;">${status.label}</div>
@@ -6241,18 +6378,18 @@
           <div class="request-item" style="background: white; padding: 20px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #eee; box-shadow: 0 2px 4px rgba(0,0,0,0.04);">
             <div style="display: flex; gap: 16px; align-items: flex-start;">
               <div style="width: 56px; height: 56px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px; flex-shrink: 0; overflow: hidden;">
-                ${requesterAvatar ? `<img src="${requesterAvatar}" style="width:100%;height:100%;object-fit:cover;">` : requesterInitial}
+                ${requesterAvatar ? `<img src="${safeUrl(requesterAvatar)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(requesterInitial)}
               </div>
               <div style="flex: 1;">
                 <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 4px;">
-                  <h3 style="margin: 0; font-size: 18px;">${requesterName}</h3>
-                  <span style="font-size: 12px; color: #999;">${date}</span>
+                  <h3 style="margin: 0; font-size: 18px;">${escapeHtml(requesterName)}</h3>
+                  <span style="font-size: 12px; color: #999;">${escapeHtml(date)}</span>
                 </div>
-                <div style="font-size: 14px; color: #555; margin-bottom: 12px;">רוצה להצטרף ל-<strong>"${planTitle}"</strong></div>
+                <div style="font-size: 14px; color: #555; margin-bottom: 12px;">רוצה להצטרף ל-<strong>"${escapeHtml(planTitle)}"</strong></div>
                 <div style="background: #f9f5ed; padding: 12px; border-radius: 12px; font-size: 14px; line-height: 1.5;">
                   <div style="font-weight: 600; margin-bottom: 4px; color: #555;">💬 הודעה אישית:</div>
-                  <div>${message}</div>
-                  ${reason ? `<div style="margin-top: 8px; font-weight: 600; color: #555;">למה דווקא לתוכנית הזו:</div><div>${reason}</div>` : ''}
+                  <div>${escapeHtml(message)}</div>
+                  ${reason ? `<div style="margin-top: 8px; font-weight: 600; color: #555;">למה דווקא לתוכנית הזו:</div><div>${escapeHtml(reason)}</div>` : ''}
                 </div>
                 ${actionsHtml}
               </div>
@@ -6270,7 +6407,7 @@
         const contactHtml = request.status === 'approved' && request.plan?.creator?.email ? `
           <div style="margin-top: 12px; padding: 12px; background: #e8f5e9; border-radius: 8px; font-size: 14px;">
             <div style="font-weight: 600; margin-bottom: 4px; color: #2e7d32;">🎉 אושרת! פרטי קשר:</div>
-            <div style="color: #555;">📧 ${request.plan.creator.email}</div>
+            <div style="color: #555;">📧 ${escapeHtml(request.plan.creator.email)}</div>
           </div>
         ` : '';
 
@@ -6278,10 +6415,10 @@
           <div class="request-item" style="background: white; padding: 20px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #eee;">
             <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
               <div>
-                <h3 style="margin: 0 0 4px 0; font-size: 18px;">${planTitle}</h3>
-                <div style="font-size: 14px; color: #777;">📍 ${planLocation} · מארגן: ${creatorName}</div>
+                <h3 style="margin: 0 0 4px 0; font-size: 18px;">${escapeHtml(planTitle)}</h3>
+                <div style="font-size: 14px; color: #777;">📍 ${escapeHtml(planLocation)} · מארגן: ${escapeHtml(creatorName)}</div>
               </div>
-              <span style="font-size: 12px; color: #999;">${date}</span>
+              <span style="font-size: 12px; color: #999;">${escapeHtml(date)}</span>
             </div>
             <div style="margin-top: 12px; padding: 8px 12px; background: ${status.bg}; color: ${status.text}; border-radius: 8px; display: inline-block; font-size: 14px; font-weight: 600;">${status.label}</div>
             ${contactHtml}
@@ -6303,7 +6440,7 @@
             await renderProfilePlans();
           } catch (err) {
             console.error(err);
-            showToast('❌ שגיאה: ' + err.message);
+            showToast('❌ ' + translateError(err));
             e.target.textContent = '✓ אשר';
             e.target.disabled = false;
           }
@@ -6322,7 +6459,7 @@
             await renderProfilePlans();
           } catch (err) {
             console.error(err);
-            showToast('❌ שגיאה: ' + err.message);
+            showToast('❌ ' + translateError(err));
             e.target.textContent = '✗ דחה';
             e.target.disabled = false;
           }
@@ -6456,7 +6593,7 @@
         btn.style.transform = 'scale(1.2)';
         setTimeout(() => btn.style.transform = '', 200);
       } catch (err) {
-        showToast('❌ ' + err.message);
+        showToast('❌ ' + translateError(err));
       }
     }
 
@@ -6645,28 +6782,30 @@
           const cities = (g.cities || []).join(', ');
           const langs = (g.languages || []).join(' · ');
 
+          const bioText = g.bio ? (g.bio.length > 150 ? g.bio.substring(0, 150) + '...' : g.bio) : '';
+          const yearsNum = parseInt(g.years_experience) || 0;
           return `
             <div class="guide-card">
               <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
                 <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #d4583a, #c44329); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
-                  ${g.avatar_url ? `<img src="${g.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+                  ${g.avatar_url ? `<img src="${safeUrl(g.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(initial)}
                 </div>
                 <div style="flex: 1;">
                   <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-                    <h3 style="margin: 0; font-size: 18px;">${g.full_name}</h3>
+                    <h3 style="margin: 0; font-size: 18px;">${escapeHtml(g.full_name)}</h3>
                     <span class="badge-pro">💎 מקצועי</span>
                   </div>
-                  <div style="font-size: 13px; color: #777;">${cities || 'מדריך טיולים'}</div>
+                  <div style="font-size: 13px; color: #777;">${escapeHtml(cities || 'מדריך טיולים')}</div>
                 </div>
               </div>
 
-              ${g.bio ? `<p style="font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px;">${g.bio.length > 150 ? g.bio.substring(0, 150) + '...' : g.bio}</p>` : ''}
+              ${bioText ? `<p style="font-size: 14px; color: #555; line-height: 1.5; margin-bottom: 16px;">${escapeHtml(bioText)}</p>` : ''}
 
-              ${specialties ? `<div style="font-size: 13px; color: #777; margin-bottom: 8px;">🎯 <strong>תחומים:</strong> ${specialties}</div>` : ''}
+              ${specialties ? `<div style="font-size: 13px; color: #777; margin-bottom: 8px;">🎯 <strong>תחומים:</strong> ${escapeHtml(specialties)}</div>` : ''}
 
-              ${langs ? `<div style="font-size: 13px; color: #777; margin-bottom: 12px;">🌐 <strong>שפות:</strong> ${langs}</div>` : ''}
+              ${langs ? `<div style="font-size: 13px; color: #777; margin-bottom: 12px;">🌐 <strong>שפות:</strong> ${escapeHtml(langs)}</div>` : ''}
 
-              ${g.years_experience ? `<div style="font-size: 13px; color: var(--color-terracotta); font-weight: 600;">⭐ ${g.years_experience} שנות ניסיון</div>` : ''}
+              ${yearsNum ? `<div style="font-size: 13px; color: var(--color-terracotta); font-weight: 600;">⭐ ${yearsNum} שנות ניסיון</div>` : ''}
             </div>
           `;
         }).join('');
@@ -6747,7 +6886,7 @@
             if (err.code === '23505') {
               showToast('⚠️ אתה כבר רשום כמדריך');
             } else {
-              showToast('❌ שגיאה: ' + (err.message || 'נסה שוב'));
+              showToast('❌ ' + translateError(err));
             }
             submitBtn.textContent = '📤 שלח הרשמה לאישור';
             submitBtn.disabled = false;
@@ -6987,31 +7126,32 @@
       const sc = statusColors[g.status] || statusColors.pending;
       const date = new Date(g.created_at).toLocaleDateString('he-IL');
 
+      const yearsNum = parseInt(g.years_experience) || 0;
       return `
         <div style="background: white; padding: 24px; border-radius: 16px; margin-bottom: 16px; border: 1px solid #eee;">
           <div style="display: flex; gap: 16px; align-items: flex-start; flex-wrap: wrap;">
             <div style="width: 64px; height: 64px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
-              ${g.avatar_url ? `<img src="${g.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : initial}
+              ${g.avatar_url ? `<img src="${safeUrl(g.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml(initial)}
             </div>
             <div style="flex: 1; min-width: 250px;">
               <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap; margin-bottom: 8px;">
-                <h3 style="margin: 0;">${g.full_name}</h3>
+                <h3 style="margin: 0;">${escapeHtml(g.full_name)}</h3>
                 <span style="background: ${sc.bg}; color: ${sc.text}; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600;">${sc.label}</span>
               </div>
-              <div style="font-size: 13px; color: #777; margin-bottom: 12px;">📧 ${g.email} ${g.whatsapp ? `· 📱 ${g.whatsapp}` : ''}</div>
+              <div style="font-size: 13px; color: #777; margin-bottom: 12px;">📧 ${escapeHtml(g.email)} ${g.whatsapp ? `· 📱 ${escapeHtml(g.whatsapp)}` : ''}</div>
 
-              ${g.bio ? `<p style="font-size: 14px; line-height: 1.6; color: #555; background: #f9f5ed; padding: 12px; border-radius: 8px; margin-bottom: 12px;">${g.bio}</p>` : ''}
+              ${g.bio ? `<p style="font-size: 14px; line-height: 1.6; color: #555; background: #f9f5ed; padding: 12px; border-radius: 8px; margin-bottom: 12px;">${escapeHtml(g.bio)}</p>` : ''}
 
               <div style="display: flex; gap: 16px; font-size: 13px; color: #555; flex-wrap: wrap; margin-bottom: 12px;">
-                ${g.years_experience ? `<div>⭐ ${g.years_experience} שנות ניסיון</div>` : ''}
-                ${g.license_number ? `<div>📜 תעודה: ${g.license_number}</div>` : '<div style="color: #c62828;">⚠️ ללא תעודה</div>'}
+                ${yearsNum ? `<div>⭐ ${yearsNum} שנות ניסיון</div>` : ''}
+                ${g.license_number ? `<div>📜 תעודה: ${escapeHtml(g.license_number)}</div>` : '<div style="color: #c62828;">⚠️ ללא תעודה</div>'}
               </div>
 
               ${g.specialties && g.specialties.length > 0 ? `
                 <div style="margin-bottom: 8px;">
                   <strong style="font-size: 12px; color: #777;">תחומים:</strong>
                   <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
-                    ${g.specialties.map(s => `<span style="background: #f5f5f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                    ${g.specialties.map(s => `<span style="background: #f5f5f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${escapeHtml(s)}</span>`).join('')}
                   </div>
                 </div>
               ` : ''}
@@ -7020,7 +7160,7 @@
                 <div style="margin-bottom: 8px;">
                   <strong style="font-size: 12px; color: #777;">שפות:</strong>
                   <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
-                    ${g.languages.map(s => `<span style="background: #e3f2fd; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                    ${g.languages.map(s => `<span style="background: #e3f2fd; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${escapeHtml(s)}</span>`).join('')}
                   </div>
                 </div>
               ` : ''}
@@ -7029,20 +7169,20 @@
                 <div style="margin-bottom: 12px;">
                   <strong style="font-size: 12px; color: #777;">ערים:</strong>
                   <div style="display: flex; gap: 6px; margin-top: 4px; flex-wrap: wrap;">
-                    ${g.cities.map(s => `<span style="background: #fff8f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${s}</span>`).join('')}
+                    ${g.cities.map(s => `<span style="background: #fff8f5; padding: 2px 10px; border-radius: 12px; font-size: 12px;">${escapeHtml(s)}</span>`).join('')}
                   </div>
                 </div>
               ` : ''}
 
-              <div style="font-size: 11px; color: #999;">נרשם: ${date}</div>
+              <div style="font-size: 11px; color: #999;">נרשם: ${escapeHtml(date)}</div>
 
               ${showActions ? `
                 <div style="display: flex; gap: 8px; margin-top: 16px;">
-                  <button class="admin-approve-guide" data-guide-id="${g.id}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר מדריך</button>
-                  <button class="admin-reject-guide" data-guide-id="${g.id}" style="flex: 1; background: #f5f5f5; color: #c62828; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
+                  <button class="admin-approve-guide" data-guide-id="${escapeHtml(g.id)}" style="flex: 1; background: #2e7d32; color: white; padding: 10px; border: none; border-radius: 8px; cursor: pointer; font-family: inherit; font-weight: 600;">✓ אשר מדריך</button>
+                  <button class="admin-reject-guide" data-guide-id="${escapeHtml(g.id)}" style="flex: 1; background: #f5f5f5; color: #c62828; padding: 10px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit;">✗ דחה</button>
                 </div>
               ` : g.status === 'approved' ? `
-                <button class="admin-reject-guide" data-guide-id="${g.id}" style="margin-top: 12px; background: #f5f5f5; color: #c62828; padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">⚠️ בטל אישור</button>
+                <button class="admin-reject-guide" data-guide-id="${escapeHtml(g.id)}" style="margin-top: 12px; background: #f5f5f5; color: #c62828; padding: 8px 16px; border: 1px solid #ddd; border-radius: 8px; cursor: pointer; font-family: inherit; font-size: 13px;">⚠️ בטל אישור</button>
               ` : ''}
             </div>
           </div>
@@ -7063,7 +7203,7 @@
             await renderAdminPendingGuides();
             await renderAdminOverview();
           } catch (err) {
-            showToast('❌ שגיאה: ' + err.message);
+            showToast('❌ ' + translateError(err));
             e.target.textContent = '✓ אשר מדריך';
             e.target.disabled = false;
           }
@@ -7083,7 +7223,7 @@
             await renderAdminAllGuides();
             await renderAdminOverview();
           } catch (err) {
-            showToast('❌ שגיאה: ' + err.message);
+            showToast('❌ ' + translateError(err));
             e.target.disabled = false;
           }
         };
@@ -7111,13 +7251,13 @@
             ${users.map(u => `
               <div style="padding: 16px 20px; border-bottom: 1px solid #f5f5f5; display: flex; gap: 16px; align-items: center;">
                 <div style="width: 40px; height: 40px; border-radius: 50%; background: var(--color-terracotta); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; overflow: hidden; flex-shrink: 0;">
-                  ${u.avatar_url ? `<img src="${u.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : (u.full_name || '?').charAt(0).toUpperCase()}
+                  ${u.avatar_url ? `<img src="${safeUrl(u.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : escapeHtml((u.full_name || '?').charAt(0).toUpperCase())}
                 </div>
                 <div style="flex: 1;">
-                  <div style="font-weight: 600;">${u.full_name || 'משתמש'} ${u.is_admin ? '<span class="badge-pro">🛡️ אדמין</span>' : ''}</div>
-                  <div style="font-size: 13px; color: #777;">${u.email || ''}</div>
+                  <div style="font-weight: 600;">${escapeHtml(u.full_name || 'משתמש')} ${u.is_admin ? '<span class="badge-pro">🛡️ אדמין</span>' : ''}</div>
+                  <div style="font-size: 13px; color: #777;">${escapeHtml(u.email || '')}</div>
                 </div>
-                <div style="font-size: 11px; color: #999;">${new Date(u.created_at).toLocaleDateString('he-IL')}</div>
+                <div style="font-size: 11px; color: #999;">${escapeHtml(new Date(u.created_at).toLocaleDateString('he-IL'))}</div>
               </div>
             `).join('')}
           </div>
@@ -7166,21 +7306,23 @@
               };
               const sc = statusColors[status] || statusColors.pending;
 
+              const amountNum = parseFloat(b.amount_paid) || 0;
+              const feeNum = parseFloat(b.platform_fee) || 0;
               return `
                 <div style="padding: 16px 20px; border-bottom: 1px solid #f5f5f5;">
                   <div style="display: flex; justify-content: space-between; align-items: start; gap: 12px; flex-wrap: wrap;">
                     <div>
-                      <div style="font-weight: 600;">${b.user?.full_name || 'לקוח'} → ${b.guide?.full_name || 'מדריך'}</div>
-                      <div style="font-size: 13px; color: #777; margin-top: 2px;">${b.plan?.title || 'תוכנית'}</div>
+                      <div style="font-weight: 600;">${escapeHtml(b.user?.full_name || 'לקוח')} → ${escapeHtml(b.guide?.full_name || 'מדריך')}</div>
+                      <div style="font-size: 13px; color: #777; margin-top: 2px;">${escapeHtml(b.plan?.title || 'תוכנית')}</div>
                     </div>
                     <div style="text-align: left;">
-                      <div style="font-size: 18px; font-weight: 700; color: var(--color-terracotta);">€${b.amount_paid || 0}</div>
-                      <div style="font-size: 11px; color: #999;">עמלה: €${(b.platform_fee || 0).toFixed(2)}</div>
+                      <div style="font-size: 18px; font-weight: 700; color: var(--color-terracotta);">€${amountNum}</div>
+                      <div style="font-size: 11px; color: #999;">עמלה: €${feeNum.toFixed(2)}</div>
                     </div>
                   </div>
                   <div style="display: flex; justify-content: space-between; margin-top: 8px;">
                     <span style="background: ${sc.bg}; color: ${sc.text}; padding: 2px 10px; border-radius: 10px; font-size: 11px; font-weight: 600;">${sc.label}</span>
-                    <span style="font-size: 11px; color: #999;">${new Date(b.created_at).toLocaleDateString('he-IL')}</span>
+                    <span style="font-size: 11px; color: #999;">${escapeHtml(new Date(b.created_at).toLocaleDateString('he-IL'))}</span>
                   </div>
                 </div>
               `;
@@ -7225,61 +7367,65 @@
         ? '<p style="font-size: 13px; color: var(--color-stone); padding: 16px; text-align: center; background: var(--color-cream-warm); border-radius: var(--radius-md);">עדיין אין מצטרפים מאושרים. תהיה הראשון!</p>'
         : realJoined.map(j => `
             <div class="joined-item">
-              <div class="creator-avatar ${j.avatarClass}" style="overflow: hidden;">
-                ${j.avatar_url ? `<img src="${j.avatar_url}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : j.initial}
+              <div class="creator-avatar ${escapeHtml(j.avatarClass)}" style="overflow: hidden;">
+                ${j.avatar_url ? `<img src="${safeUrl(j.avatar_url)}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;">` : escapeHtml(j.initial)}
               </div>
               <div class="joined-info">
-                <div class="joined-name">${j.name}</div>
-                <div class="joined-bio">${j.bio}</div>
+                <div class="joined-name">${escapeHtml(j.name)}</div>
+                <div class="joined-bio">${escapeHtml(j.bio)}</div>
               </div>
             </div>
           `).join('');
 
+      const detailPriceNum = parseFloat(plan.price) || 0;
+      const spotsTotalNum = parseInt(plan.spots) || 0;
+      const progressPct = parseFloat(progress) || 0;
+      const detailPhoto = getPhotoForPlan(plan);
       document.getElementById('plan-detail-content').innerHTML = `
         <span class="back-link" data-route="home">← חזרה לפיד</span>
 
         <div class="detail-hero">
-          ${getPhotoForPlan(plan)
-            ? `<img src="${getPhotoForPlan(plan)}" alt="${plan.title}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+          ${detailPhoto
+            ? `<img src="${safeUrl(detailPhoto)}" alt="${escapeHtml(plan.title)}" style="width:100%;height:100%;object-fit:cover;display:block;">`
             : (ILLUSTRATIONS[plan.illustration] || '')}
           <div class="detail-hero-overlay">
-            <span class="detail-hero-tag">${plan.tag}</span>
-            <h1 class="detail-hero-title">${plan.title}</h1>
+            <span class="detail-hero-tag">${escapeHtml(plan.tag)}</span>
+            <h1 class="detail-hero-title">${escapeHtml(plan.title)}</h1>
           </div>
         </div>
 
         <div class="detail-grid">
           <div class="detail-main">
             <h2>על התוכנית</h2>
-            <p>${plan.longDesc}</p>
+            <p>${escapeHtml(plan.longDesc)}</p>
 
             <div class="detail-meta-grid">
               <div class="detail-meta-item">
                 <div class="label">📅 תאריך</div>
-                <div class="value">${plan.dateFull || 'TBD'}</div>
+                <div class="value">${escapeHtml(plan.dateFull || 'TBD')}</div>
               </div>
               ${plan.location ? `
               <div class="detail-meta-item">
                 <div class="label">📍 מיקום</div>
-                <div class="value">${plan.location}</div>
+                <div class="value">${escapeHtml(plan.location)}</div>
               </div>
               ` : ''}
               ${plan.budget ? `
               <div class="detail-meta-item">
                 <div class="label">💰 תקציב</div>
-                <div class="value">${plan.budget}</div>
+                <div class="value">${escapeHtml(plan.budget)}</div>
               </div>
               ` : ''}
               ${plan.difficulty ? `
               <div class="detail-meta-item">
                 <div class="label">⚡ רמה</div>
-                <div class="value">${plan.difficulty}</div>
+                <div class="value">${escapeHtml(plan.difficulty)}</div>
               </div>
               ` : ''}
               ${plan.meetingPoint ? `
               <div class="detail-meta-item" style="grid-column: 1 / -1;">
                 <div class="label">🚗 נקודת מפגש</div>
-                <div class="value">${plan.meetingPoint}</div>
+                <div class="value">${escapeHtml(plan.meetingPoint)}</div>
               </div>
               ` : ''}
             </div>
@@ -7291,22 +7437,22 @@
           <aside class="detail-sidebar">
             <div class="detail-card">
               <div class="detail-creator-block">
-                <div class="creator-avatar ${plan.creator.avatarClass}">${plan.creator.initial}</div>
+                <div class="creator-avatar ${escapeHtml(plan.creator.avatarClass)}">${escapeHtml(plan.creator.initial)}</div>
                 <div>
-                  <div class="detail-creator-name">${plan.creator.name}</div>
+                  <div class="detail-creator-name">${escapeHtml(plan.creator.name)}</div>
                   <div class="detail-creator-meta">
-                    ${plan.creator.meta || 'מארגן/ת'}
+                    ${escapeHtml(plan.creator.meta || 'מארגן/ת')}
                   </div>
                 </div>
               </div>
 
               <div class="detail-spots">
                 <span class="detail-spots-label">מקומות פנויים</span>
-                <span class="detail-spots-value">${plan.spots - realJoined.length}/${plan.spots}</span>
+                <span class="detail-spots-value">${spotsTotalNum - realJoined.length}/${spotsTotalNum}</span>
               </div>
 
               <div class="progress-bar">
-                <div class="progress-fill" style="width: ${progress}%"></div>
+                <div class="progress-fill" style="width: ${progressPct}%"></div>
               </div>
 
               ${isMyPlan ? `
@@ -7316,10 +7462,10 @@
                 <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 2px solid #d4583a33;">
                   <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
                     <span style="font-size: 13px; color: #777;">מחיר לאדם</span>
-                    <span style="font-size: 28px; font-weight: 700; color: var(--color-terracotta);">${({EUR:'€',ILS:'₪',USD:'$'})[plan.currency] || '€'}${plan.price}</span>
+                    <span style="font-size: 28px; font-weight: 700; color: var(--color-terracotta);">${({EUR:'€',ILS:'₪',USD:'$'})[plan.currency] || '€'}${detailPriceNum}</span>
                   </div>
-                  ${plan.priceIncludes ? `<div style="font-size: 13px; color: #555; margin-top: 8px;"><strong>כלול:</strong> ${plan.priceIncludes}</div>` : ''}
-                  ${plan.priceExcludes ? `<div style="font-size: 13px; color: #999; margin-top: 4px;"><strong>לא כלול:</strong> ${plan.priceExcludes}</div>` : ''}
+                  ${plan.priceIncludes ? `<div style="font-size: 13px; color: #555; margin-top: 8px;"><strong>כלול:</strong> ${escapeHtml(plan.priceIncludes)}</div>` : ''}
+                  ${plan.priceExcludes ? `<div style="font-size: 13px; color: #999; margin-top: 4px;"><strong>לא כלול:</strong> ${escapeHtml(plan.priceExcludes)}</div>` : ''}
                 </div>
                 <button class="btn-join-large" id="detail-book-btn" style="background: linear-gradient(135deg, #d4583a, #c44329);">💳 הזמן עכשיו</button>
                 <button class="btn-secondary" id="detail-share-btn">📤 שתף תוכנית</button>
@@ -7381,17 +7527,17 @@
 
           if (guide?.whatsapp) {
             const waNumber = guide.whatsapp.replace(/\D/g, '');
-            window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank');
+            window.open(`https://wa.me/${waNumber}?text=${message}`, '_blank', 'noopener,noreferrer');
             showToast('✓ נפתח WhatsApp - תכתב למדריך');
           } else if (guide?.email) {
-            window.open(`mailto:${guide.email}?subject=${encodeURIComponent('הזמנה: ' + plan.title)}&body=${message}`, '_blank');
+            window.open(`mailto:${encodeURIComponent(guide.email)}?subject=${encodeURIComponent('הזמנה: ' + plan.title)}&body=${message}`, '_blank', 'noopener,noreferrer');
             showToast('✓ נפתח אימייל למדריך');
           } else {
             showToast('⚠️ אין פרטי קשר למדריך');
           }
         } catch (err) {
           console.error('Booking error:', err);
-          showToast('❌ שגיאה: ' + (err.message || 'נסה שוב'));
+          showToast('❌ ' + translateError(err));
         } finally {
           btn.textContent = '💳 הזמן עכשיו';
           btn.disabled = false;
@@ -7413,12 +7559,45 @@
 
       // Edit button (only for plan owner)
       document.getElementById('detail-edit-btn')?.addEventListener('click', () => {
-        // Pre-fill the create modal with current values
-        const inputs = document.querySelectorAll('#modal-create input, #modal-create textarea');
-        const select = document.querySelector('#modal-create select');
-        if (inputs[0]) inputs[0].value = plan.title || '';
-        if (inputs[1]) inputs[1].value = plan.startDate || '';
-        if (inputs[2]) inputs[2].value = plan.longDesc || plan.desc || '';
+        // Pre-fill the create modal with current values (by ID)
+        const setVal = (elId, v) => {
+          const el = document.getElementById(elId);
+          if (el) el.value = v == null ? '' : v;
+        };
+        setVal('create-title', plan.title);
+        // start_date may be 'YYYY-MM-DD' or full ISO. Slice to date portion.
+        setVal('create-date', plan.dateFull ? String(plan.dateFull).slice(0, 10) : '');
+        setVal('create-desc', plan.longDesc || plan.desc);
+        setVal('create-country', plan.country);
+        setVal('create-topic', plan.topic);
+
+        // Spots: select option that contains the spots number
+        const spotsSel = document.getElementById('create-spots');
+        if (spotsSel && plan.spots) {
+          const target = plan.spots >= 5 ? '5+ אנשים' : `${plan.spots} אנשים`;
+          for (const opt of spotsSel.options) {
+            if (opt.text === target) { opt.selected = true; break; }
+          }
+        }
+
+        // City: repopulate based on country, then select
+        if (typeof populateCitiesDropdown === 'function' && plan.country) {
+          populateCitiesDropdown(plan.country, 'create-city', plan.city);
+        }
+
+        // Paid plan fields
+        const paidCheckbox = document.getElementById('is-paid-plan');
+        const priceFields = document.getElementById('price-fields');
+        if (paidCheckbox) {
+          paidCheckbox.checked = !!plan.isPaid;
+          if (priceFields) priceFields.style.display = plan.isPaid ? 'block' : 'none';
+        }
+        if (plan.isPaid) {
+          setVal('plan-price', plan.price);
+          setVal('plan-currency', plan.currency || 'ILS');
+          setVal('plan-price-includes', plan.priceIncludes);
+          setVal('plan-price-excludes', plan.priceExcludes);
+        }
 
         // Mark we're editing
         window._editingPlanId = id;
@@ -7448,7 +7627,7 @@
           navigate('home');
         } catch (err) {
           console.error('Delete error:', err);
-          showToast('❌ שגיאה במחיקה: ' + err.message);
+          showToast('❌ שגיאה במחיקה: ' + translateError(err));
           btn.textContent = '🗑️ מחק תוכנית';
           btn.disabled = false;
         }
@@ -7755,12 +7934,10 @@
         const originalText = btn.textContent;
 
         try {
-          // Get all form values
-          const inputs = document.querySelectorAll('#modal-create input, #modal-create textarea');
-          const select = document.querySelector('#modal-create select');
-          const titleInput = inputs[0]?.value?.trim();
-          const dateInput = inputs[1]?.value;
-          const descInput = inputs[2]?.value?.trim();
+          // Get all form values by ID (avoids index drift when modal HTML changes)
+          const titleInput = document.getElementById('create-title')?.value?.trim();
+          const dateInput = document.getElementById('create-date')?.value;
+          const descInput = document.getElementById('create-desc')?.value?.trim();
 
           console.log('📝 Form values:', { title: titleInput, date: dateInput, desc: descInput });
           console.log('🔐 Auth state:', { SUPABASE_ENABLED, currentUser: currentUser?.email });
@@ -7797,7 +7974,7 @@
           btn.disabled = true;
           btn.style.opacity = '0.6';
 
-          const spotsValue = select?.value || '4 אנשים';
+          const spotsValue = document.getElementById('create-spots')?.value || '4 אנשים';
           const spotsTotal = parseInt(spotsValue) || 4;
 
           // Check if this is a paid plan (only for approved guides)
@@ -7836,9 +8013,9 @@
             } catch (e) {}
           }
 
-          // Get hierarchical fields
-          const country = document.getElementById('create-country')?.value || 'CY';
-          let city = document.getElementById('create-city')?.value || 'limassol';
+          // Get hierarchical fields (Israel-only mode)
+          const country = document.getElementById('create-country')?.value || 'IL';
+          let city = document.getElementById('create-city')?.value || 'tel-aviv';
 
           // If "other" was selected, use the custom city input
           if (city.startsWith('other-')) {
@@ -7911,7 +8088,7 @@
             details: err.details,
             hint: err.hint,
           });
-          showToast('❌ ' + (err.message || err.error_description || 'שגיאה - בדוק Console'));
+          showToast('❌ ' + translateError(err));
         } finally {
           btn.textContent = originalText;
           btn.disabled = false;
@@ -8005,7 +8182,7 @@
           if (err.code === '23505' || err.message?.includes('duplicate')) {
             showToast('⚠️ כבר שלחת בקשה לתוכנית זו');
           } else {
-            showToast('❌ ' + (err.message || 'שגיאה - בדוק Console'));
+            showToast('❌ ' + translateError(err));
           }
         } finally {
           btn.textContent = originalText;
@@ -8046,7 +8223,7 @@
             closeModal('modal-login');
             showToast(isLogin ? '👋 ברוך השב!' : '🎉 ברוך הבא לקהילה!');
           } catch (err) {
-            showToast('❌ ' + (err.message || 'שגיאה בהתחברות'));
+            showToast('❌ ' + translateError(err));
           }
         });
       }
@@ -8061,7 +8238,7 @@
           try {
             if (idx === 0) await api.signInWithGoogle();
           } catch (err) {
-            showToast('❌ ' + err.message);
+            showToast('❌ ' + translateError(err));
           }
         });
       });
@@ -8138,6 +8315,66 @@
           // Open this one if it was closed
           if (!wasOpen) item.classList.add('open');
         });
+      });
+    }
+
+    // ============================================================
+    // EDIT PROFILE — open with prefill, save to DB
+    // ============================================================
+    function setupEditProfile() {
+      // Use event delegation since the buttons may render after this runs
+      document.addEventListener('click', async (e) => {
+        // Open
+        if (e.target.closest('#btn-edit-profile')) {
+          if (!currentUser) {
+            showToast('🔒 התחבר כדי לערוך פרופיל');
+            openModal('modal-login');
+            return;
+          }
+          const meta = currentUser?.user_metadata || {};
+          const p = currentProfile || {};
+          const setVal = (id, v) => {
+            const el = document.getElementById(id);
+            if (el) el.value = v == null ? '' : v;
+          };
+          setVal('edit-profile-name', p.full_name || meta.full_name || '');
+          setVal('edit-profile-city', p.city || '');
+          setVal('edit-profile-age', p.age || '');
+          setVal('edit-profile-bio', p.bio || '');
+          openModal('modal-edit-profile');
+        }
+
+        // Save
+        if (e.target.closest('#btn-save-profile')) {
+          const saveBtn = document.getElementById('btn-save-profile');
+          if (!currentUser || !saveBtn) return;
+          const fullName = document.getElementById('edit-profile-name')?.value?.trim();
+          const city = document.getElementById('edit-profile-city')?.value?.trim();
+          const ageRaw = document.getElementById('edit-profile-age')?.value;
+          const bio = document.getElementById('edit-profile-bio')?.value?.trim();
+
+          if (!fullName) { showToast('⚠️ שם לא יכול להיות ריק'); return; }
+          const age = ageRaw ? parseInt(ageRaw) : null;
+          if (age !== null && (isNaN(age) || age < 13 || age > 120)) {
+            showToast('⚠️ גיל לא תקין'); return;
+          }
+
+          const originalText = saveBtn.textContent;
+          saveBtn.textContent = 'שומר...';
+          saveBtn.disabled = true;
+          try {
+            await api.updateMyProfile({ full_name: fullName, city, age, bio });
+            showToast('✓ הפרופיל עודכן');
+            closeModal('modal-edit-profile');
+            if (typeof renderProfilePlans === 'function') renderProfilePlans();
+          } catch (err) {
+            console.error('Profile update error:', err);
+            showToast('❌ ' + translateError(err));
+          } finally {
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
+          }
+        }
       });
     }
 
@@ -8238,7 +8475,7 @@
 
           showToast('✅ התמונה הועלתה בהצלחה!');
         } catch (err) {
-          showToast('❌ ' + err.message);
+          showToast('❌ ' + translateError(err));
           // Reset prompt
           prompt.innerHTML = `
             <div style="font-size: 32px; margin-bottom: 8px;">📷</div>
@@ -8526,7 +8763,7 @@
               return;
             }
             try {
-              await api.createBooking({
+              await api.createTourBooking({
                 tour_id: tour.id,
                 tour_date_id: selectedDate.dataset.dateId,
                 participants: 1,
@@ -8537,7 +8774,7 @@
               });
               showToast('✅ ההזמנה התקבלה! נחזור אליך בהקדם.');
             } catch (err) {
-              showToast('❌ ' + err.message);
+              showToast('❌ ' + translateError(err));
             }
           });
         }
@@ -8677,7 +8914,7 @@
               await api.signInWithGoogle();
             } catch (err) {
               console.error('Google sign-in error:', err);
-              showToast('❌ ' + (err.message || 'שגיאה בחיבור'));
+              showToast('❌ ' + translateError(err));
               btn.disabled = false;
               btn.innerHTML = `
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
@@ -8705,6 +8942,7 @@
       setupFAQ();
       setupContactForm();
       setupImageUpload();
+      setupEditProfile();
 
       // Render plans immediately (works without auth)
       renderHomePlans();
