@@ -3697,57 +3697,146 @@
 
     // Smart query mapping - converts Hebrew topics to English search queries
     const PEXELS_TOPIC_QUERIES = {
-      'running': 'running outdoor park',
-      'cycling': 'cycling road bike',
-      'football': 'football soccer game',
-      'basketball': 'basketball outdoor',
-      'swimming': 'swimming sea ocean',
-      'yoga': 'yoga sunrise outdoor',
-      'hiking': 'hiking trail nature israel',
-      'beach': 'beach mediterranean tel aviv',
-      'climbing': 'rock climbing outdoor',
-      'diving': 'scuba diving',
-      'beer': 'beer friends bar',
-      'coffee': 'coffee shop morning',
-      'sunset': 'sunset beach israel',
-      'language': 'people talking conversation',
-      'networking': 'networking business meetup',
-      'family': 'family outdoor activity',
-      'food': 'food restaurant friends',
-      'photo': 'photography camera',
-      'music': 'live music concert',
-      'travel': 'travel landscape adventure',
-      'roadtrip': 'road trip car desert',
-      'camping': 'camping tent night',
+      'running': 'running outdoor park morning',
+      'cycling': 'cycling road bike landscape',
+      'football': 'football soccer game outdoor',
+      'basketball': 'basketball court outdoor',
+      'swimming': 'swimming sea ocean blue',
+      'yoga': 'yoga sunrise outdoor mindfulness',
+      'hiking': 'hiking trail nature israel mountain',
+      'beach': 'beach mediterranean sunset',
+      'climbing': 'rock climbing outdoor adventure',
+      'diving': 'scuba diving coral reef',
+      'beer': 'beer friends bar evening',
+      'coffee': 'coffee shop morning specialty',
+      'sunset': 'sunset beach golden hour',
+      'language': 'people talking conversation friends',
+      'networking': 'networking business meetup professional',
+      'family': 'family outdoor activity nature',
+      'food': 'food restaurant friends mediterranean',
+      'photo': 'photography camera artistic',
+      'music': 'live music concert atmosphere',
+      'travel': 'travel landscape adventure scenic',
+      'roadtrip': 'road trip car desert highway',
+      'camping': 'camping tent night stars',
     };
 
     // City-specific search modifiers for better localization
     const CITY_QUERIES = {
-      'tel-aviv': 'tel aviv',
-      'jerusalem': 'jerusalem',
-      'haifa': 'haifa israel',
-      'eilat': 'eilat red sea',
-      'galilee': 'galilee israel',
+      'tel-aviv': 'tel aviv beach',
+      'jerusalem': 'jerusalem old city',
+      'haifa': 'haifa israel bahai',
+      'eilat': 'eilat red sea coral',
+      'galilee': 'galilee israel green',
       'negev': 'negev desert',
+      'ramat-gan': 'tel aviv urban',
+      'givatayim': 'tel aviv',
+      'herzliya': 'herzliya beach israel',
+      'raanana': 'israel suburban',
+      'kfar-saba': 'israel suburban',
+      'hod-hasharon': 'israel suburban',
+      'petah-tikva': 'israel city',
+      'rosh-haayin': 'israel suburban',
+      'kiryat-ono': 'israel suburban',
+      'yehud': 'israel city',
+      'savyon': 'israel green suburban',
+      'gani-tikva': 'israel suburban',
+      'or-yehuda': 'israel suburban',
+      'rishon-lezion': 'israel coastal',
+      'holon': 'israel modern',
+      'bat-yam': 'bat yam beach israel',
+      'bnei-brak': 'israel city',
     };
+
+    // 🇮🇱 Hebrew keyword → English search terms (extracted from plan title for richer queries)
+    const HEBREW_KEYWORDS = {
+      // Activities
+      'ריצה': 'running',
+      'ריצת בוקר': 'morning run sunrise',
+      'אופניים': 'cycling bike',
+      'רכיבה': 'cycling',
+      'כדורגל': 'soccer football',
+      'כדורסל': 'basketball',
+      'יוגה': 'yoga',
+      'שחייה': 'swimming',
+      'טיול': 'hiking',
+      'טיולים': 'hiking trail',
+      'טיפוס': 'climbing',
+      'צלילה': 'diving',
+      'צילום': 'photography',
+      'מוזיקה': 'live music',
+      'בירה': 'beer bar',
+      'קפה': 'coffee shop',
+      'אוכל': 'food restaurant',
+      'מסעדה': 'restaurant',
+      'שוק': 'market',
+      'מוזיאון': 'museum',
+      'גלריה': 'art gallery',
+      // Locations
+      'ים': 'sea beach',
+      'חוף': 'beach mediterranean',
+      'מדבר': 'desert',
+      'הרים': 'mountains',
+      'יער': 'forest',
+      'נחל': 'stream river',
+      'מכתש': 'crater desert israel',
+      'פארק': 'park urban',
+      // Cities (in Hebrew)
+      'תל אביב': 'tel aviv',
+      'ירושלים': 'jerusalem old city',
+      'חיפה': 'haifa israel',
+      'אילת': 'eilat red sea',
+      'מצדה': 'masada israel desert',
+      'הירקון': 'park urban green',
+      'גליל': 'galilee israel',
+      'גולן': 'golan heights',
+      'נגב': 'negev desert',
+      'ים המלח': 'dead sea salt',
+      'כינרת': 'sea galilee',
+      // Time of day / atmosphere
+      'זריחה': 'sunrise golden',
+      'שקיעה': 'sunset golden hour',
+      'בוקר': 'morning',
+      'ערב': 'evening',
+      'לילה': 'night stars',
+      'שבת': 'weekend',
+      'חברים': 'friends together',
+    };
+
+    // Extract good English keywords from a Hebrew title for richer Pexels queries
+    function extractTitleKeywords(title) {
+      if (!title) return '';
+      const found = [];
+      for (const [heb, eng] of Object.entries(HEBREW_KEYWORDS)) {
+        if (title.includes(heb)) found.push(eng);
+      }
+      // Take top 3 to keep query focused
+      return found.slice(0, 3).join(' ');
+    }
 
     // In-memory cache for current session (reduces Supabase queries)
     const _imageCache = new Map();
 
     /**
-     * Search Pexels for a relevant photo
+     * Search Pexels for a relevant photo with smart query construction
      * @param {string} topic - The plan topic (e.g., 'running')
      * @param {string} city - Optional city for localization
+     * @param {string} title - Optional Hebrew plan title for richer keyword extraction
+     * @param {string} planId - Optional plan ID for stable per-plan caching
      * @returns {Promise<string|null>} Photo URL or null
      */
-    async function searchPexelsPhoto(topic, city) {
-      if (!topic) return null;
+    async function searchPexelsPhoto(topic, city, title, planId) {
+      if (!topic && !title) return null;
 
-      // Build query
-      const baseQuery = PEXELS_TOPIC_QUERIES[topic] || topic;
+      // Build query: title keywords (most specific) + topic + city
+      const titleKeywords = extractTitleKeywords(title);
+      const baseQuery = PEXELS_TOPIC_QUERIES[topic] || topic || '';
       const cityModifier = city ? (CITY_QUERIES[city] || '') : '';
-      const query = (baseQuery + ' ' + cityModifier).trim();
-      const cacheKey = query.toLowerCase().replace(/\s+/g, '-');
+      const query = [titleKeywords, baseQuery, cityModifier].filter(Boolean).join(' ').trim().replace(/\s+/g, ' ');
+      if (!query) return null;
+
+      // Cache key: prefer per-plan key for consistency, fall back to query
+      const cacheKey = planId ? `plan-${planId}` : query.toLowerCase().replace(/\s+/g, '-');
 
       // Check in-memory cache
       if (_imageCache.has(cacheKey)) {
@@ -3771,10 +3860,10 @@
         }
       }
 
-      // Fetch from Pexels API
+      // Fetch from Pexels API — request more results for better selection
       try {
         const response = await fetch(
-          `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=10&orientation=landscape`,
+          `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=15&orientation=landscape&size=large`,
           {
             headers: { 'Authorization': PEXELS_API_KEY }
           }
@@ -3783,12 +3872,23 @@
         if (!response.ok) throw new Error('Pexels API failed');
 
         const data = await response.json();
-        if (!data.photos || data.photos.length === 0) return null;
+        if (!data.photos || data.photos.length === 0) {
+          // Fallback: try with just the topic
+          if (topic && titleKeywords) {
+            return searchPexelsPhoto(topic, city, null, planId);
+          }
+          return null;
+        }
 
-        // Pick a random photo from top 5 to add variety
-        const topPhotos = data.photos.slice(0, 5);
-        const chosen = topPhotos[Math.floor(Math.random() * topPhotos.length)];
-        const imageUrl = chosen.src.large;
+        // Deterministic selection if planId provided (always same image for same plan),
+        // otherwise random from top 8 for variety
+        const topPhotos = data.photos.slice(0, 8);
+        const idx = planId
+          ? Math.abs(String(planId).split('').reduce((a, c) => a + c.charCodeAt(0), 0)) % topPhotos.length
+          : Math.floor(Math.random() * topPhotos.length);
+        const chosen = topPhotos[idx];
+        // Use larger size for better quality (large2x = ~1880px, large = ~940px)
+        const imageUrl = chosen.src.large2x || chosen.src.large;
 
         // Save to memory cache
         _imageCache.set(cacheKey, imageUrl);
@@ -4325,6 +4425,22 @@
         }
         if (!currentUser) throw new Error('Must be logged in');
 
+        // 📸 If user didn't upload a cover image, auto-fetch one from Pexels
+        // based on the plan's title + topic + city. This way every plan gets
+        // a beautiful, relevant image — and it stays consistent forever.
+        let coverImageUrl = planData.cover_image_url || null;
+        if (!coverImageUrl) {
+          try {
+            const fetchedUrl = await Promise.race([
+              searchPexelsPhoto(planData.topic, planData.city, planData.title, null),
+              new Promise(resolve => setTimeout(() => resolve(null), 4000)),
+            ]);
+            if (fetchedUrl) coverImageUrl = fetchedUrl;
+          } catch (e) {
+            // Image fetch failed — plan will still be created without it
+          }
+        }
+
         const { data, error } = await sb.from('plans').insert({
           creator_id: currentUser.id,
           title: planData.title,
@@ -4341,12 +4457,12 @@
           difficulty: planData.difficulty,
           meeting_point: planData.meetingPoint,
           categories: planData.categories || [],
-          // Hierarchical fields
-          country: planData.country || 'CY',
+          // Hierarchical fields (Israel-only)
+          country: planData.country || 'IL',
           city: planData.city || null,
           topic: planData.topic || null,
-          // 📸 Cover image (user-uploaded)
-          cover_image_url: planData.cover_image_url || null,
+          // 📸 Cover image (user-uploaded OR auto-fetched from Pexels)
+          cover_image_url: coverImageUrl,
           // Paid plan fields
           is_paid: planData.isPaid || false,
           price: planData.price || null,
@@ -5794,7 +5910,7 @@
 
       const photoUrl = getPhotoForPlan(plan);
       return `
-        <article class="plan-card ${staggerClass}" data-plan-id="${escapeHtml(plan.id)}" data-categories="${escapeHtml(plan.categories)}" data-topic="${escapeHtml(plan.topic || '')}" data-city="${escapeHtml(plan.city || '')}" style="position: relative;">
+        <article class="plan-card ${staggerClass}" data-plan-id="${escapeHtml(plan.id)}" data-categories="${escapeHtml(plan.categories)}" data-topic="${escapeHtml(plan.topic || '')}" data-city="${escapeHtml(plan.city || '')}" data-title="${escapeHtml(plan.title || '')}" style="position: relative;">
           ${paidBadge}
           <!-- Action buttons: like + share -->
           <div style="position: absolute; top: 12px; left: 12px; display: flex; gap: 8px; z-index: 3;">
@@ -6543,18 +6659,21 @@
         const img = card.querySelector('img');
         if (!img) continue;
 
-        // Extract topic and city from card (use data attributes if available)
+        // Extract data from card (used for richer Pexels query + per-plan cache)
         const topic = card.dataset.topic;
         const city = card.dataset.city;
+        const title = card.dataset.title;
+        const planId = card.dataset.planId;
 
         // Only upgrade if we have a topic and current image is from REAL_PHOTOS (not user upload)
         if (!topic) continue;
         const currentSrc = img.src;
-        const isUnsplashGeneric = currentSrc.includes('unsplash.com');
-        if (!isUnsplashGeneric) continue;
+        const isGenericFallback = currentSrc.includes('images.unsplash.com');
+        if (!isGenericFallback) continue;
 
         try {
-          const newUrl = await searchPexelsPhoto(topic, city);
+          // Use plan id for stable per-plan caching, title for richer query
+          const newUrl = await searchPexelsPhoto(topic, city, title, planId);
           if (newUrl && newUrl !== currentSrc) {
             // Smooth transition
             img.style.transition = 'opacity 0.3s';
