@@ -7719,27 +7719,8 @@
     // INIT
     // ============================================================
     document.addEventListener('DOMContentLoaded', async () => {
-      // Check if user is already logged in (Supabase session)
-      await checkAuthSession();
-
-      // Render initial views
-      renderHomePlans();
-      renderProfilePlans();
-      setupFilters();
-      setupToursFilters();
-      setupModals();
-      setupProfileTabs();
-      setupNavigation();
-      setupFAQ();
-      setupContactForm();
-      setupNotificationsButton();
-      loadNotifications();
-
-      // Refresh notifications every 60 seconds
-      setInterval(loadNotifications, 60000);
-
-      // 🚀 MASTER EVENT DELEGATION - handles ALL clicks on the page
-      // Works for elements that exist now AND elements added later
+      // 🚀 MASTER EVENT DELEGATION - הוסף קודם כל לפני async logic
+      // עובד גם אם משהו אחר נכשל
       document.addEventListener('click', (e) => {
         // 1. Close modal buttons (X buttons)
         const closeBtn = e.target.closest('[data-close-modal]');
@@ -7753,7 +7734,7 @@
         const createBtn = e.target.closest('[data-action="create-plan"], #btn-create-plan');
         if (createBtn) {
           e.preventDefault();
-          if (SUPABASE_ENABLED && !currentUser) {
+          if (typeof SUPABASE_ENABLED !== 'undefined' && SUPABASE_ENABLED && !currentUser) {
             showToast('🔒 התחבר קודם כדי לפרסם תוכנית');
             openModal('modal-login');
             return;
@@ -7769,10 +7750,33 @@
           openModal('modal-login');
           return;
         }
-
-        // Note: data-route handled by setupNavigation() - separate delegation
-        // Note: data-tab handled by setupProfileTabs() - direct listeners
       });
+
+      // Setup navigation IMMEDIATELY
+      setupNavigation();
+      setupProfileTabs();
+      setupModals();
+
+      // Setup tabs/filters that don't need auth
+      setupFilters();
+      setupToursFilters();
+      setupFAQ();
+      setupContactForm();
+
+      // Render plans immediately (works without auth)
+      renderHomePlans();
+
+      // Now do async stuff - if these fail, basic UI still works
+      try {
+        await checkAuthSession();
+        renderProfilePlans();
+        setupNotificationsButton();
+        loadNotifications();
+        setInterval(loadNotifications, 60000);
+      } catch (err) {
+        console.error('Auth/profile init error:', err);
+        // Continue anyway - basic UI works
+      }
 
       // Listen for auth state changes (login/logout in another tab, OAuth redirect, etc.)
       if (SUPABASE_ENABLED && sb) {
