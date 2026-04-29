@@ -105,7 +105,7 @@
       inset: 0;
       pointer-events: none;
       opacity: 0.03;
-      z-index: 1;
+      z-index: -1; /* sit behind content (was 1, caused some headless renderers to blank) */
       background-image:
         radial-gradient(circle at 20% 30%, var(--color-night) 1px, transparent 1px),
         radial-gradient(circle at 80% 70%, var(--color-night) 1px, transparent 1px);
@@ -2509,13 +2509,13 @@
   <header class="header" role="banner">
     <div class="header-inner">
       <div class="logo" data-route="home">יאלה<span class="logo-dot"></span></div>
-      <nav class="nav-main">
-        <span class="nav-link active" data-route="home">🤝 קהילה</span>
-        <span class="nav-link" data-route="tours">🗺️ סיורים</span>
-        <span class="nav-link" data-route="trails">🥾 מסלולים</span>
-        <span class="nav-link" data-route="profile">👤 הפרופיל שלי</span>
-        <span class="nav-link" data-route="about">📖 איך זה עובד</span>
-        <span class="nav-link" id="nav-admin" data-route="admin" style="display: none; color: #d4583a; font-weight: 600;">🛡️ אדמין</span>
+      <nav class="nav-main" aria-label="ניווט ראשי">
+        <a class="nav-link active" data-route="home" href="#home">🤝 קהילה</a>
+        <a class="nav-link" data-route="tours" href="#tours">🗺️ סיורים</a>
+        <a class="nav-link" data-route="trails" href="#trails">🥾 מסלולים</a>
+        <a class="nav-link" data-route="profile" href="#profile">👤 הפרופיל שלי</a>
+        <a class="nav-link" data-route="about" href="#about">📖 איך זה עובד</a>
+        <a class="nav-link" id="nav-admin" data-route="admin" href="#admin" style="display: none; color: #d4583a; font-weight: 600;">🛡️ אדמין</a>
       </nav>
       <div class="header-actions">
         <button id="btn-notifications" aria-label="התראות" style="display: none; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: var(--color-cream); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 18px; position: relative; align-items: center; justify-content: center;">
@@ -2718,11 +2718,8 @@
             יאלה זה הקהל המושלם לעסק שלך.
           </p>
           <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-            <a href="https://wa.me/?text=שלום%20יאלה%20-%20אני%20רוצה%20להיות%20שותף%20עסקי" target="_blank" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: #25D366; color: white; border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;">
-              📱 WhatsApp
-            </a>
-            <a href="mailto:partnerships@yalla-app.com" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--color-terracotta); color: white; border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;">
-              📧 partnerships@yalla-app.com
+            <a href="mailto:partnerships@yalla-app.com?subject=שותפות%20עסקית%20עם%20יאלה" target="_blank" rel="noopener noreferrer" style="display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; background: var(--color-terracotta); color: white; border-radius: 100px; text-decoration: none; font-weight: 600; font-size: 15px;">
+              📧 שלח אימייל לשותפויות
             </a>
           </div>
         </div>
@@ -3269,7 +3266,6 @@
         <div class="logo" data-route="home" style="color: var(--color-terracotta);">יאלה<span class="logo-dot"></span></div>
         <p>הקהילה הישראלית של אזור המרכז. מצא שותפים אמיתיים לרגעים אמיתיים. ספורט, טיולים, חברים חדשים.</p>
         <div style="display: flex; gap: 12px; margin-top: 16px;">
-          <a href="https://wa.me/?text=שלום%20יאלה" target="_blank" style="color: var(--color-cream); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; text-decoration: none;">📱 WhatsApp</a>
           <a href="mailto:hello@yalla-app.com" style="color: var(--color-cream); display: inline-flex; align-items: center; gap: 6px; font-size: 14px; text-decoration: none;">📧 אימייל</a>
         </div>
       </div>
@@ -3314,29 +3310,6 @@
         <button class="modal-close" data-close-modal="modal-create">×</button>
       </div>
       <div class="modal-body">
-        <!-- Progress steps indicator -->
-        <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0 24px 0; border-bottom: 1px solid #eee; margin-bottom: 24px;">
-          <div style="text-align: center; flex: 1;">
-            <div style="width: 32px; height: 32px; background: var(--color-terracotta); color: white; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">1</div>
-            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">מידע</div>
-          </div>
-          <div style="flex: 0.5; height: 2px; background: #eee;"></div>
-          <div style="text-align: center; flex: 1;">
-            <div style="width: 32px; height: 32px; background: #eee; color: #999; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">2</div>
-            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">מיקום</div>
-          </div>
-          <div style="flex: 0.5; height: 2px; background: #eee;"></div>
-          <div style="text-align: center; flex: 1;">
-            <div style="width: 32px; height: 32px; background: #eee; color: #999; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">3</div>
-            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">פרטים</div>
-          </div>
-          <div style="flex: 0.5; height: 2px; background: #eee;"></div>
-          <div style="text-align: center; flex: 1;">
-            <div style="width: 32px; height: 32px; background: #eee; color: #999; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">4</div>
-            <div style="font-size: 11px; color: var(--color-stone); margin-top: 4px;">סיכום</div>
-          </div>
-        </div>
-
         <div class="form-group">
           <label class="form-label">לאן הולכים? <span style="color: #d4583a;">*</span></label>
           <input type="text" class="form-input" id="create-title" placeholder="למשל: ריצה בפארק הירקון, טיול בצפון, אופניים בחוף...">
@@ -3560,8 +3533,8 @@
         </button>
 
         <p style="text-align: center; margin-top: 24px; font-size: 12px; color: var(--color-stone); line-height: 1.5;">
-          על ידי הרשמה אתה מסכים ל<a href="#" style="color: var(--color-terracotta);">תנאי שימוש</a> ו<a href="#" style="color: var(--color-terracotta);">מדיניות פרטיות</a>.
-          אנחנו לא משתפים את הנתונים שלך.
+          ההרשמה מהווה הסכמה לתנאי השימוש ולמדיניות הפרטיות.<br>
+          אנחנו לא משתפים את הנתונים שלך עם צד שלישי.
         </p>
       </div>
     </div>
@@ -3905,6 +3878,10 @@
         }
       }
 
+      // Skip Pexels if we've already detected the key is bad this session.
+      // This avoids spamming the API + console with 401 errors.
+      if (window._pexelsDisabled) return null;
+
       // Fetch from Pexels API — request more results for better selection
       try {
         const response = await fetch(
@@ -3914,7 +3891,12 @@
           }
         );
 
-        if (!response.ok) throw new Error('Pexels API failed');
+        if (response.status === 401) {
+          // API key invalid/expired — disable for the rest of the session
+          window._pexelsDisabled = true;
+          return null;
+        }
+        if (!response.ok) return null; // graceful: no console spam
 
         const data = await response.json();
         if (!data.photos || data.photos.length === 0) {
@@ -3951,7 +3933,7 @@
 
         return imageUrl;
       } catch (err) {
-        console.warn('Pexels search failed:', err.message);
+        // Silent fail — caller will use fallback images
         return null;
       }
     }
@@ -4083,12 +4065,19 @@
         } catch (e) {}
       }
 
+      // Skip if Pexels disabled this session
+      if (window._pexelsDisabled) return;
+
       // Fetch from Pexels
       try {
         const response = await fetch(
           `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=5&orientation=landscape`,
           { headers: { 'Authorization': PEXELS_API_KEY } }
         );
+        if (response.status === 401) {
+          window._pexelsDisabled = true;
+          return;
+        }
         if (!response.ok) return;
         const data = await response.json();
         if (!data.photos || data.photos.length === 0) return;
@@ -6798,8 +6787,7 @@
         navigator.clipboard.writeText(url).then(() => {
           showToast('🔗 הקישור הועתק! שתף אותו עם חברים');
         }).catch(() => {
-          // Last resort: WhatsApp
-          window.open(`https://wa.me/?text=${encodeURIComponent(text + ' ' + url)}`);
+          showToast('📋 העתק את הקישור: ' + url);
         });
       }
     }
