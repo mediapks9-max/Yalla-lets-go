@@ -27,7 +27,7 @@
   <meta name="twitter:image" content="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?auto=format&fit=crop&w=1200&q=80">
 
   <!-- Theme Color (mobile browser bar) -->
-  <meta name="theme-color" content="#c2410c">
+  <meta name="theme-color" content="#B85C3C">
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='45' fill='%23c2410c'/%3E%3Ctext x='50' y='65' font-size='50' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3Eי%3C/text%3E%3C/svg%3E">
@@ -55,30 +55,32 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      /* 🎨 NEW: Coral palette like Airbnb (#FF5A5F) - vibrant and modern */
-      --color-terracotta: #FF5A5F;
-      --color-terracotta-dark: #E63946;
-      --color-terracotta-light: #FFB4B7;
-      --color-cream: #fdf6ec;
-      --color-cream-warm: #fde9c9;
+      /* 🎨 פלטה ארץ-ישראלית - אותנטית ורצינית */
+      --color-terracotta: #B85C3C;        /* כתום-חום ראשי */
+      --color-terracotta-dark: #8B4513;   /* חום כהה - hover */
+      --color-terracotta-light: #F5E6D3;  /* בז' בהיר - רקעים */
+      --color-cream: #FFF9F0;             /* בז' בהיר מאוד */
+      --color-cream-warm: #F5E6D3;        /* בז' חמים */
       --color-sand: #d4b896;
-      --color-stone: #8a6f5a;
-      --color-earth: #6b4f3a;
-      --color-night: #2d1f15;
+      --color-stone: #6B6B6B;             /* טקסט משני */
+      --color-earth: #222428;             /* טקסט ראשי */
+      --color-night: #222428;
       --color-olive: #6b7a3f;
-      --color-mediterranean: #0e7490;
-      --color-success: #15803d;
+      --color-mediterranean: #305BAB;     /* כחול מידע */
+      --color-success: #087429;           /* ירוק הצלחה */
+      --color-error: #D32F2F;             /* אדום שגיאה */
+      --color-warning: #F57C00;           /* צהוב אזהרה */
       
-      /* 🆕 Category colors - מהמחקר */
-      --cat-water: #06B6D4;      /* 💧 מים - טורקיז */
-      --cat-desert: #F59E0B;     /* 🌵 מדבר - חרדל */
-      --cat-history: #8B5CF6;    /* 🕍 היסטוריה - סגול */
-      --cat-family: #EC4899;     /* 👨‍👩‍👧 משפחה - ורוד */
-      --cat-shabbat: #6366F1;    /* 🕯️ שבת - אינדיגו */
-      --cat-haredi: #1E1B4B;     /* ✡️ חרדי - כחול עמוק */
-      --cat-reservist: #1E40AF;  /* 🎖️ מילואים - כחול */
-      --cat-trail: #059669;      /* 🥾 שביל - ירוק */
-      --cat-kosher: #D97706;     /* 🍎 כשר - חום-זהב */
+      /* קטגוריות */
+      --cat-water: #06B6D4;
+      --cat-desert: #F59E0B;
+      --cat-history: #8B5CF6;
+      --cat-family: #EC4899;
+      --cat-shabbat: #6366F1;
+      --cat-haredi: #1E1B4B;
+      --cat-reservist: #1E40AF;
+      --cat-trail: #059669;
+      --cat-kosher: #D97706;
 
       --font-display: 'Suez One', 'Frank Ruhl Libre', serif;
       --font-body: 'Rubik', 'Heebo', sans-serif;
@@ -477,7 +479,7 @@
 
     /* Premium badge */
     .badge-pro {
-      background: linear-gradient(135deg, #FF5A5F 0%, #E63946 100%);
+      background: linear-gradient(135deg, #B85C3C 0%, #8B4513 100%);
       color: white;
       padding: 4px 10px;
       border-radius: 12px;
@@ -2581,7 +2583,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <!-- 📱 PWA Meta Tags -->
-  <meta name="theme-color" content="#FF5A5F">
+  <meta name="theme-color" content="#B85C3C">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="יאלה">
@@ -2609,7 +2611,7 @@
         <span class="nav-link" data-route="trails">🥾 מסלולים</span>
         <span class="nav-link" data-route="profile">👤 הפרופיל שלי</span>
         <span class="nav-link" data-route="about">📖 איך זה עובד</span>
-        <span class="nav-link" id="nav-admin" data-route="admin" style="display: none; color: #FF5A5F; font-weight: 600;">🛡️ אדמין</span>
+        <span class="nav-link" id="nav-admin" data-route="admin" style="display: none; color: #B85C3C; font-weight: 600;">🛡️ אדמין</span>
       </nav>
       <div class="header-actions">
         <button id="btn-notifications" aria-label="התראות" style="display: none; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: var(--color-cream); width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 18px; position: relative; align-items: center; justify-content: center;">
@@ -2632,7 +2634,7 @@
         <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
           <span style="font-size: 20px;">📱</span>
           <span><strong>הורד את יאלה</strong> כאפליקציה - גישה מהירה, התראות והכל offline</span>
-          <button id="pwa-install-btn" style="background: #FF5A5F; color: white; border: none; padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">📥 התקן עכשיו</button>
+          <button id="pwa-install-btn" style="background: #B85C3C; color: white; border: none; padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">📥 התקן עכשיו</button>
           <button onclick="document.getElementById('pwa-banner').style.display='none'; localStorage.setItem('pwa_banner_dismissed','1');" style="position: absolute; left: 16px; background: rgba(255,255,255,0.2); border: none; color: white; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1;">×</button>
         </div>
       </div>
@@ -2648,16 +2650,16 @@
       </div>
 
       <!-- ============================ 🌸 SEASONAL/HOLIDAY BANNER ============================ -->
-      <div id="seasonal-banner" style="background: linear-gradient(135deg, #FFE5E5 0%, #FF8A8E 100%); padding: 14px 20px;">
+      <div id="seasonal-banner" style="background: linear-gradient(135deg, #FFF9F0 0%, #F5E6D3 100%); padding: 14px 20px;">
         <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; color: #92400e;">
           <span style="font-size: 24px;">💧</span>
           <span style="font-size: 15px; font-weight: 700;">חול המועד פסח! 12 טיולי מים מיוחדים + הנחת חג 20%</span>
-          <button data-filter="holiday" style="background: white; color: #FF5A5F; border: none; padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">ראה הכל ←</button>
+          <button data-filter="holiday" style="background: white; color: #B85C3C; border: none; padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">ראה הכל ←</button>
         </div>
       </div>
 
       <!-- ============================ HERO V4 - 02-IMPROVED INTEGRATED ============================ -->
-      <section class="hero" style="position: relative; min-height: 90vh; background: linear-gradient(135deg, #FFE5E5 0%, #FF8A8E 50%, #FF5A5F 100%); overflow: hidden; display: flex; align-items: center; padding: 100px 20px 60px;">
+      <section class="hero" style="position: relative; min-height: 90vh; background: linear-gradient(135deg, #FFF9F0 0%, #F5E6D3 50%, #B85C3C 100%); overflow: hidden; display: flex; align-items: center; padding: 100px 20px 60px;">
         
         <!-- Video background -->
         <video autoplay muted loop playsinline style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); min-width: 100%; min-height: 100%; width: auto; height: auto; z-index: 0; object-fit: cover; opacity: 0.4;">
@@ -2665,11 +2667,11 @@
         </video>
         
         <!-- Warm overlay -->
-        <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,216,155,0.5) 0%, rgba(244,162,97,0.65) 30%, rgba(231,111,81,0.8) 70%, rgba(212,88,58,0.95) 100%); z-index: 1;"></div>
+        <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(255,216,155,0.5) 0%, rgba(244,162,97,0.65) 30%, rgba(231,111,81,0.8) 70%, rgba(184,92,60,0.95) 100%); z-index: 1;"></div>
         
         <!-- Decorative blobs -->
         <div style="position: absolute; top: -10%; left: -5%; width: 400px; height: 400px; background: rgba(255,255,255,0.1); border-radius: 50%; filter: blur(80px); z-index: 1; pointer-events: none;"></div>
-        <div style="position: absolute; bottom: -10%; right: -5%; width: 500px; height: 500px; background: rgba(212,88,58,0.2); border-radius: 50%; filter: blur(100px); z-index: 1; pointer-events: none;"></div>
+        <div style="position: absolute; bottom: -10%; right: -5%; width: 500px; height: 500px; background: rgba(184,92,60,0.2); border-radius: 50%; filter: blur(100px); z-index: 1; pointer-events: none;"></div>
         
         <!-- Floating emojis -->
         <span style="position: absolute; top: 20%; left: 10%; font-size: 48px; animation: heroFloat 4s ease-in-out infinite; z-index: 2; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.2));">🎒</span>
@@ -2698,7 +2700,7 @@
             
             <!-- CTAs -->
             <div style="display: flex; gap: 12px; margin-bottom: 32px; flex-wrap: wrap;">
-              <button class="btn-primary" data-action="create-plan" style="padding: 16px 32px; background: white; color: #FF5A5F; border: none; border-radius: 99px; font-size: 16px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
+              <button class="btn-primary" data-action="create-plan" style="padding: 16px 32px; background: white; color: #B85C3C; border: none; border-radius: 99px; font-size: 16px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; font-family: inherit; box-shadow: 0 8px 24px rgba(0,0,0,0.15);">
                 <span>פרסם תוכנית</span>
                 <span>←</span>
               </button>
@@ -2789,7 +2791,7 @@
         .preview-card .preview-img {
           aspect-ratio: 16/10;
           border-radius: 12px;
-          background: linear-gradient(135deg, #FF5A5F, #E63946);
+          background: linear-gradient(135deg, #B85C3C, #8B4513);
           margin-bottom: 12px;
           overflow: hidden;
           position: relative;
@@ -2852,7 +2854,7 @@
       <!-- ============================ QUICK FILTER CHIPS - לפי המחקר ============================ -->
       <div class="filter-bar" style="background: white; border-bottom: 1px solid #f0ebe0; padding: 14px 0; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
         <div style="max-width: 1280px; margin: 0 auto; padding: 0 20px; display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch;">
-          <button class="quick-filter active" data-quickfilter="all" style="padding: 8px 18px; background: linear-gradient(135deg, #FF5A5F, #E63946); color: white; border: none; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0; box-shadow: 0 4px 12px rgba(212,88,58,0.3);">✨ הכל</button>
+          <button class="quick-filter active" data-quickfilter="all" style="padding: 8px 18px; background: linear-gradient(135deg, #B85C3C, #8B4513); color: white; border: none; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0; box-shadow: 0 4px 12px rgba(184,92,60,0.3);">✨ הכל</button>
           <button class="quick-filter" data-quickfilter="shabbat" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🕯️ שומר שבת</button>
           <button class="quick-filter" data-quickfilter="reservist" style="padding: 8px 18px; background: #dbeafe; color: #1e40af; border: none; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🎖️ מילואים</button>
           <button class="quick-filter" data-quickfilter="holiday" style="padding: 8px 18px; background: #fef3c7; color: #92400e; border: none; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🌸 חול המועד</button>
@@ -2965,7 +2967,7 @@
       <!-- ============================ ⭐ TESTIMONIALS - הוכחה חברתית ============================ -->
       <section style="background: white; padding: 60px 20px;">
         <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
-          <p style="font-size: 12px; font-weight: 700; color: #FF5A5F; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">מה אומרים עלינו</p>
+          <p style="font-size: 12px; font-weight: 700; color: #B85C3C; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">מה אומרים עלינו</p>
           <h2 style="font-size: 32px; color: #1a1a1a; margin-bottom: 8px;">2,847 חברים מטיילים יחד</h2>
           <div style="font-size: 18px; color: #f59e0b; margin-bottom: 40px;">⭐⭐⭐⭐⭐ <span style="color: #6b7280; font-size: 14px;">4.9/5 ב-247 ביקורות</span></div>
           
@@ -2975,7 +2977,7 @@
               <div style="color: #f59e0b; font-size: 16px; margin-bottom: 12px;">⭐⭐⭐⭐⭐</div>
               <p style="font-size: 14px; line-height: 1.6; color: #444; margin-bottom: 16px;">"מצאתי טיול למצדה ב-5 דקות. יוסי המורה דרך היה מקסים, הקבוצה הייתה מגוונת. רכשתי 3 חברים חדשים!"</p>
               <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #FF5A5F, #E63946); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">ר</div>
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #B85C3C, #8B4513); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">ר</div>
                 <div>
                   <div style="font-weight: 700; color: #1a1a1a; font-size: 14px;">רוית כהן</div>
                   <div style="font-size: 11px; color: #888;">מצדה עם זריחה · אפריל 2026</div>
@@ -3015,7 +3017,7 @@
       <section style="background: white; padding: 60px 20px;">
         <div style="max-width: 1280px; margin: 0 auto;">
           <div style="text-align: center; margin-bottom: 40px;">
-            <p style="font-size: 12px; font-weight: 700; color: #FF5A5F; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">חפש לפי קטגוריה</p>
+            <p style="font-size: 12px; font-weight: 700; color: #B85C3C; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">חפש לפי קטגוריה</p>
             <h2 style="font-size: 36px; font-weight: 900; color: #1a1a1a;">איפה אתה רוצה לטייל?</h2>
             <p style="color: #6b7280; font-size: 16px; margin-top: 8px;">12 קטגוריות לכל סוג של מטייל</p>
           </div>
@@ -3063,7 +3065,7 @@
             </a>
             
             <!-- 🌅 זריחה / שקיעה -->
-            <a href="#tours?cat=sunrise" style="background: linear-gradient(135deg, #FF8A8E, #FF5A5F); border: 2px solid #1a1a1a; border-radius: 16px; padding: 24px 16px; text-align: center; text-decoration: none; color: white; box-shadow: 4px 4px 0 #1a1a1a; transition: all 0.2s;" onmouseover="this.style.transform='translate(-2px,-2px)'; this.style.boxShadow='6px 6px 0 #1a1a1a';" onmouseout="this.style.transform='none'; this.style.boxShadow='4px 4px 0 #1a1a1a';">
+            <a href="#tours?cat=sunrise" style="background: linear-gradient(135deg, #F5E6D3, #B85C3C); border: 2px solid #1a1a1a; border-radius: 16px; padding: 24px 16px; text-align: center; text-decoration: none; color: white; box-shadow: 4px 4px 0 #1a1a1a; transition: all 0.2s;" onmouseover="this.style.transform='translate(-2px,-2px)'; this.style.boxShadow='6px 6px 0 #1a1a1a';" onmouseout="this.style.transform='none'; this.style.boxShadow='4px 4px 0 #1a1a1a';">
               <div style="font-size: 40px; margin-bottom: 8px;">🌅</div>
               <div style="font-weight: 800; font-size: 16px;">זריחה</div>
               <div style="font-size: 11px; opacity: 0.9; margin-top: 4px;">סיורי בוקר מוקדם</div>
@@ -3681,13 +3683,13 @@
 
           <!-- Profile actions -->
           <div style="display: flex; gap: 12px; margin-top: 24px; padding-top: 24px; border-top: 1px solid #eee; flex-wrap: wrap;">
-            <button id="btn-profile-logout" style="background: #f5f5f5; color: #FF5A5F; padding: 10px 20px; border: 1px solid #FF5A5F33; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">🚪 התנתק</button>
+            <button id="btn-profile-logout" style="background: #f5f5f5; color: #B85C3C; padding: 10px 20px; border: 1px solid #B85C3C33; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;">🚪 התנתק</button>
           </div>
         </div>
 
         <div class="profile-tabs">
           <button class="profile-tab active" data-tab="my-plans">התוכניות שלי</button>
-          <button class="profile-tab" data-tab="incoming-requests">🔔 בקשות נכנסות <span id="incoming-badge" style="display:none; background: #FF5A5F; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-right: 4px;"></span></button>
+          <button class="profile-tab" data-tab="incoming-requests">🔔 בקשות נכנסות <span id="incoming-badge" style="display:none; background: #B85C3C; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-right: 4px;"></span></button>
           <button class="profile-tab" data-tab="my-requests">בקשות ששלחתי</button>
           <button class="profile-tab" data-tab="my-favorites">❤️ מועדפים</button>
           <button class="profile-tab" data-tab="my-bookings">💳 ההזמנות שלי</button>
@@ -3798,7 +3800,7 @@
       <div class="guide-register-page" style="max-width: 700px; margin: 0 auto; padding: 60px 20px;">
         <span class="back-link" data-route="home" style="cursor: pointer; color: var(--color-terracotta); margin-bottom: 24px; display: inline-block;">← חזרה</span>
 
-        <div style="background: linear-gradient(135deg, #FF5A5F 0%, #E63946 100%); color: white; padding: 40px; border-radius: 24px; margin-bottom: 32px;">
+        <div style="background: linear-gradient(135deg, #B85C3C 0%, #8B4513 100%); color: white; padding: 40px; border-radius: 24px; margin-bottom: 32px;">
           <h1 style="font-size: 42px; margin: 0 0 12px 0;">💎 הצטרף כמדריך טיולים</h1>
           <p style="font-size: 18px; opacity: 0.95; line-height: 1.5; margin: 0;">
             מדריכי טיולים מקצועיים, בעלי תעודה, מדריכי שטח, ומומחי טיולים -
@@ -3927,7 +3929,7 @@
       <div class="admin-page" style="max-width: 1400px; margin: 0 auto; padding: 40px 20px;">
         <div id="admin-not-authorized" style="display: none; text-align: center; padding: 80px 20px;">
           <div style="font-size: 64px; margin-bottom: 16px;">🚫</div>
-          <h1 style="color: #FF5A5F; margin-bottom: 12px;">אין לך הרשאת אדמין</h1>
+          <h1 style="color: #B85C3C; margin-bottom: 12px;">אין לך הרשאת אדמין</h1>
           <p style="color: #777;">העמוד הזה זמין רק למנהלי הפלטפורמה</p>
           <button class="btn-join-large" data-route="home" style="margin-top: 24px;">חזרה לעמוד הבית</button>
         </div>
@@ -3942,7 +3944,7 @@
           <!-- Tabs -->
           <div class="profile-tabs" style="margin-bottom: 24px;">
             <button class="profile-tab active" data-admin-tab="overview">📊 סקירה כללית</button>
-            <button class="profile-tab" data-admin-tab="pending-guides">⏳ מדריכים ממתינים <span id="admin-pending-badge" style="display:none; background: #FF5A5F; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-right: 4px;"></span></button>
+            <button class="profile-tab" data-admin-tab="pending-guides">⏳ מדריכים ממתינים <span id="admin-pending-badge" style="display:none; background: #B85C3C; color: white; border-radius: 10px; padding: 2px 6px; font-size: 11px; margin-right: 4px;"></span></button>
             <button class="profile-tab" data-admin-tab="all-guides">💎 כל המדריכים</button>
             <button class="profile-tab" data-admin-tab="all-users">👥 משתמשים</button>
             <button class="profile-tab" data-admin-tab="all-bookings">💳 הזמנות</button>
@@ -4059,7 +4061,7 @@
         </div>
 
         <div class="form-group">
-          <label class="form-label">לאן הולכים? <span style="color: #FF5A5F;">*</span></label>
+          <label class="form-label">לאן הולכים? <span style="color: #B85C3C;">*</span></label>
           <input type="text" class="form-input" placeholder="למשל: ריצה בפארק הירקון, טיול בצפון, אופניים בחוף...">
         </div>
 
@@ -4164,7 +4166,7 @@
             <div id="image-upload-preview" style="display: none;">
               <img id="image-preview-img" src="" alt="תצוגה מקדימה" style="max-width: 100%; max-height: 200px; border-radius: 8px; margin-bottom: 12px;">
               <div style="display: flex; gap: 8px; justify-content: center;">
-                <button type="button" id="image-remove-btn" style="padding: 6px 12px; background: white; border: 1px solid #FF5A5F; color: #FF5A5F; border-radius: 8px; cursor: pointer; font-size: 13px;">🗑️ הסר</button>
+                <button type="button" id="image-remove-btn" style="padding: 6px 12px; background: white; border: 1px solid #B85C3C; color: #B85C3C; border-radius: 8px; cursor: pointer; font-size: 13px;">🗑️ הסר</button>
               </div>
             </div>
             <input type="file" id="image-upload-input" accept="image/*" style="display: none;">
@@ -4172,7 +4174,7 @@
         </div>
 
         <!-- Paid plan section - only shown for approved guides -->
-        <div id="paid-plan-section" style="display: none; background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 20px; border-radius: 12px; border: 2px dashed #FF5A5F; margin-bottom: 20px;">
+        <div id="paid-plan-section" style="display: none; background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 20px; border-radius: 12px; border: 2px dashed #B85C3C; margin-bottom: 20px;">
           <div class="form-group">
             <label style="display: flex; align-items: center; gap: 12px; cursor: pointer; margin: 0;">
               <input type="checkbox" id="is-paid-plan" style="width: 20px; height: 20px; cursor: pointer;">
@@ -4728,7 +4730,7 @@
     // ============================================================
     // Real photos are used by default. This is just a fallback gradient
     // when an image fails to load. Saves ~30KB of unused SVG code.
-    const FALLBACK_SVG = `<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="fb" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFE5E5"/><stop offset="50%" stop-color="#FF8A8E"/><stop offset="100%" stop-color="#FF5A5F"/></linearGradient></defs><rect width="800" height="500" fill="url(#fb)"/><circle cx="640" cy="140" r="55" fill="#FFE5B4" opacity="0.9"/></svg>`;
+    const FALLBACK_SVG = `<svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="fb" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#FFF9F0"/><stop offset="50%" stop-color="#F5E6D3"/><stop offset="100%" stop-color="#B85C3C"/></linearGradient></defs><rect width="800" height="500" fill="url(#fb)"/><circle cx="640" cy="140" r="55" fill="#FFE5B4" opacity="0.9"/></svg>`;
 
     const ILLUSTRATIONS = new Proxy({}, {
       get: function() { return FALLBACK_SVG; }
@@ -4870,7 +4872,7 @@
               <span>💎</span> רישום כמדריך
             </div>
             <div style="height:1px; background:#eee; margin:4px 0;"></div>
-            <div class="user-dropdown-item" data-action="logout" style="padding:10px 12px; color:#FF5A5F; cursor:pointer; border-radius:8px; font-size:14px; display:flex; align-items:center; gap:8px;">
+            <div class="user-dropdown-item" data-action="logout" style="padding:10px 12px; color:#B85C3C; cursor:pointer; border-radius:8px; font-size:14px; display:flex; align-items:center; gap:8px;">
               <span>🚪</span> התנתק
             </div>
           </div>
@@ -6428,14 +6430,14 @@
       } else if (plan.joined === 0) {
         spotsLabel = '<span style="color:#10b981;">✨ חדש · להכיר אנשים</span>';
       } else if (spotsLeft === 0) {
-        spotsLabel = '<span style="color:#FF5A5F; font-weight:700;">🔒 מלא · רשימת המתנה</span>';
+        spotsLabel = '<span style="color:#B85C3C; font-weight:700;">🔒 מלא · רשימת המתנה</span>';
         urgencyClass = 'plan-card-full';
       } else if (spotsLeft === 1) {
-        spotsLabel = `<span style="color:#FF5A5F; font-weight:700;">🔥 מקום אחרון! ${plan.joined}/${plan.spots}</span>`;
+        spotsLabel = `<span style="color:#B85C3C; font-weight:700;">🔥 מקום אחרון! ${plan.joined}/${plan.spots}</span>`;
         urgencyClass = 'plan-card-urgent';
         urgencyEmoji = '🔥';
       } else if (spotsLeft <= 2) {
-        spotsLabel = `<span style="color:#FF5A5F; font-weight:700;">⚡ נשארו ${spotsLeft} מקומות! ${plan.joined}/${plan.spots}</span>`;
+        spotsLabel = `<span style="color:#B85C3C; font-weight:700;">⚡ נשארו ${spotsLeft} מקומות! ${plan.joined}/${plan.spots}</span>`;
         urgencyClass = 'plan-card-urgent';
         urgencyEmoji = '⚡';
       } else if (fillPercent >= 60) {
@@ -6459,7 +6461,7 @@
 
       // Paid plan badge + price
       const paidBadge = plan.isPaid ? `
-        <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #FF5A5F, #E63946); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 2;">💎 מקצועי</span>
+        <span style="position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #B85C3C, #8B4513); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; box-shadow: 0 2px 8px rgba(0,0,0,0.15); z-index: 2;">💎 מקצועי</span>
       ` : '';
 
       // 🔥 Urgency badge (top corner if urgent)
@@ -6468,14 +6470,14 @@
       ` : '';
 
       const priceDisplay = plan.isPaid && plan.price ? `
-        <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 10px 14px; border-radius: 12px; margin: 8px 0; border: 1px solid #FF5A5F33; display: flex; justify-content: space-between; align-items: center;">
+        <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 10px 14px; border-radius: 12px; margin: 8px 0; border: 1px solid #B85C3C33; display: flex; justify-content: space-between; align-items: center;">
           <span style="font-size: 12px; color: #777;">מחיר לאדם</span>
           <span style="font-size: 22px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${plan.price}</span>
         </div>
       ` : '';
 
       const ctaButton = plan.isPaid
-        ? `<button class="btn-join" data-join-id="${plan.id}" style="background: linear-gradient(135deg, #FF5A5F, #E63946);">הזמן עכשיו</button>`
+        ? `<button class="btn-join" data-join-id="${plan.id}" style="background: linear-gradient(135deg, #B85C3C, #8B4513);">הזמן עכשיו</button>`
         : spotsLeft === 0
           ? `<button class="btn-join" data-join-id="${plan.id}" style="background: #999;">המתנה</button>`
           : `<button class="btn-join" data-join-id="${plan.id}">אני בעניין</button>`;
@@ -6488,7 +6490,7 @@
             <button class="btn-like" data-target-type="plan" data-target-id="${plan.id}" aria-label="אהבתי" style="background: rgba(255,255,255,0.95); border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); display: flex; align-items: center; justify-content: center; transition: transform 0.2s;">🤍</button>
             <button class="btn-share" data-share-id="${plan.id}" data-share-title="${plan.title}" data-target-type="plan" aria-label="שתף בוואטסאפ" style="background: linear-gradient(135deg, #25D366, #128C7E); border: none; width: 38px; height: 38px; border-radius: 50%; cursor: pointer; font-size: 18px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); display: flex; align-items: center; justify-content: center; transition: transform 0.2s; color: white;">💬</button>
           </div>
-          <div class="plan-image" style="background: linear-gradient(135deg, #FFE5E5 0%, #FF8A8E 50%, #FF5A5F 100%); aspect-ratio: 16/10;">
+          <div class="plan-image" style="background: linear-gradient(135deg, #FFF9F0 0%, #F5E6D3 50%, #B85C3C 100%); aspect-ratio: 16/10;">
             ${getPhotoForPlan(plan)
               ? `<img src="${getPhotoForPlan(plan)}" alt="${plan.title}" width="800" height="500" style="width:100%;height:100%;object-fit:cover;display:block;" loading="${loadingAttr}" fetchpriority="${fetchAttr}" decoding="async" onerror="this.style.display='none';">`
               : (ILLUSTRATIONS[plan.illustration] || ILLUSTRATIONS['ramon-crater'] || '')}
@@ -6933,7 +6935,7 @@
         }
       } catch (err) {
         console.error('Error loading my plans:', err);
-        myPlansContainer.innerHTML = '<p style="text-align:center; padding: 40px; color: #FF5A5F;">שגיאה בטעינת תוכניות</p>';
+        myPlansContainer.innerHTML = '<p style="text-align:center; padding: 40px; color: #B85C3C;">שגיאה בטעינת תוכניות</p>';
       }
 
       // 3. Load incoming requests (for plans I created)
@@ -6968,7 +6970,7 @@
         }
       } catch (err) {
         console.error('Error loading incoming requests:', err);
-        incomingContainer.innerHTML = '<p style="text-align:center; padding: 40px; color: #FF5A5F;">שגיאה בטעינת בקשות</p>';
+        incomingContainer.innerHTML = '<p style="text-align:center; padding: 40px; color: #B85C3C;">שגיאה בטעינת בקשות</p>';
       }
 
       // 4. Load my outgoing requests
@@ -6992,7 +6994,7 @@
         }
       } catch (err) {
         console.error('Error loading my requests:', err);
-        myRequestsContainer.innerHTML = '<p style="text-align:center; padding: 40px; color: #FF5A5F;">שגיאה</p>';
+        myRequestsContainer.innerHTML = '<p style="text-align:center; padding: 40px; color: #B85C3C;">שגיאה</p>';
       }
 
       // 5. Check if user is approved guide and load dashboard
@@ -7037,7 +7039,7 @@
 
         container.innerHTML = `
           <!-- Guide profile card -->
-          <div style="background: linear-gradient(135deg, #FF5A5F 0%, #E63946 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+          <div style="background: linear-gradient(135deg, #B85C3C 0%, #8B4513 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
             <h2 style="margin: 0 0 8px 0;">💎 ${guide.full_name}</h2>
             <p style="margin: 0; opacity: 0.9; font-size: 14px;">${guide.bio || 'מדריך מקצועי בקהילה'}</p>
             <div style="display: flex; gap: 16px; margin-top: 16px; flex-wrap: wrap;">
@@ -7059,7 +7061,7 @@
               <div style="font-size: 12px; color: #999; margin-bottom: 4px;">ממתינות</div>
               <div style="font-size: 32px; font-weight: 700; color: #f57c00;">${pendingBookings}</div>
             </div>
-            <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 20px; border-radius: 12px; border: 2px solid #FF5A5F33;">
+            <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 20px; border-radius: 12px; border: 2px solid #B85C3C33;">
               <div style="font-size: 12px; color: #999; margin-bottom: 4px;">הכנסות שלך (90%)</div>
               <div style="font-size: 24px; font-weight: 700; color: var(--color-terracotta);">${currencySymbol}${guideNet.toFixed(0)}</div>
             </div>
@@ -7148,7 +7150,7 @@
 
       } catch (err) {
         console.error('Guide dashboard error:', err);
-        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #FF5A5F;">שגיאה בטעינת הדשבורד</p>';
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #B85C3C;">שגיאה בטעינת הדשבורד</p>';
       }
     }
 
@@ -7525,7 +7527,7 @@
         attachPlanCardListeners();
       } catch (err) {
         console.error('renderMyFavorites error:', err);
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#FF5A5F;padding:40px;">שגיאה בטעינה</p>';
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:#B85C3C;padding:40px;">שגיאה בטעינה</p>';
       }
     }
 
@@ -7580,7 +7582,7 @@
         `;
       } catch (err) {
         console.error('renderMyBookings error:', err);
-        list.innerHTML = '<p style="text-align:center;color:#FF5A5F;padding:40px;">שגיאה בטעינה</p>';
+        list.innerHTML = '<p style="text-align:center;color:#B85C3C;padding:40px;">שגיאה בטעינה</p>';
       }
     }
 
@@ -7617,7 +7619,7 @@
           return `
             <div class="guide-card">
               <div style="display: flex; gap: 16px; align-items: center; margin-bottom: 16px;">
-                <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #FF5A5F, #E63946); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
+                <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #B85C3C, #8B4513); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 24px; overflow: hidden; flex-shrink: 0;">
                   ${g.avatar_url ? `<img src="${g.avatar_url}" style="width:100%;height:100%;object-fit:cover;">` : initial}
                 </div>
                 <div style="flex: 1;">
@@ -7641,7 +7643,7 @@
         }).join('');
       } catch (err) {
         console.error('renderGuidesPage error:', err);
-        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #FF5A5F; padding: 60px;">שגיאה בטעינת המדריכים</p>';
+        grid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: #B85C3C; padding: 60px;">שגיאה בטעינת המדריכים</p>';
       }
     }
 
@@ -7856,7 +7858,7 @@
           </div>
 
           <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px;">
-            <div style="background: linear-gradient(135deg, #fff8f5, #fff); padding: 24px; border-radius: 16px; border: 2px solid #FF5A5F33;">
+            <div style="background: linear-gradient(135deg, #fff8f5, #fff); padding: 24px; border-radius: 16px; border: 2px solid #B85C3C33;">
               <div style="font-size: 13px; color: #999; margin-bottom: 8px;">💰 הכנסות פלטפורמה (10%)</div>
               <div style="${numStyle} color: var(--color-terracotta);">€${stats.platformRevenue.toFixed(0)}</div>
               <div style="font-size: 11px; color: #999; margin-top: 4px;">מתוך €${stats.totalRevenue.toFixed(0)} סה"כ</div>
@@ -7893,7 +7895,7 @@
         `;
       } catch (err) {
         console.error('Admin overview error:', err);
-        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #FF5A5F;">שגיאה בטעינת הסטטיסטיקות</p>';
+        grid.innerHTML = '<p style="text-align: center; padding: 40px; color: #B85C3C;">שגיאה בטעינת הסטטיסטיקות</p>';
       }
     }
 
@@ -7922,7 +7924,7 @@
         attachAdminGuideListeners();
       } catch (err) {
         console.error('Admin pending guides error:', err);
-        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #FF5A5F;">שגיאה</p>';
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #B85C3C;">שגיאה</p>';
       }
     }
 
@@ -7942,7 +7944,7 @@
         container.innerHTML = guides.map(g => renderAdminGuideCard(g, false)).join('');
         attachAdminGuideListeners();
       } catch (err) {
-        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #FF5A5F;">שגיאה</p>';
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #B85C3C;">שגיאה</p>';
       }
     }
 
@@ -8092,7 +8094,7 @@
           </div>
         `;
       } catch (err) {
-        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #FF5A5F;">שגיאה</p>';
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #B85C3C;">שגיאה</p>';
       }
     }
 
@@ -8119,7 +8121,7 @@
         const platformFee = totalRevenue * 0.10;
 
         container.innerHTML = `
-          <div style="background: linear-gradient(135deg, #FF5A5F 0%, #E63946 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
+          <div style="background: linear-gradient(135deg, #B85C3C 0%, #8B4513 100%); color: white; padding: 24px; border-radius: 16px; margin-bottom: 24px;">
             <h3 style="margin: 0 0 8px 0;">💰 הכנסות הפלטפורמה</h3>
             <div style="font-size: 36px; font-weight: 700;">€${platformFee.toFixed(0)}</div>
             <div style="font-size: 13px; opacity: 0.8; margin-top: 4px;">מתוך €${totalRevenue.toFixed(0)} סה"כ במכירות</div>
@@ -8157,7 +8159,7 @@
           </div>
         `;
       } catch (err) {
-        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #FF5A5F;">שגיאה</p>';
+        container.innerHTML = '<p style="text-align: center; padding: 40px; color: #B85C3C;">שגיאה</p>';
       }
     }
 
@@ -8280,9 +8282,9 @@
 
               ${isMyPlan ? `
                 <button class="btn-join-large" id="detail-edit-btn" style="background: #555;">✏️ ערוך תוכנית</button>
-                <button class="btn-secondary" id="detail-delete-btn" style="border-color: #FF5A5F; color: #FF5A5F;">🗑️ מחק תוכנית</button>
+                <button class="btn-secondary" id="detail-delete-btn" style="border-color: #B85C3C; color: #B85C3C;">🗑️ מחק תוכנית</button>
               ` : plan.isPaid ? `
-                <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 2px solid #FF5A5F33;">
+                <div style="background: linear-gradient(135deg, #fff8f5 0%, #fff 100%); padding: 16px; border-radius: 12px; margin-bottom: 12px; border: 2px solid #B85C3C33;">
                   <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px;">
                     <span style="font-size: 13px; color: #777;">מחיר לאדם</span>
                     <span style="font-size: 28px; font-weight: 700; color: var(--color-terracotta);">${({EUR:'€',ILS:'₪',USD:'$'})[plan.currency] || '€'}${plan.price}</span>
@@ -8290,7 +8292,7 @@
                   ${plan.priceIncludes ? `<div style="font-size: 13px; color: #555; margin-top: 8px;"><strong>כלול:</strong> ${plan.priceIncludes}</div>` : ''}
                   ${plan.priceExcludes ? `<div style="font-size: 13px; color: #999; margin-top: 4px;"><strong>לא כלול:</strong> ${plan.priceExcludes}</div>` : ''}
                 </div>
-                <button class="btn-join-large" id="detail-book-btn" style="background: linear-gradient(135deg, #FF5A5F, #E63946);">💳 הזמן עכשיו</button>
+                <button class="btn-join-large" id="detail-book-btn" style="background: linear-gradient(135deg, #B85C3C, #8B4513);">💳 הזמן עכשיו</button>
                 <button class="btn-secondary" id="detail-share-btn" style="background: linear-gradient(135deg, #25D366, #128C7E); color: white; font-weight: 600;">💬 שתף בוואטסאפ</button>
                 <button class="btn-secondary" id="detail-calendar-btn">📅 הוסף ליומן</button>
               ` : `
@@ -9401,7 +9403,7 @@
         });
       } catch (err) {
         console.error('Tours render error:', err);
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#FF5A5F;">שגיאה בטעינת סיורים</p>';
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#B85C3C;">שגיאה בטעינת סיורים</p>';
       }
     }
 
@@ -9436,7 +9438,7 @@
       try {
         const tour = await api.fetchTourById(tourId);
         if (!tour) {
-          container.innerHTML = '<div style="text-align:center;padding:80px;color:#FF5A5F;">סיור לא נמצא</div>';
+          container.innerHTML = '<div style="text-align:center;padding:80px;color:#B85C3C;">סיור לא נמצא</div>';
           return;
         }
 
@@ -9586,7 +9588,7 @@
         }
       } catch (err) {
         console.error('Tour detail error:', err);
-        container.innerHTML = '<div style="text-align:center;padding:80px;color:#FF5A5F;">שגיאה בטעינת הסיור</div>';
+        container.innerHTML = '<div style="text-align:center;padding:80px;color:#B85C3C;">שגיאה בטעינת הסיור</div>';
       }
     }
 
@@ -9634,7 +9636,7 @@
         `).join('');
       } catch (err) {
         console.error('Trails render error:', err);
-        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#FF5A5F;">שגיאה בטעינת מסלולים</p>';
+        grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;padding:40px;color:#B85C3C;">שגיאה בטעינת מסלולים</p>';
       }
     }
 
@@ -9896,9 +9898,9 @@
           b.style.boxShadow = 'none';
           b.classList.remove('active');
         });
-        e.target.style.background = 'linear-gradient(135deg, #FF5A5F, #E63946)';
+        e.target.style.background = 'linear-gradient(135deg, #B85C3C, #8B4513)';
         e.target.style.color = 'white';
-        e.target.style.boxShadow = '0 4px 12px rgba(212,88,58,0.3)';
+        e.target.style.boxShadow = '0 4px 12px rgba(184,92,60,0.3)';
         e.target.classList.add('active');
 
         const filter = e.target.dataset.quickfilter;
