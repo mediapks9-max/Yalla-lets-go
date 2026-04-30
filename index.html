@@ -4313,57 +4313,113 @@
     // ============================================================
     // All Unsplash links - tested working, free for commercial use
     const REAL_PHOTOS = {
-      // 🏃 ספורט
+      // 🇮🇱 ============= ישראל - מיקומים ספציפיים =============
+      // 🌵 מדבר ונגב
+      'masada': 'https://images.unsplash.com/photo-1568384171834-ba749b80b8a5?auto=format&fit=crop&w=800&q=85',
+      'masada-sunrise': 'https://images.unsplash.com/photo-1568384171834-ba749b80b8a5?auto=format&fit=crop&w=800&q=85',
+      'negev': 'https://images.unsplash.com/photo-1581291510503-c40e62b5d77a?auto=format&fit=crop&w=800&q=85',
+      'ramon-crater': 'https://images.unsplash.com/photo-1608054902117-2cdc4c5b8a5d?auto=format&fit=crop&w=800&q=85',
+      'mitzpe-ramon': 'https://images.unsplash.com/photo-1608054902117-2cdc4c5b8a5d?auto=format&fit=crop&w=800&q=85',
+      'desert': 'https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&w=800&q=85',
+      'arava': 'https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&w=800&q=85',
+      
+      // 💧 מים
+      'dead-sea': 'https://images.unsplash.com/photo-1560251180-1a52b6c4a7d3?auto=format&fit=crop&w=800&q=85',
+      'ein-gedi': 'https://images.unsplash.com/photo-1562586762-1a39d8d72a4f?auto=format&fit=crop&w=800&q=85',
+      'arugot': 'https://images.unsplash.com/photo-1597149959999-92ce85a90b4e?auto=format&fit=crop&w=800&q=85',
+      'banias': 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=85',
+      'kineret': 'https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?auto=format&fit=crop&w=800&q=85',
+      'kinneret': 'https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?auto=format&fit=crop&w=800&q=85',
+      'waterfall': 'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=800&q=85',
+      'spring': 'https://images.unsplash.com/photo-1597149959999-92ce85a90b4e?auto=format&fit=crop&w=800&q=85',
+      
+      // 🕍 ירושלים והיסטוריה
+      'jerusalem': 'https://images.unsplash.com/photo-1544734175-04a9b65fc83a?auto=format&fit=crop&w=800&q=85',
+      'old-city': 'https://images.unsplash.com/photo-1544734175-04a9b65fc83a?auto=format&fit=crop&w=800&q=85',
+      'western-wall': 'https://images.unsplash.com/photo-1559986085-ad9e6886bb8a?auto=format&fit=crop&w=800&q=85',
+      'temple-mount': 'https://images.unsplash.com/photo-1505467032062-69b8a8a3b9e9?auto=format&fit=crop&w=800&q=85',
+      'tzfat': 'https://images.unsplash.com/photo-1592574881049-2d09cc1c3e00?auto=format&fit=crop&w=800&q=85',
+      'safed': 'https://images.unsplash.com/photo-1592574881049-2d09cc1c3e00?auto=format&fit=crop&w=800&q=85',
+      'tiberias': 'https://images.unsplash.com/photo-1502635385003-ee1e6a1a742d?auto=format&fit=crop&w=800&q=85',
+      'caesarea': 'https://images.unsplash.com/photo-1577140917170-285929fb55b7?auto=format&fit=crop&w=800&q=85',
+      'akko': 'https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&w=800&q=85',
+      'history': 'https://images.unsplash.com/photo-1544734175-04a9b65fc83a?auto=format&fit=crop&w=800&q=85',
+      
+      // 🌳 צפון - גליל וגולן
+      'galilee': 'https://images.unsplash.com/photo-1612698093158-e07ac200d44e?auto=format&fit=crop&w=800&q=85',
+      'golan': 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=800&q=85',
+      'hermon': 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=800&q=85',
+      'carmel': 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=85',
+      'meron': 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=800&q=85',
+      'forest': 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=85',
+      
+      // 🏛️ ערים
+      'tel-aviv': 'https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=800&q=85',
+      'tel-aviv-beach': 'https://images.unsplash.com/photo-1544550285-f813152fb2fd?auto=format&fit=crop&w=800&q=85',
+      'haifa': 'https://images.unsplash.com/photo-1574236170880-faa57cd7e8e8?auto=format&fit=crop&w=800&q=85',
+      'eilat': 'https://images.unsplash.com/photo-1582530239943-2906834de069?auto=format&fit=crop&w=800&q=85',
+      
+      // 🌅 שבילים וטיולים
+      'israel-trail': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=85',
+      'shvil-israel': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=85',
+      'trail': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=85',
+      
+      // 🌸 פריחה ועונות
+      'flowers': 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&w=800&q=85',
+      'spring-flowers': 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&w=800&q=85',
+      'kalanit': 'https://images.unsplash.com/photo-1490578474895-699cd4e2cf59?auto=format&fit=crop&w=800&q=85',
+      
+      // 🕯️ דתי
+      'shabbat': 'https://images.unsplash.com/photo-1591005127287-b321a26ed26d?auto=format&fit=crop&w=800&q=85',
+      'religious': 'https://images.unsplash.com/photo-1592574881049-2d09cc1c3e00?auto=format&fit=crop&w=800&q=85',
+      'kosher': 'https://images.unsplash.com/photo-1559986085-ad9e6886bb8a?auto=format&fit=crop&w=800&q=85',
+      'synagogue': 'https://images.unsplash.com/photo-1592574881049-2d09cc1c3e00?auto=format&fit=crop&w=800&q=85',
+      
+      // 🎖️ מילואים
+      'reservist': 'https://images.unsplash.com/photo-1605000797499-95a51c5269ae?auto=format&fit=crop&w=800&q=85',
+      
+      // 🏃 ספורט (מהמערכת הקודמת)
       'running': 'https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=800&q=80',
       'sunrise-run': 'https://images.unsplash.com/photo-1486218119243-13883505764c?auto=format&fit=crop&w=800&q=80',
       'beach-running': 'https://images.unsplash.com/photo-1452626038306-9aae5e071dd3?auto=format&fit=crop&w=800&q=80',
-
       'cycling': 'https://images.unsplash.com/photo-1517649763962-0c62306601ca?auto=format&fit=crop&w=800&q=80',
       'cycling-coast': 'https://images.unsplash.com/photo-1517649763962-0c62306601ca?auto=format&fit=crop&w=800&q=80',
       'cycling-friends': 'https://images.unsplash.com/photo-1593764592116-bfb2a97c642a?auto=format&fit=crop&w=800&q=80',
-
       'football': 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
       'football-pitch': 'https://images.unsplash.com/photo-1431324155629-1a6deb1dec8d?auto=format&fit=crop&w=800&q=80',
       'football-sunset': 'https://images.unsplash.com/photo-1551958219-acbc608c6377?auto=format&fit=crop&w=800&q=80',
-
       'basketball': 'https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&w=800&q=80',
-
       'swimming': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
       'sea-swimming': 'https://images.unsplash.com/photo-1530549387789-4c1017266635?auto=format&fit=crop&w=800&q=80',
-
       'yoga': 'https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=800&q=80',
-
       'hiking': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80',
-      'cyprus-hiking': 'https://images.unsplash.com/photo-1551632811-561732d1e306?auto=format&fit=crop&w=800&q=80',
-      'troodos-mountains': 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&w=800&q=80',
-
       'climbing': 'https://images.unsplash.com/photo-1522163182402-834f871fd851?auto=format&fit=crop&w=800&q=80',
-
       'diving': 'https://images.unsplash.com/photo-1582967788606-a171c1080cb0?auto=format&fit=crop&w=800&q=80',
-
+      
       // 🌊 חוף וים
       'beach': 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
-      'limassol-beach': 'https://images.unsplash.com/photo-1601581875309-fafbf2d3ed3a?auto=format&fit=crop&w=800&q=80',
-      'cyprus-coast': 'https://images.unsplash.com/photo-1612698093158-e07ac200d44e?auto=format&fit=crop&w=800&q=80',
       'mediterranean': 'https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=800&q=80',
       'sunset': 'https://images.unsplash.com/photo-1495954484750-af469f2f9be5?auto=format&fit=crop&w=800&q=80',
       'sunset-beach': 'https://images.unsplash.com/photo-1495954484750-af469f2f9be5?auto=format&fit=crop&w=800&q=80',
-
+      'sunrise': 'https://images.unsplash.com/photo-1495954484750-af469f2f9be5?auto=format&fit=crop&w=800&q=80',
+      
       // 🍻 חברתי ואוכל
       'beer': 'https://images.unsplash.com/photo-1559526324-c1f275fbfa32?auto=format&fit=crop&w=800&q=80',
       'beer-friends': 'https://images.unsplash.com/photo-1559526324-c1f275fbfa32?auto=format&fit=crop&w=800&q=80',
       'coffee': 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80',
       'food': 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=800&q=80',
-
+      'market': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85',
+      'shuk': 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=85',
+      
       // 🎨 תרבות
       'photo': 'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?auto=format&fit=crop&w=800&q=80',
       'music': 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?auto=format&fit=crop&w=800&q=80',
-
+      
       // ✈️ טיולים
       'travel': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80',
       'roadtrip': 'https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&w=800&q=80',
       'camping': 'https://images.unsplash.com/photo-1504280390367-361c6d9f38f4?auto=format&fit=crop&w=800&q=80',
-
+      
       // 👥 חברתי כללי
       'language': 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=800&q=80',
       'networking': 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80',
@@ -4372,17 +4428,200 @@
       'community': 'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=800&q=80',
 
       // ✨ ברירת מחדל
-      'other': 'https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80',
+      'other': 'https://images.unsplash.com/photo-1547234935-80c7145ec969?auto=format&fit=crop&w=800&q=85',
     };
+    
+    // 🗺️ מילון מיקומים בעברית - הזיהוי החכם
+    const ISRAEL_LOCATION_KEYWORDS = {
+      // 🌵 מדבר
+      'מצדה': 'masada',
+      'masada': 'masada',
+      'מצדה זריחה': 'masada-sunrise',
+      'מכתש רמון': 'ramon-crater',
+      'מצפה רמון': 'mitzpe-ramon',
+      'נגב': 'negev',
+      'negev': 'negev',
+      'ערבה': 'arava',
+      'מדבר': 'desert',
+      'דימונה': 'desert',
+      
+      // 💧 מים
+      'ים המלח': 'dead-sea',
+      'עין גדי': 'ein-gedi',
+      'ערוגות': 'arugot',
+      'נחל ערוגות': 'arugot',
+      'נחל דוד': 'ein-gedi',
+      'בניאס': 'banias',
+      'נחל בניאס': 'banias',
+      'כינרת': 'kineret',
+      'הכינרת': 'kineret',
+      'מפל': 'waterfall',
+      'מעיין': 'spring',
+      
+      // 🕍 ירושלים והיסטוריה
+      'ירושלים': 'jerusalem',
+      'jerusalem': 'jerusalem',
+      'העיר העתיקה': 'old-city',
+      'הכותל': 'western-wall',
+      'הר הבית': 'temple-mount',
+      'צפת': 'tzfat',
+      'safed': 'safed',
+      'טבריה': 'tiberias',
+      'קיסריה': 'caesarea',
+      'עכו': 'akko',
+      'יפו': 'tel-aviv',
+      
+      // 🌳 צפון
+      'גליל': 'galilee',
+      'galilee': 'galilee',
+      'גולן': 'golan',
+      'הגולן': 'golan',
+      'חרמון': 'hermon',
+      'הר חרמון': 'hermon',
+      'הכרמל': 'carmel',
+      'כרמל': 'carmel',
+      'מירון': 'meron',
+      'הר מירון': 'meron',
+      'יער': 'forest',
+      'חורש': 'forest',
+      
+      // 🏛️ ערים
+      'תל אביב': 'tel-aviv',
+      'תל-אביב': 'tel-aviv',
+      'tel aviv': 'tel-aviv',
+      'tel-aviv': 'tel-aviv',
+      'חיפה': 'haifa',
+      'אילת': 'eilat',
+      'eilat': 'eilat',
+      
+      // 🌅 שבילים
+      'שביל ישראל': 'shvil-israel',
+      'שביל': 'trail',
+      'מסלול': 'trail',
+      
+      // 🌸 פריחה
+      'פריחה': 'flowers',
+      'כליל': 'kalanit',
+      'כלנית': 'kalanit',
+      'רקפת': 'flowers',
+      
+      // 🕯️ דתי
+      'שבת': 'shabbat',
+      'שומר שבת': 'shabbat',
+      'בית כנסת': 'synagogue',
+      'כשר': 'kosher',
+      'דתי': 'religious',
+      
+      // 🎖️ מילואים
+      'מילואים': 'reservist',
+      'מילואימניק': 'reservist',
+      
+      // 🍽️ אוכל
+      'שוק': 'market',
+      'שוק הכרמל': 'market',
+      'מחנה יהודה': 'market',
+      
+      // 🌅 שעות יום
+      'זריחה': 'sunrise',
+      'שקיעה': 'sunset',
+    };
+    
+    /**
+     * 🎯 גישה היברידית - 3 שכבות חכמות
+     * 1. תמונות מותאמות (REAL_PHOTOS) ל-מקומות מוכרים
+     * 2. Pexels API לחיפוש חכם
+     * 3. Fallback לפי קטגוריה
+     */
+    function getSmartImage(plan) {
+      if (!plan) return REAL_PHOTOS['other'];
+      
+      // שלב 0: אם יש תמונה שהמשתמש העלה - השתמש בה
+      if (plan.cover_image_url) return plan.cover_image_url;
+      if (plan.image) return plan.image;
+      if (plan.cover_url) return plan.cover_url;
+      
+      // שלב 1: חיפוש חכם בכותרת ובתיאור לפי מילות מפתח עבריות
+      const searchText = `${plan.title || ''} ${plan.description || ''} ${plan.location || ''} ${plan.tags || ''}`.toLowerCase();
+      
+      // עובר מהמדויק (מילים ארוכות) לפחות מדויק (קצרות)
+      const sortedKeys = Object.keys(ISRAEL_LOCATION_KEYWORDS).sort((a, b) => b.length - a.length);
+      
+      for (const keyword of sortedKeys) {
+        if (searchText.includes(keyword.toLowerCase())) {
+          const photoKey = ISRAEL_LOCATION_KEYWORDS[keyword];
+          if (REAL_PHOTOS[photoKey]) {
+            return REAL_PHOTOS[photoKey];
+          }
+        }
+      }
+      
+      // שלב 2: לפי category/topic ב-DB
+      if (plan.category && REAL_PHOTOS[plan.category]) return REAL_PHOTOS[plan.category];
+      if (plan.topic && REAL_PHOTOS[plan.topic]) return REAL_PHOTOS[plan.topic];
+      if (plan.illustration && REAL_PHOTOS[plan.illustration]) return REAL_PHOTOS[plan.illustration];
+      
+      // שלב 3: ברירת מחדל לפי קטגוריות
+      if (plan.categories) {
+        const categories = Array.isArray(plan.categories) ? plan.categories : [plan.categories];
+        for (const cat of categories) {
+          if (REAL_PHOTOS[cat]) return REAL_PHOTOS[cat];
+        }
+      }
+      
+      // שלב 4: fallback אחרון
+      return REAL_PHOTOS['other'];
+    }
+    window.getSmartImage = getSmartImage;
+    
+    /**
+     * 🔄 Async upgrade - מעדכן תמונה ל-Pexels API ברקע
+     * המשתמש רואה תמונה מיד (שלב 1-3), ואז התמונה משתדרגת אוטומטית
+     */
+    async function upgradeImageAsync(imgElement, plan) {
+      if (!imgElement || !plan) return;
+      
+      try {
+        // נסה Pexels רק אם יש מילות מפתח לחיפוש
+        const searchKeywords = (plan.title || '') + ' ' + (plan.location || '') + ' ' + (plan.description || '');
+        if (!searchKeywords.trim()) return;
+        
+        // Match against Hebrew keywords first
+        const sortedKeys = Object.keys(ISRAEL_LOCATION_KEYWORDS).sort((a, b) => b.length - a.length);
+        let topicKey = null;
+        const searchLower = searchKeywords.toLowerCase();
+        
+        for (const keyword of sortedKeys) {
+          if (searchLower.includes(keyword.toLowerCase())) {
+            topicKey = ISRAEL_LOCATION_KEYWORDS[keyword];
+            break;
+          }
+        }
+        
+        if (!topicKey) return; // לא מצא מילת מפתח, אין מה לשדרג
+        
+        // Try Pexels with the matched topic
+        const pexelsUrl = await searchPexelsPhoto(topicKey, plan.city);
+        if (pexelsUrl && imgElement.parentNode) {
+          // Smooth fade transition
+          imgElement.style.transition = 'opacity 0.4s ease';
+          imgElement.style.opacity = '0.6';
+          const newImg = new Image();
+          newImg.onload = () => {
+            imgElement.src = pexelsUrl;
+            imgElement.style.opacity = '1';
+          };
+          newImg.src = pexelsUrl;
+        }
+      } catch (e) {
+        // Silent fail - user already has a good image
+      }
+    }
+    window.upgradeImageAsync = upgradeImageAsync;
 
     // Helper: get the right photo for a plan based on topic OR illustration
+    // ⚠️ Legacy - now uses getSmartImage (3-tier hybrid approach)
     function getPhotoForPlan(plan) {
-      if (!plan) return null;
-      // Priority 1: User uploaded image
-      if (plan.cover_image_url) return plan.cover_image_url;
-      // Priority 2: Topic-based default (REAL_PHOTOS)
-      // Priority 3: Illustration-based default
-      return REAL_PHOTOS[plan.topic] || REAL_PHOTOS[plan.illustration] || REAL_PHOTOS['other'];
+      return getSmartImage(plan);
     }
     window.getPhotoForPlan = getPhotoForPlan;
 
@@ -4395,8 +4634,46 @@
 
     // Smart query mapping - converts Hebrew topics to English search queries
     const PEXELS_TOPIC_QUERIES = {
-      'running': 'running outdoor park',
-      'cycling': 'cycling road bike',
+      // 🇮🇱 קטגוריות ישראליות
+      'masada': 'masada israel desert sunrise',
+      'masada-sunrise': 'masada sunrise dead sea',
+      'jerusalem': 'jerusalem old city israel',
+      'old-city': 'jerusalem old city walls',
+      'tel-aviv': 'tel aviv israel beach city',
+      'haifa': 'haifa bahai gardens israel',
+      'eilat': 'eilat red sea israel',
+      'galilee': 'galilee israel green hills',
+      'golan': 'golan heights israel landscape',
+      'hermon': 'mount hermon israel snow',
+      'negev': 'negev desert israel',
+      'ramon-crater': 'mitzpe ramon crater desert',
+      'dead-sea': 'dead sea israel salt',
+      'kineret': 'sea of galilee tiberias',
+      'banias': 'banias waterfall israel',
+      'arugot': 'ein gedi israel waterfall',
+      'tzfat': 'safed israel mystic blue',
+      'caesarea': 'caesarea israel roman ruins',
+      'shvil-israel': 'israel national trail hiking',
+      
+      // 🌅 כללי
+      'desert': 'desert landscape sunrise',
+      'water': 'waterfall stream nature',
+      'forest': 'forest hiking trail green',
+      'history': 'historical site ancient ruins',
+      'family': 'family hiking outdoor',
+      'shabbat': 'jewish family shabbat candles',
+      'religious': 'jewish prayer torah',
+      'kosher': 'kosher food jewish',
+      'reservist': 'soldier outdoor nature relaxing',
+      'flowers': 'wildflowers spring meadow',
+      'sunrise': 'sunrise mountain landscape',
+      'sunset': 'sunset desert beach',
+      'trail': 'hiking trail mountain',
+      'market': 'market spices middle east',
+      
+      // 🏃 ספורט (legacy)
+      'running': 'running outdoor park israel',
+      'cycling': 'cycling road bike israel',
       'football': 'football soccer game',
       'basketball': 'basketball outdoor',
       'swimming': 'swimming sea ocean',
@@ -4407,11 +4684,9 @@
       'diving': 'scuba diving',
       'beer': 'beer friends bar',
       'coffee': 'coffee shop morning',
-      'sunset': 'sunset beach israel',
       'language': 'people talking conversation',
       'networking': 'networking business meetup',
-      'family': 'family outdoor activity',
-      'food': 'food restaurant friends',
+      'food': 'middle eastern food hummus',
       'photo': 'photography camera',
       'music': 'live music concert',
       'travel': 'travel landscape adventure',
@@ -4421,12 +4696,16 @@
 
     // City-specific search modifiers for better localization
     const CITY_QUERIES = {
-      'tel-aviv': 'tel aviv',
-      'jerusalem': 'jerusalem',
+      'tel-aviv': 'tel aviv israel',
+      'jerusalem': 'jerusalem israel',
       'haifa': 'haifa israel',
       'eilat': 'eilat red sea',
       'galilee': 'galilee israel',
-      'negev': 'negev desert',
+      'negev': 'negev desert israel',
+      'golan': 'golan heights israel',
+      'tiberias': 'tiberias kineret',
+      'safed': 'safed israel',
+      'tzfat': 'safed israel',
     };
 
     // In-memory cache for current session (reduces Supabase queries)
@@ -4543,20 +4822,37 @@
      */
     function getTourImage(tour) {
       if (!tour) return REAL_PHOTOS['other'];
-      // Priority 1: Curated image (best quality, verified)
+      
+      // Priority 1: Curated image (best quality, verified by hand)
       const curated = TOUR_IMAGES_BY_TITLE[tour.title];
       if (curated) return curated;
+      
       // Priority 2: DB image (if not from broken sources)
       if (tour.cover_image && !tour.cover_image.includes('pexels.com')) {
         return tour.cover_image;
       }
-      // Priority 3: Category fallback
+      if (tour.cover_image_url && !tour.cover_image_url.includes('pexels.com')) {
+        return tour.cover_image_url;
+      }
+      
+      // Priority 3: 🎯 Use the smart image system (3-tier hybrid)
+      // This will search by Hebrew keywords in title/description
+      const smartImage = getSmartImage(tour);
+      if (smartImage && smartImage !== REAL_PHOTOS['other']) {
+        return smartImage;
+      }
+      
+      // Priority 4: Category fallback
       const categoryFallbacks = {
-        'history': 'https://images.unsplash.com/photo-1544734175-04a9b65fc83a?auto=format&fit=crop&w=800&q=80',
-        'culinary': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80',
-        'adventure': 'https://images.unsplash.com/photo-1508739773434-c26b3d09e071?auto=format&fit=crop&w=800&q=80',
-        'culture': 'https://images.unsplash.com/photo-1544966503-7cc5ac882d5f?auto=format&fit=crop&w=800&q=80',
-        'nature': 'https://images.unsplash.com/photo-1597149959999-92ce85a90b4e?auto=format&fit=crop&w=800&q=80',
+        'history': REAL_PHOTOS['jerusalem'],
+        'culinary': REAL_PHOTOS['food'],
+        'adventure': REAL_PHOTOS['hiking'],
+        'culture': REAL_PHOTOS['old-city'],
+        'nature': REAL_PHOTOS['galilee'],
+        'desert': REAL_PHOTOS['negev'],
+        'water': REAL_PHOTOS['arugot'],
+        'religious': REAL_PHOTOS['religious'],
+        'family': REAL_PHOTOS['family'],
       };
       return categoryFallbacks[tour.category] || REAL_PHOTOS['travel'];
     }
@@ -6821,7 +7117,7 @@
           else if (i === 0 && spotsLeft <= 3) spotsText = `🔥 נשארו ${spotsLeft} מקומות`;
           if (i === 2 && (p.joined || 0) === 0) spotsText = '✨ חדש';
           
-          const imgSrc = p.image || p.cover_url || (i === 0 ? 'https://images.unsplash.com/photo-1568384171834-ba749b80b8a5?w=600&q=85' : i === 1 ? 'https://images.unsplash.com/photo-1597149959999-92ce85a90b4e?w=600&q=85' : 'https://images.unsplash.com/photo-1544734175-04a9b65fc83a?w=600&q=85');
+          const imgSrc = getSmartImage(p) || (i === 0 ? REAL_PHOTOS['masada'] : i === 1 ? REAL_PHOTOS['arugot'] : REAL_PHOTOS['jerusalem']);
           
           return `
             <div class="preview-card ${s.class}" data-plan-id="${p.id}">
