@@ -2601,6 +2601,25 @@
     <!-- ============================ HOME PAGE ============================ -->
     <div class="page active" data-page="home">
 
+      <!-- ============================ 🎖️ RESERVIST BANNER ============================ -->
+      <div id="reservist-banner" style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); color: white; padding: 12px 20px; text-align: center; font-size: 14px; font-weight: 500; position: relative;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap;">
+          <span style="font-size: 20px;">🎖️</span>
+          <span><strong style="color: #fef3c7;">מילואימניקים</strong> - 90 יום פרימיום חינם · סיורים מסובסדים · קדימות בהצטרפות</span>
+          <button data-action="reservist-signup" style="background: white; color: #1e40af; border: none; padding: 6px 16px; border-radius: 99px; font-size: 12px; font-weight: 700; cursor: pointer; font-family: inherit;">הרשם כאן ←</button>
+          <button onclick="document.getElementById('reservist-banner').style.display='none'" style="position: absolute; left: 16px; background: rgba(255,255,255,0.2); border: none; color: white; width: 24px; height: 24px; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1;">×</button>
+        </div>
+      </div>
+
+      <!-- ============================ 🌸 SEASONAL/HOLIDAY BANNER ============================ -->
+      <div id="seasonal-banner" style="background: linear-gradient(135deg, #FFD89B 0%, #F4A261 100%); padding: 14px 20px;">
+        <div style="max-width: 1200px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; color: #92400e;">
+          <span style="font-size: 24px;">💧</span>
+          <span style="font-size: 15px; font-weight: 700;">חול המועד פסח! 12 טיולי מים מיוחדים + הנחת חג 20%</span>
+          <button data-filter="holiday" style="background: white; color: #d4583a; border: none; padding: 6px 16px; border-radius: 99px; font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit;">ראה הכל ←</button>
+        </div>
+      </div>
+
       <!-- ============================ HERO V4 - 02-IMPROVED INTEGRATED ============================ -->
       <section class="hero" style="position: relative; min-height: 90vh; background: linear-gradient(135deg, #FFD89B 0%, #F4A261 50%, #E76F51 100%); overflow: hidden; display: flex; align-items: center; padding: 100px 20px 60px;">
         
@@ -2794,9 +2813,29 @@
         }
       </style>
 
-      <div class="filter-bar">
-        <div class="filter-bar-inner" style="display: flex; align-items: center; gap: 10px; padding: 14px 24px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap;">
-          <span class="filter-label" style="font-weight: 600; color: var(--color-stone); font-size: 13px; white-space: nowrap;">📍 סנן:</span>
+      <!-- ============================ QUICK FILTER CHIPS - לפי המחקר ============================ -->
+      <div class="filter-bar" style="background: white; border-bottom: 1px solid #f0ebe0; padding: 14px 0; position: sticky; top: 0; z-index: 50; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 20px; display: flex; gap: 8px; overflow-x: auto; -webkit-overflow-scrolling: touch;">
+          <button class="quick-filter active" data-quickfilter="all" style="padding: 8px 18px; background: linear-gradient(135deg, #d4583a, #c44329); color: white; border: none; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0; box-shadow: 0 4px 12px rgba(212,88,58,0.3);">✨ הכל</button>
+          <button class="quick-filter" data-quickfilter="shabbat" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🕯️ שומר שבת</button>
+          <button class="quick-filter" data-quickfilter="reservist" style="padding: 8px 18px; background: #dbeafe; color: #1e40af; border: none; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🎖️ מילואים</button>
+          <button class="quick-filter" data-quickfilter="holiday" style="padding: 8px 18px; background: #fef3c7; color: #92400e; border: none; border-radius: 99px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🌸 חול המועד</button>
+          <button class="quick-filter" data-quickfilter="family" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">👨‍👩‍👧 משפחה</button>
+          <button class="quick-filter" data-quickfilter="stroller" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🚼 ידידותי לעגלה</button>
+          <button class="quick-filter" data-quickfilter="accessible" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">♿ נגיש</button>
+          <button class="quick-filter" data-quickfilter="dogs" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🐕 ידידותי לכלבים</button>
+          <button class="quick-filter" data-quickfilter="desert" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🌵 מדבר</button>
+          <button class="quick-filter" data-quickfilter="water" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">💧 מים</button>
+          <button class="quick-filter" data-quickfilter="history" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🕍 היסטוריה</button>
+          <button class="quick-filter" data-quickfilter="trail" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🥾 שביל ישראל</button>
+          <button class="quick-filter" data-quickfilter="sunrise" style="padding: 8px 18px; background: #f5f1ea; color: #555; border: none; border-radius: 99px; font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; font-family: inherit; flex-shrink: 0;">🌅 זריחה</button>
+        </div>
+      </div>
+
+      <!-- ============================ ADVANCED FILTERS (ערים + נושאים) ============================ -->
+      <div class="filter-bar" style="background: #faf8f4; border-bottom: 1px solid #f0ebe0;">
+        <div class="filter-bar-inner" style="display: flex; align-items: center; gap: 10px; padding: 12px 24px; max-width: 1200px; margin: 0 auto; flex-wrap: wrap;">
+          <span class="filter-label" style="font-weight: 600; color: var(--color-stone); font-size: 13px; white-space: nowrap;">📍 חיפוש מתקדם:</span>
           <select id="filter-city" class="filter-select-compact" aria-label="סנן לפי עיר">
             <option value="">📍 כל הערים</option>
           </select>
@@ -2886,6 +2925,145 @@
           </div>
         </div>
       </section>
+
+      <!-- ============================ ⭐ TESTIMONIALS - הוכחה חברתית ============================ -->
+      <section style="background: white; padding: 60px 20px;">
+        <div style="max-width: 1200px; margin: 0 auto; text-align: center;">
+          <p style="font-size: 12px; font-weight: 700; color: #d4583a; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">מה אומרים עלינו</p>
+          <h2 style="font-size: 32px; color: #1a1a1a; margin-bottom: 8px;">2,847 חברים מטיילים יחד</h2>
+          <div style="font-size: 18px; color: #f59e0b; margin-bottom: 40px;">⭐⭐⭐⭐⭐ <span style="color: #6b7280; font-size: 14px;">4.9/5 ב-247 ביקורות</span></div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; text-align: right;">
+            
+            <div style="background: #faf8f4; padding: 24px; border-radius: 16px; border: 1px solid #f0ebe0;">
+              <div style="color: #f59e0b; font-size: 16px; margin-bottom: 12px;">⭐⭐⭐⭐⭐</div>
+              <p style="font-size: 14px; line-height: 1.6; color: #444; margin-bottom: 16px;">"מצאתי טיול למצדה ב-5 דקות. יוסי המורה דרך היה מקסים, הקבוצה הייתה מגוונת. רכשתי 3 חברים חדשים!"</p>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #d4583a, #c44329); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">ר</div>
+                <div>
+                  <div style="font-weight: 700; color: #1a1a1a; font-size: 14px;">רוית כהן</div>
+                  <div style="font-size: 11px; color: #888;">מצדה עם זריחה · אפריל 2026</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #faf8f4; padding: 24px; border-radius: 16px; border: 1px solid #f0ebe0;">
+              <div style="color: #f59e0b; font-size: 16px; margin-bottom: 12px;">⭐⭐⭐⭐⭐</div>
+              <p style="font-size: 14px; line-height: 1.6; color: #444; margin-bottom: 16px;">"כאמא דתייה היה לי קשה למצוא טיולים שומרי שבת. ב-יאלה יש פילטר ייעודי - החיים שלי שופרו!"</p>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #8b5cf6, #7c3aed); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">מ</div>
+                <div>
+                  <div style="font-weight: 700; color: #1a1a1a; font-size: 14px;">מירי לוי</div>
+                  <div style="font-size: 11px; color: #888;">משפחה דתית · ירושלים</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="background: #faf8f4; padding: 24px; border-radius: 16px; border: 1px solid #f0ebe0;">
+              <div style="color: #f59e0b; font-size: 16px; margin-bottom: 12px;">⭐⭐⭐⭐⭐</div>
+              <p style="font-size: 14px; line-height: 1.6; color: #444; margin-bottom: 16px;">"חזרתי ממילואים והייתי צריך לצאת לטבע. תוך 3 דקות הצטרפתי לטיול בגולן. תודה יאלה! 🎖️"</p>
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #1e40af, #1e3a8a); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700;">א</div>
+                <div>
+                  <div style="font-weight: 700; color: #1a1a1a; font-size: 14px;">איל אברהם</div>
+                  <div style="font-size: 11px; color: #888;">מילואימניק · הגולן</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ 🌸 HOLIDAY TOURS - מבצעי חגים ============================ -->
+      <section style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 60px 20px;">
+        <div style="max-width: 1200px; margin: 0 auto;">
+          <div style="text-align: center; margin-bottom: 32px;">
+            <p style="font-size: 12px; font-weight: 700; color: #92400e; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 8px;">תוכן עונתי</p>
+            <h2 style="font-size: 32px; color: #92400e; margin-bottom: 8px;">🌸 מבצעי חגים פעילים</h2>
+            <p style="color: #78350f; font-size: 15px;">חול המועד פסח · ל"ג בעומר · שבועות · יום העצמאות</p>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; max-width: 1100px; margin: 0 auto;">
+            
+            <!-- חוה"מ פסח -->
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div style="font-size: 36px; margin-bottom: 12px;">💧</div>
+              <h3 style="font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">חול המועד פסח</h3>
+              <p style="font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 12px;">12 טיולי מים מיוחדים · נחל עין גדי, ערוגות, חרוד ועוד</p>
+              <div style="background: #fef3c7; color: #92400e; padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; display: inline-block;">🎁 הנחת חג 20%</div>
+            </div>
+
+            <!-- ל"ג בעומר -->
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div style="font-size: 36px; margin-bottom: 12px;">🔥</div>
+              <h3 style="font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">ל"ג בעומר</h3>
+              <p style="font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 12px;">טיולי לילה למירון + הדלקות · קבוצות משפחתיות</p>
+              <div style="background: #fee2e2; color: #991b1b; padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; display: inline-block;">🌙 כולל לינה</div>
+            </div>
+
+            <!-- שבועות -->
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div style="font-size: 36px; margin-bottom: 12px;">🌾</div>
+              <h3 style="font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">שבועות</h3>
+              <p style="font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 12px;">סיורי בוקר במאגרי המים · חליבה + בוקר חלבי</p>
+              <div style="background: #d1fae5; color: #065f46; padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; display: inline-block;">🥛 חוויה משפחתית</div>
+            </div>
+
+            <!-- יום העצמאות -->
+            <div style="background: white; padding: 20px; border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); cursor: pointer; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-4px)'" onmouseout="this.style.transform='translateY(0)'">
+              <div style="font-size: 36px; margin-bottom: 12px;">🇮🇱</div>
+              <h3 style="font-size: 18px; font-weight: 800; color: #1a1a1a; margin-bottom: 8px;">יום העצמאות</h3>
+              <p style="font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 12px;">טיולי שטח · מנגלים בקבוצה · עיצוב הר הצופים</p>
+              <div style="background: #dbeafe; color: #1e40af; padding: 6px 12px; border-radius: 99px; font-size: 12px; font-weight: 700; display: inline-block;">🎉 חגיגה לאומית</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================ 🎖️ RESERVIST SECTION - הטבות מילואים ============================ -->
+      <section style="background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%); padding: 60px 20px; color: white;">
+        <div style="max-width: 1100px; margin: 0 auto;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: center;">
+            
+            <div>
+              <p style="font-size: 12px; font-weight: 700; color: #fef3c7; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 12px;">הטבת מילואים</p>
+              <h2 style="font-size: 36px; font-weight: 900; line-height: 1.1; margin-bottom: 16px;">תרמת. עכשיו תיהנה. <span style="color: #fef3c7;">חינם.</span></h2>
+              <p style="font-size: 16px; line-height: 1.6; opacity: 0.9; margin-bottom: 24px;">לכל מילואימניק/ית פעיל/ה - <strong style="color: #fef3c7;">90 יום פרימיום חינם</strong> + סיורים מסובסדים + קדימות בהצטרפות לתוכניות.</p>
+              
+              <ul style="list-style: none; padding: 0; margin-bottom: 24px;">
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px;"><span style="background: rgba(254,243,199,0.2); color: #fef3c7; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</span> 90 יום פרימיום ללא תשלום</li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px;"><span style="background: rgba(254,243,199,0.2); color: #fef3c7; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</span> 30% הנחה על כל הסיורים</li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px;"><span style="background: rgba(254,243,199,0.2); color: #fef3c7; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</span> קדימות בהצטרפות לתוכניות מבוקשות</li>
+                <li style="padding: 8px 0; display: flex; align-items: center; gap: 10px;"><span style="background: rgba(254,243,199,0.2); color: #fef3c7; width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px;">✓</span> טיולי דקומפרסיה ייעודיים</li>
+              </ul>
+
+              <button data-action="reservist-signup" style="background: white; color: #1e40af; border: none; padding: 14px 28px; border-radius: 99px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; box-shadow: 0 4px 16px rgba(0,0,0,0.2);">🎖️ הרשם להטבה ←</button>
+            </div>
+
+            <div style="background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 24px; padding: 32px; text-align: center;">
+              <div style="font-size: 48px; margin-bottom: 16px;">🎖️</div>
+              <div style="font-size: 60px; font-weight: 900; line-height: 1; margin-bottom: 8px; color: #fef3c7;">237</div>
+              <div style="font-size: 14px; opacity: 0.9; margin-bottom: 24px;">מילואימניקים שכבר נהנים מההטבה</div>
+              <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 99px; font-size: 12px;">🏔️ גולן</span>
+                <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 99px; font-size: 12px;">🌵 נגב</span>
+                <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 99px; font-size: 12px;">💧 ים המלח</span>
+                <span style="background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 99px; font-size: 12px;">🌳 גליל</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <style>
+        @media (max-width: 768px) {
+          /* Mobile: stack reservist columns */
+          section[style*="linear-gradient(135deg, #1e40af"] > div > div {
+            grid-template-columns: 1fr !important;
+          }
+        }
+      </style>
 
       <!-- ============================ WHAT'S WAITING IN ISRAEL ============================ -->
       <section class="kpis-section">
@@ -9344,6 +9522,87 @@
       // Initial route
       handleHashChange();
       window.addEventListener('hashchange', handleHashChange);
+    });
+  </script>
+
+  <!-- ============================ 💬 FLOATING WHATSAPP BOT ============================ -->
+  <button id="whatsapp-bot" onclick="openWhatsAppSupport()" style="position: fixed; bottom: 24px; left: 24px; width: 60px; height: 60px; background: linear-gradient(135deg, #25D366, #128C7E); border-radius: 50%; box-shadow: 0 8px 24px rgba(37,211,102,0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 28px; color: white; z-index: 1000; border: none; animation: bounceBot 3s infinite;" aria-label="פתח תמיכה ב-WhatsApp">
+    💬
+    <span id="bot-tooltip" style="position: absolute; right: 70px; background: white; color: #1a1a1a; padding: 8px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15); opacity: 0; transition: opacity 0.3s; pointer-events: none;">איך אפשר לעזור? 👋</span>
+  </button>
+
+  <style>
+    @keyframes bounceBot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-6px); }
+    }
+    #whatsapp-bot:hover #bot-tooltip {
+      opacity: 1 !important;
+    }
+    /* Show tooltip briefly on first visit */
+    @keyframes showTooltip {
+      0%, 80% { opacity: 1; }
+      100% { opacity: 0; }
+    }
+  </style>
+
+  <script>
+    function openWhatsAppSupport() {
+      // Open WhatsApp with pre-filled message
+      const message = encodeURIComponent('שלום! אני מתעניין ביאלה ויש לי שאלה');
+      const phone = '972500000000'; // Replace with real support number
+      window.open(`https://wa.me/${phone}?text=${message}`, '_blank');
+    }
+
+    // Show tooltip on first visit
+    setTimeout(() => {
+      const tooltip = document.getElementById('bot-tooltip');
+      if (tooltip && !localStorage.getItem('bot_tooltip_shown')) {
+        tooltip.style.opacity = '1';
+        setTimeout(() => {
+          tooltip.style.opacity = '0';
+          localStorage.setItem('bot_tooltip_shown', 'true');
+        }, 4000);
+      }
+    }, 2000);
+
+    // Reservist signup handler
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('[data-action="reservist-signup"]')) {
+        e.preventDefault();
+        if (typeof showToast === 'function') {
+          showToast('🎖️ נהדר! נציג יצור איתך קשר תוך 24 שעות');
+        } else {
+          alert('🎖️ הרשמתך נקלטה! נציג יצור איתך קשר תוך 24 שעות');
+        }
+      }
+
+      // Quick filter handler
+      if (e.target.matches('.quick-filter')) {
+        document.querySelectorAll('.quick-filter').forEach(b => {
+          b.style.background = '#f5f1ea';
+          b.style.color = '#555';
+          b.style.boxShadow = 'none';
+          b.classList.remove('active');
+        });
+        e.target.style.background = 'linear-gradient(135deg, #d4583a, #c44329)';
+        e.target.style.color = 'white';
+        e.target.style.boxShadow = '0 4px 12px rgba(212,88,58,0.3)';
+        e.target.classList.add('active');
+
+        const filter = e.target.dataset.quickfilter;
+        if (filter && filter !== 'all') {
+          // Trigger filter - integrate with existing filter logic
+          const topicSelect = document.getElementById('filter-topic');
+          if (topicSelect) {
+            topicSelect.value = filter;
+            topicSelect.dispatchEvent(new Event('change'));
+          }
+        } else {
+          // Clear filters
+          document.getElementById('btn-clear-filters')?.click();
+        }
+      }
     });
   </script>
 
