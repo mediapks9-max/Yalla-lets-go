@@ -2886,8 +2886,17 @@
 
       <section class="plans-section">
         <div class="section-header">
-          <h2 class="section-title">תוכניות פעילות</h2>
-          <span class="section-meta" id="section-meta">🇮🇱 אזור המרכז</span>
+          <h2 class="section-title" id="plans-section-title">תוכניות פעילות</h2>
+          <span class="section-meta" id="section-meta">🇮🇱 הכל</span>
+        </div>
+        <div id="active-filter-info" style="display: none; max-width: 1200px; margin: 0 auto 16px; padding: 12px 20px; background: linear-gradient(135deg, #FFF9F0, #F5E6D3); border: 2px solid #B85C3C; border-radius: 12px; display: none; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;">
+          <span style="color: #8B4513; font-weight: 600; font-size: 14px;">
+            <span id="active-filter-emoji">✨</span>
+            <span>מציג: <strong id="active-filter-text">הכל</strong></span>
+            <span style="color: #6B6B6B; font-weight: 400; margin-right: 8px;">·</span>
+            <span id="active-filter-count" style="color: #6B6B6B; font-weight: 400;">0 תוצאות</span>
+          </span>
+          <button onclick="document.querySelector('.quick-filter[data-quickfilter=\\'all\\']')?.click();" style="background: white; color: #B85C3C; border: 1.5px solid #B85C3C; padding: 6px 14px; border-radius: 99px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;">✕ נקה סינון</button>
         </div>
         <div class="plans-grid" id="plans-grid"></div>
       </section>
@@ -9890,8 +9899,11 @@
         }
       }
 
-      // Quick filter handler
+      // ============== Quick filter - REAL category filtering ==============
       if (e.target.matches('.quick-filter')) {
+        e.preventDefault();
+        
+        // Update visual state
         document.querySelectorAll('.quick-filter').forEach(b => {
           b.style.background = '#f5f1ea';
           b.style.color = '#555';
@@ -9904,17 +9916,211 @@
         e.target.classList.add('active');
 
         const filter = e.target.dataset.quickfilter;
-        if (filter && filter !== 'all') {
-          // Trigger filter - integrate with existing filter logic
-          const topicSelect = document.getElementById('filter-topic');
-          if (topicSelect) {
-            topicSelect.value = filter;
-            topicSelect.dispatchEvent(new Event('change'));
+        window.activeQuickFilter = filter;
+        
+        // Apply filtering to BOTH plans grid and tours grid
+        applyQuickFilter(filter);
+      }
+    });
+
+    // ============== Quick Filter - Apply to Plans + Tours ==============
+    window.activeQuickFilter = 'all';
+    
+    async function applyQuickFilter(filter) {
+      // Filter Plans grid (homepage)
+      const plansGrid = document.getElementById('plans-grid');
+      const toursGrid = document.getElementById('tours-preview-grid');
+      const filterInfo = document.getElementById('active-filter-info');
+      const filterText = document.getElementById('active-filter-text');
+      const filterCount = document.getElementById('active-filter-count');
+      const filterEmoji = document.getElementById('active-filter-emoji');
+      
+      // Filter labels
+      const filterLabels = {
+        all: { emoji: '✨', text: 'הכל' },
+        shabbat: { emoji: '🕯️', text: 'שומר שבת' },
+        reservist: { emoji: '🎖️', text: 'מילואים' },
+        holiday: { emoji: '🌸', text: 'חול המועד' },
+        family: { emoji: '👨‍👩‍👧', text: 'משפחה' },
+        stroller: { emoji: '🚼', text: 'ידידותי לעגלה' },
+        accessible: { emoji: '♿', text: 'נגיש' },
+        dogs: { emoji: '🐕', text: 'ידידותי לכלבים' },
+        desert: { emoji: '🌵', text: 'מדבר' },
+        water: { emoji: '💧', text: 'מים' },
+        history: { emoji: '🕍', text: 'היסטוריה' },
+        trail: { emoji: '🥾', text: 'שביל ישראל' },
+        sunrise: { emoji: '🌅', text: 'זריחה' },
+        forest: { emoji: '🌳', text: 'חורש' },
+        flowers: { emoji: '🌸', text: 'פריחה' },
+        food: { emoji: '🍽️', text: 'אוכל' },
+        adventure: { emoji: '🧗', text: 'אתגרי' },
+        urban: { emoji: '🏛️', text: 'עירוני' },
+        photography: { emoji: '📸', text: 'צילום' },
+      };
+      
+      const label = filterLabels[filter] || { emoji: '✨', text: filter };
+      
+      // Show loading
+      if (plansGrid) plansGrid.innerHTML = getSkeletonGrid(3);
+      if (toursGrid) toursGrid.innerHTML = getSkeletonGrid(3);
+      
+      try {
+        // Fetch fresh data
+        const [allPlans, allTours] = await Promise.all([
+          api.fetchPlans(),
+          api.fetchTours()
+        ]);
+        
+        // Filter by category
+        const filteredPlans = filterByCategory(allPlans, filter);
+        const filteredTours = filterByCategory(allTours, filter);
+        const totalResults = filteredPlans.length + filteredTours.length;
+        
+        // Update filter info banner
+        if (filterInfo) {
+          if (filter === 'all') {
+            filterInfo.style.display = 'none';
+          } else {
+            filterInfo.style.display = 'flex';
+            if (filterEmoji) filterEmoji.textContent = label.emoji;
+            if (filterText) filterText.textContent = label.text;
+            if (filterCount) filterCount.textContent = `${totalResults} ${totalResults === 1 ? 'תוצאה' : 'תוצאות'}`;
           }
-        } else {
-          // Clear filters
-          document.getElementById('btn-clear-filters')?.click();
         }
+        
+        // Update Plans grid
+        if (plansGrid) {
+          if (filteredPlans.length === 0) {
+            plansGrid.innerHTML = `
+              <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 60px 20px; background: white; border: 2px solid #1a1a1a; border-radius: 16px; box-shadow: 4px 4px 0 #1a1a1a;">
+                <div style="font-size: 64px; margin-bottom: 16px;">${label.emoji}</div>
+                <h3 style="color: #B85C3C; font-size: 22px; margin-bottom: 8px;">אין תוכניות ב${label.text}</h3>
+                <p style="color: #6B6B6B; margin-bottom: 24px;">נסה קטגוריה אחרת או היה הראשון לפרסם!</p>
+                <div style="display: flex; gap: 8px; justify-content: center; flex-wrap: wrap;">
+                  <button onclick="document.querySelector('.quick-filter[data-quickfilter=\\'all\\']')?.click();" style="background: #B85C3C; color: white; padding: 12px 24px; border-radius: 100px; border: none; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600;">✕ הצג הכל</button>
+                  <button data-action="create-plan" style="background: white; color: #B85C3C; border: 2px solid #B85C3C; padding: 12px 24px; border-radius: 100px; cursor: pointer; font-family: inherit; font-size: 14px; font-weight: 600;">+ פרסם תוכנית</button>
+                </div>
+              </div>
+            `;
+          } else {
+            plansGrid.innerHTML = filteredPlans.map((p, i) => renderPlanCard(p, true, i)).join('');
+            if (typeof attachPlanCardListeners === 'function') attachPlanCardListeners();
+          }
+        }
+        
+        // Update Tours grid
+        if (toursGrid) {
+          if (filteredTours.length === 0) {
+            toursGrid.innerHTML = `
+              <div style="grid-column: 1/-1; text-align: center; padding: 40px 20px; background: #FFF9F0; border-radius: 16px; border: 2px dashed #F5E6D3;">
+                <div style="font-size: 48px; margin-bottom: 12px;">🗺️</div>
+                <p style="color: #6B6B6B; font-size: 14px;">אין סיורים ב${label.text} עדיין</p>
+              </div>
+            `;
+          } else {
+            // Render tours
+            toursGrid.innerHTML = filteredTours.slice(0, 6).map((t, i) => 
+              typeof renderTourCard === 'function' ? renderTourCard(t, i) : renderPlanCard(t, true, i)
+            ).join('');
+          }
+        }
+        
+        // Show toast
+        if (filter !== 'all' && typeof showToast === 'function') {
+          showToast(`${label.emoji} ${label.text} · ${totalResults} ${totalResults === 1 ? 'תוצאה' : 'תוצאות'}`);
+        }
+      } catch (err) {
+        console.error('Filter error:', err);
+      }
+    }
+    
+    // ============== Filter logic - Smart matching ==============
+    function filterByCategory(items, filter) {
+      if (!items || filter === 'all') return items;
+      
+      // Map filter keys to what they should match in DB fields
+      const matchers = {
+        // קהל דתי
+        shabbat: (i) => i.kosher === 'shomer-shabbat' || i.shabbat_friendly === true || 
+                       /שבת|שומר שבת|כשר|לפני שבת/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        
+        // מילואים
+        reservist: (i) => i.reservist_friendly === true || i.has_reservist_discount === true ||
+                       /מילואים|מילואימניק|חייל/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        
+        // חגים
+        holiday: (i) => i.holiday_special === true || 
+                       /פסח|חול המועד|סוכות|שבועות|חנוכה|חג|מועד/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        
+        // משפחה
+        family: (i) => i.family_friendly === true || i.kid_friendly === true || i.target === 'family' ||
+                       /משפחה|ילדים|משפחתי|פעוטות/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        
+        // עגלה
+        stroller: (i) => i.stroller_friendly === true ||
+                       /עגלה|נגיש לעגלה|תינוק/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        
+        // נגיש
+        accessible: (i) => i.accessible === true || i.wheelchair_friendly === true ||
+                       /נגיש|כיסא גלגלים|מוגבלות/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        
+        // כלבים
+        dogs: (i) => i.dogs_allowed === true ||
+                       /כלב|חיית מחמד|דוג/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        
+        // קטגוריות סוג שטח - בודק category וגם topic ותגים
+        desert: (i) => i.category === 'desert' || i.topic === 'desert' ||
+                       /מדבר|נגב|ערבה|מצדה|רמון/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        water: (i) => i.category === 'water' || i.topic === 'water' ||
+                       /מים|נחל|מעיין|מפל|בריכה|אגם|כינרת|ים המלח/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        history: (i) => i.category === 'history' || i.topic === 'history' ||
+                       /היסטוריה|עתיקות|תל|ירושלים|מצדה|בית כנסת|מקדש/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        trail: (i) => i.category === 'trail' || i.topic === 'trail' ||
+                       /שביל ישראל|שביל|מסלול ארוך|טרק/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        sunrise: (i) => i.category === 'sunrise' || i.topic === 'sunrise' ||
+                       /זריחה|בוקר|השכמה|שקיעה/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        forest: (i) => i.category === 'forest' || /חורש|יער|כרמל|גליל/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        flowers: (i) => i.category === 'flowers' || /פריחה|אביב|כליל|רקפת|שקד|דובדבן/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        food: (i) => i.category === 'food' || /אוכל|שוק|סדנה|בישול|מאכל|מסעדה/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        adventure: (i) => i.category === 'adventure' || /אתגר|סנפלינג|אופניים|אקסטרים/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        urban: (i) => i.category === 'urban' || /עירוני|תל אביב|חיפה|ירושלים|עיר/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+        photography: (i) => i.category === 'photography' || /צילום|פוטוגרפיה|מצלמה/.test(`${i.title} ${i.description} ${i.tags || ''}`),
+      };
+      
+      const matcher = matchers[filter];
+      if (!matcher) return items; // unknown filter, return all
+      
+      return items.filter(item => {
+        try {
+          return matcher(item);
+        } catch (e) {
+          return false;
+        }
+      });
+    }
+    
+    // ============== Category cards click handler ==============
+    document.addEventListener('click', (e) => {
+      const catLink = e.target.closest('a[href^="#tours?cat="]');
+      if (catLink) {
+        e.preventDefault();
+        const cat = catLink.href.split('cat=')[1];
+        if (!cat) return;
+        
+        // Set the matching quick filter as active
+        const matchingChip = document.querySelector(`.quick-filter[data-quickfilter="${cat}"]`);
+        if (matchingChip) {
+          matchingChip.click();
+        } else {
+          // Direct apply if no chip exists
+          window.activeQuickFilter = cat;
+          applyQuickFilter(cat);
+        }
+        
+        // Scroll to plans section
+        setTimeout(() => {
+          document.querySelector('.plans-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 300);
       }
     });
   </script>
